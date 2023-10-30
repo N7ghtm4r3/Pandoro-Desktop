@@ -9,14 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
+import helpers.isGroupDescriptionValid
+import helpers.isGroupNameValid
+import helpers.isInputValid
 import helpers.showSnack
 import layouts.components.PandoroTextField
-import layouts.ui.screens.Connect.Companion.isPasswordValid
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
-import toImportFromLibrary.Group.GROUP_DESCRIPTION_MAX_LENGTH
-import toImportFromLibrary.Group.GROUP_NAME_MAX_LENGTH
 
 /**
  * Function to show the popup to edit the email of the [user]
@@ -98,21 +98,6 @@ private fun showEditProfilePopup(
 }
 
 /**
- * Function to check the validity of an input
- *
- * @param item: the item between **email** and **password**
- * @param input: input to check
- * @return whether the input is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isInputValid(item: String, input: String): Boolean {
-    return if (item == "email")
-        isEmailValid(input)
-    else
-        isPasswordValid(input)
-}
-
-/**
  * Function to show the popup to create and add a new [Group]
  *
  * No-any params required
@@ -170,26 +155,4 @@ fun showAddGroupPopup() {
             }
         }
     )
-}
-
-/**
- * Function to check the validity of a group name
- *
- * @param groupName: group name to check
- * @return whether the group name is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isGroupNameValid(groupName: String): Boolean {
-    return groupName.length in 1..GROUP_NAME_MAX_LENGTH
-}
-
-/**
- * Function to check the validity of a group description
- *
- * @param groupDescription: group description to check
- * @return whether the group description is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isGroupDescriptionValid(groupDescription: String): Boolean {
-    return groupDescription.length in 1..GROUP_DESCRIPTION_MAX_LENGTH
 }

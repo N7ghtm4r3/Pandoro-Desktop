@@ -18,11 +18,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.RED_COLOR
+import helpers.isContentNoteValid
+import helpers.isValidVersion
 import helpers.showSnack
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
-import toImportFromLibrary.Update.TARGET_VERSION_MAX_LENGTH
 
 /**
  * Function to show the popup to schedule a new [Update]
@@ -42,7 +43,7 @@ fun showScheduleUpdatePopup() {
             PandoroTextField(
                 modifier = Modifier.padding(10.dp).height(55.dp),
                 label = "Target version",
-                isError = !isValidTargetVersion(targetVersion),
+                isError = !isValidVersion(targetVersion),
                 onValueChange = { targetVersion = it },
                 value = targetVersion
             )
@@ -106,7 +107,7 @@ fun showScheduleUpdatePopup() {
             Spacer(Modifier.height(15.dp))
             Text(
                 modifier = Modifier.clickable {
-                    if (isValidTargetVersion(targetVersion)) {
+                    if (isValidVersion(targetVersion)) {
                         if (notes.isNotEmpty()) {
                             var notesCorrect = true
                             for (note in notes) {
@@ -129,15 +130,4 @@ fun showScheduleUpdatePopup() {
             )
         }
     )
-}
-
-/**
- * Function to check the validity of a target version
- *
- * @param targetVersion: target version to check
- * @return whether the target version is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isValidTargetVersion(targetVersion: String): Boolean {
-    return targetVersion.length in 1..TARGET_VERSION_MAX_LENGTH
 }

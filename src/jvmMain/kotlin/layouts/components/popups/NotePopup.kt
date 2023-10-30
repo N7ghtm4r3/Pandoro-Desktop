@@ -11,13 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import helpers.isContentNoteValid
 import helpers.showSnack
 import helpers.spaceContent
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import toImportFromLibrary.Note
-import toImportFromLibrary.Note.NOTE_CONTENT_MAX_LENGTH
 import toImportFromLibrary.Update
 
 /**
@@ -61,17 +61,6 @@ fun showCreateNotePopup(update: Update?) {
             }
         }
     )
-}
-
-/**
- * Function to check the validity of a content for a note
- *
- * @param content: content to check
- * @return whether the content is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-fun isContentNoteValid(content: String): Boolean {
-    return content.length in 1..NOTE_CONTENT_MAX_LENGTH
 }
 
 /**

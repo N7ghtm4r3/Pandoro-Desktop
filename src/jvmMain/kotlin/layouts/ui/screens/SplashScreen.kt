@@ -19,7 +19,6 @@ import helpers.PRIMARY_COLOR
 import helpers.appName
 import kotlinx.coroutines.delay
 import navigator
-import org.apache.commons.validator.routines.EmailValidator
 import toImportFromLibrary.User
 
 /**
@@ -31,11 +30,6 @@ import toImportFromLibrary.User
 class SplashScreen : UIScreen() {
 
     companion object {
-
-        /**
-         * **validator** -> the validator to check the validity of the emails
-         */
-        val validator: EmailValidator = EmailValidator.getInstance()
 
         /**
          * **user** -> the user connected for the session
@@ -59,7 +53,7 @@ class SplashScreen : UIScreen() {
             )
             delay(500)
             // TODO: NAVIGATE CORRECTLY TO THE FIRST SCREEN OF THE APPLICATION
-            if (false)
+            if (!false)
                 navigator.navigate(home.name)
             else
                 navigator.navigate(connect.name)

@@ -15,20 +15,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
-import helpers.BACKGROUND_COLOR
-import helpers.PRIMARY_COLOR
-import helpers.showSnack
+import helpers.*
 import layouts.components.PandoroTextField
-import layouts.ui.screens.Connect.Companion.urlValidator
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.ProjectsSection.Companion.projectsList
 import toImportFromLibrary.Group
 import toImportFromLibrary.Project
-import toImportFromLibrary.Project.*
 import toImportFromLibrary.Update
-import toImportFromLibrary.Update.TARGET_VERSION_MAX_LENGTH
 
 /**
  * Function to show the popup to add a new project
@@ -82,14 +77,14 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
             PandoroTextField(
                 modifier = Modifier.padding(10.dp).height(55.dp),
                 label = "Description",
-                isError = !isValidDescription(description),
+                isError = !isValidProjectDescription(description),
                 onValueChange = { description = it },
                 value = description
             )
             PandoroTextField(
                 modifier = Modifier.padding(10.dp).height(55.dp),
                 label = "Short description",
-                isError = !isValidShortDescription(shortDescription),
+                isError = !isValidProjectShortDescription(shortDescription),
                 onValueChange = { shortDescription = it },
                 value = shortDescription
             )
@@ -153,8 +148,8 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
             Text(
                 modifier = Modifier.clickable {
                     if (isValidProjectName(name)) {
-                        if (isValidDescription(description)) {
-                            if (isValidShortDescription(shortDescription)) {
+                        if (isValidProjectDescription(description)) {
+                            if (isValidProjectShortDescription(shortDescription)) {
                                 if (isValidVersion(version)) {
                                     version = version.replace("v. ", "")
                                     if (isValidRepository(repository)) {
@@ -212,59 +207,4 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
             )
         }
     )
-}
-
-/**
- * Function to check the validity of a project name
- *
- * @param projectName: project name to check
- * @return whether the project name is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isValidProjectName(projectName: String): Boolean {
-    return projectName.length in 1..PROJECT_NAME_MAX_LENGTH
-}
-
-/**
- * Function to check the validity of a description
- *
- * @param description: description to check
- * @return whether the description is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isValidDescription(description: String): Boolean {
-    return description.length in 1..PROJECT_DESCRIPTION_MAX_LENGTH
-}
-
-/**
- * Function to check the validity of a short description
- *
- * @param shorDescription: short description to check
- * @return whether the short description is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isValidShortDescription(shorDescription: String): Boolean {
-    return shorDescription.length in 1..PROJECT_SHORT_DESCRIPTION_MAX_LENGTH
-}
-
-/**
- * Function to check the validity of a version
- *
- * @param version: version to check
- * @return whether the version is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isValidVersion(version: String): Boolean {
-    return version.length in 1..TARGET_VERSION_MAX_LENGTH
-}
-
-/**
- * Function to check the validity of a repository url
- *
- * @param repository: repository to check
- * @return whether the repository is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-private fun isValidRepository(repository: String): Boolean {
-    return repository.isEmpty() || (urlValidator.isValid(repository) && RepositoryPlatform.isValidPlatform(repository))
 }

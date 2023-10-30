@@ -24,14 +24,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.*
+import helpers.InputStatus.*
+import helpers.ScreenType.SignIn
+import helpers.ScreenType.SignUp
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
-import layouts.components.popups.isEmailValid
-import layouts.ui.screens.Connect.ScreenType.SignIn
-import layouts.ui.screens.Connect.ScreenType.SignUp
 import navigator
-import org.apache.commons.validator.routines.UrlValidator
-import toImportFromLibrary.User.*
 
 /**
  * This is the layout for the connect screen
@@ -40,84 +38,6 @@ import toImportFromLibrary.User.*
  * @see UIScreen
  */
 class Connect : UIScreen() {
-
-    companion object {
-
-        /**
-         * **urlValidator** -> the validator to check the validity of the URLS
-         */
-        val urlValidator: UrlValidator = UrlValidator.getInstance()
-
-        /**
-         * Function to check the validity of a password
-         *
-         * @param password: password to check
-         * @return whether the password is valid as [Boolean]
-         */
-        // TODO: PACK IN LIBRARY
-        fun isPasswordValid(password: String): Boolean {
-            return password.length in PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH
-        }
-
-    }
-
-    /**
-     * **ScreenType** -> list of available types for the connect screen
-     */
-    // TODO: PACK IN THE LIBRARY
-    private enum class ScreenType {
-
-        /**
-         * **SignUp** -> when the user need to sign up for the first time
-         */
-        SignUp,
-
-        /**
-         * **SignIn** -> when the user need to sign in its account
-         */
-        SignIn;
-
-        /**
-         * Function to create the title to show
-         *
-         * @param screenType: the type from create the title
-         * @return title to show as [String]
-         */
-        fun createTitle(screenType: ScreenType): String {
-            return when (screenType) {
-                SignUp -> "Sign up"
-                SignIn -> "Sign In"
-            }
-        }
-
-        /**
-         * Function to create the message to show
-         *
-         * @param screenType: the type from create the message
-         * @return message to show as [String]
-         */
-        fun createMessage(screenType: ScreenType): String {
-            return when (screenType) {
-                SignIn -> "Are you new to Pandoro?"
-                SignUp -> "Have an account?"
-            }
-        }
-
-        /**
-         * Function to create the title link to show
-         *
-         * @param screenType: the type from create the title link
-         * @return title link to show as [String]
-         */
-        fun createTitleLink(screenType: ScreenType): String {
-            return when (screenType) {
-                SignUp -> "Sign In"
-                SignIn -> "Sign up"
-            }
-        }
-
-    }
-
 
     /**
      * **scaffoldState** -> the scaffold state for the scaffold of the page
@@ -302,12 +222,9 @@ class Connect : UIScreen() {
                                                 SignUp -> {
                                                     if (isServerAddressValid(serverAddress)) {
                                                         if (isNameValid(name)) {
-                                                            if (isSurnameValid(surname)) {
-                                                                if (areCredentialsValid(email, password)) {
-                                                                    // TODO: MAKE REQUEST THEN
-                                                                    navigator.navigate(home.name)
-                                                                }
-                                                            } else
+                                                            if (isSurnameValid(surname))
+                                                                checkCredentials(email, password)
+                                                            else
                                                                 showAuthError("You must insert a correct surname")
                                                         } else
                                                             showAuthError("You must insert a correct name")
@@ -316,12 +233,9 @@ class Connect : UIScreen() {
                                                 }
 
                                                 SignIn -> {
-                                                    if (isServerAddressValid(serverAddress)) {
-                                                        if (areCredentialsValid(email, password)) {
-                                                            // TODO: MAKE REQUEST THEN
-                                                            navigator.navigate(home.name)
-                                                        }
-                                                    } else
+                                                    if (isServerAddressValid(serverAddress))
+                                                        checkCredentials(email, password)
+                                                    else
                                                         showAuthError("You must insert a correct server address")
                                                 }
                                             }
@@ -355,55 +269,27 @@ class Connect : UIScreen() {
     }
 
     /**
-     * Function to check the validity of a server address
-     *
-     * @param serverAddress: server address to check
-     * @return whether the server address is valid as [Boolean]
-     */
-    // TODO: PACK IN LIBRARY
-    private fun isServerAddressValid(serverAddress: String): Boolean {
-        return urlValidator.isValid(serverAddress)
-    }
-
-    /**
-     * Function to check the validity of a name
-     *
-     * @param name: name to check
-     * @return whether the name is valid as [Boolean]
-     */
-    // TODO: PACK IN LIBRARY
-    private fun isNameValid(name: String): Boolean {
-        return name.length in 1..USER_NAME_MAX_LENGTH
-    }
-
-    /**
-     * Function to check the validity of a surname
-     *
-     * @param surname: surname to check
-     * @return whether the surname is valid as [Boolean]
-     */
-    // TODO: PACK IN LIBRARY
-    private fun isSurnameValid(surname: String): Boolean {
-        return surname.length in 1..USER_SURNAME_MAX_LENGTH
-    }
-
-    /**
      * Function to check the validity of the credentials
      *
      * @param email: email to check
      * @param password: password to check
      * @return whether the credentials are valid as [Boolean]
      */
-    // TODO: PACK IN LIBRARY
-    private fun areCredentialsValid(email: String, password: String): Boolean {
-        if (isEmailValid(email)) {
-            if (isPasswordValid(password))
-                return true
-            else
+    private fun checkCredentials(email: String, password: String) {
+        when (areCredentialsValid(email, password)) {
+            OK -> {
+                // TODO: MAKE REQUEST THEN
+                navigator.navigate(home.name)
+            }
+
+            WRONG_PASSWORD -> {
                 showAuthError("You must insert a correct password")
-        } else
-            showAuthError("You must insert a correct email")
-        return false
+            }
+
+            WRONG_EMAIL -> {
+                showAuthError("You must insert a correct email")
+            }
+        }
     }
 
     /**

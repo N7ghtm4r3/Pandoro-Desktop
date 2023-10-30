@@ -177,7 +177,7 @@ class GroupSection : Section() {
                                                 fontSize = 18.sp
                                             )
                                             var modifier = Modifier.padding(start = 20.dp)
-                                            if ((user.id != member.id) && isCurrentUserAMaintainer) {
+                                            if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
                                                 var showRoleMenu by remember { mutableStateOf(false) }
                                                 if (isCurrentUserAnAdmin || !member.isAdmin) {
                                                     modifier = modifier.clickable { showRoleMenu = true }
@@ -209,7 +209,7 @@ class GroupSection : Section() {
                                                 textAlign = TextAlign.Center,
                                                 color = if (member.role == ADMIN) RED_COLOR else PRIMARY_COLOR
                                             )
-                                            if ((user.id != member.id) && isCurrentUserAMaintainer) {
+                                            if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
                                                 val showRemoveDialog = mutableStateOf(false)
                                                 if (isCurrentUserAnAdmin || !member.isAdmin) {
                                                     Column(
@@ -240,7 +240,8 @@ class GroupSection : Section() {
                     }
                     spaceContent()
                     val projects = currentGroup.projects
-                    if (projects.isNotEmpty()) {
+                    val areProjectsEmpty = projects.isEmpty()
+                    if (!areProjectsEmpty || isCurrentUserAnAdmin) {
                         var showProjectsSection by remember { mutableStateOf(true) }
                         var showProjectsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
                         Row(
@@ -284,46 +285,50 @@ class GroupSection : Section() {
                                 fontSize = 14.sp
                             )
                             spaceContent()
-                            LazyVerticalGrid(
-                                modifier = Modifier.padding(top = 20.dp).height(50.dp),
-                                columns = GridCells.Adaptive(100.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
-                            ) {
-                                items(projects) { project ->
-                                    Card(
-                                        modifier = Modifier.fillMaxWidth().height(40.dp),
-                                        shape = RoundedCornerShape(15),
-                                        backgroundColor = Color.White,
-                                        elevation = 2.dp,
-                                        onClick = { navToProject(Sections.Group, project) },
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.fillMaxSize(),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.Center
+                            if (!areProjectsEmpty) {
+                                LazyVerticalGrid(
+                                    modifier = Modifier
+                                        .padding(top = 20.dp)
+                                        .height(50.dp),
+                                    columns = GridCells.Adaptive(100.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
+                                ) {
+                                    items(projects) { project ->
+                                        Card(
+                                            modifier = Modifier.fillMaxWidth().height(40.dp),
+                                            shape = RoundedCornerShape(15),
+                                            backgroundColor = Color.White,
+                                            elevation = 2.dp,
+                                            onClick = { navToProject(Sections.Group, project) },
                                         ) {
-                                            Text(
-                                                text = project.name,
-                                                fontSize = 14.sp
-                                            )
-                                        }
-                                        Column(
-                                            modifier = Modifier.weight(1f).fillMaxHeight(),
-                                            horizontalAlignment = Alignment.End,
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
-                                            Box(
-                                                modifier = Modifier.background(PRIMARY_COLOR).fillMaxHeight()
-                                                    .width(3.dp)
-                                            )
+                                            Column(
+                                                modifier = Modifier.fillMaxSize(),
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Text(
+                                                    text = project.name,
+                                                    fontSize = 14.sp
+                                                )
+                                            }
+                                            Column(
+                                                modifier = Modifier.weight(1f).fillMaxHeight(),
+                                                horizontalAlignment = Alignment.End,
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier.background(PRIMARY_COLOR).fillMaxHeight()
+                                                        .width(3.dp)
+                                                )
+                                            }
                                         }
                                     }
                                 }
+                                spaceContent()
                             }
                         }
-                        spaceContent()
                     }
                 }
             }

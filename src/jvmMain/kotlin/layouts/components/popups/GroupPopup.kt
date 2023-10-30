@@ -18,17 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import helpers.BACKGROUND_COLOR
-import helpers.PRIMARY_COLOR
-import helpers.RED_COLOR
-import helpers.showSnack
+import helpers.*
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddMembersPopup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.screens.SplashScreen.Companion.validator
 import toImportFromLibrary.Group
-import toImportFromLibrary.User.EMAIL_MAX_LENGTH
 
 /**
  * Function to show the popup to add members to a [Group]
@@ -155,17 +150,6 @@ fun checkMembersValidity(members: SnapshotStateList<String>): Boolean {
     } else
         showSnack(coroutineScope, scaffoldState, "You must insert one member at least")
     return false
-}
-
-/**
- * Function to check the validity of an email
- *
- * @param email: email to check
- * @return whether the email is valid as [Boolean]
- */
-// TODO: PACK IN LIBRARY
-fun isEmailValid(email: String): Boolean {
-    return validator.isValid(email) && email.length in 1..EMAIL_MAX_LENGTH
 }
 
 /**
