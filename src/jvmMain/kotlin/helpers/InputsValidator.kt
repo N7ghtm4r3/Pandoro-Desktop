@@ -8,7 +8,7 @@ import toImportFromLibrary.Group.GROUP_NAME_MAX_LENGTH
 import toImportFromLibrary.Note.NOTE_CONTENT_MAX_LENGTH
 import toImportFromLibrary.Project.*
 import toImportFromLibrary.Project.RepositoryPlatform.isValidPlatform
-import toImportFromLibrary.Update.TARGET_VERSION_MAX_LENGTH
+import toImportFromLibrary.ProjectUpdate.TARGET_VERSION_MAX_LENGTH
 import toImportFromLibrary.User.*
 
 // TODO: IMPORT FROM LIBRARY

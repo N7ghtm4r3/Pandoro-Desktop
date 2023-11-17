@@ -23,7 +23,7 @@ import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.ProjectsSection.Companion.projectsList
 import toImportFromLibrary.Group
 import toImportFromLibrary.Project
-import toImportFromLibrary.Update
+import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to show the popup to add a new project
@@ -163,7 +163,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                                                     description,
                                                     version,
                                                     groups,
-                                                    arrayListOf<Update>(),
+                                                    arrayListOf<ProjectUpdate>(),
                                                     repository
                                                 )
                                             )

@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.tecknobit.apimanager.annotations.Wrapper
 import helpers.BACKGROUND_COLOR
 import toImportFromLibrary.Group
-import toImportFromLibrary.Update
+import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to delete an update
@@ -23,7 +23,7 @@ import toImportFromLibrary.Update
  */
 @Wrapper
 @Composable
-fun DeleteUpdate(show: MutableState<Boolean>, update: Update) {
+fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
     alertDialogContainer(
         show = show,
         title = "Delete update ${update.targetVersion}",

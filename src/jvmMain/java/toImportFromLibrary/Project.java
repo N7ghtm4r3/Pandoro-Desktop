@@ -5,7 +5,7 @@ import com.tecknobit.apimanager.formatters.TimeFormatter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import static toImportFromLibrary.Update.Status.PUBLISHED;
+import static toImportFromLibrary.ProjectUpdate.Status.PUBLISHED;
 
 // TODO: 30/07/2023 TO IMPORT FROM LIBRARY
 
@@ -117,7 +117,7 @@ public class Project extends PandoroItem implements Serializable {
     /**
      * {@code updates} updates of the project
      */
-    private final ArrayList<Update> updates;
+    private final ArrayList<ProjectUpdate> updates;
 
     /**
      * {@code projectRepo} the repository of the project
@@ -168,7 +168,7 @@ public class Project extends PandoroItem implements Serializable {
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
     public Project(String id, String name, String shortDescription, String description, String version,
-                   ArrayList<Update> updates, String projectRepo) {
+                   ArrayList<ProjectUpdate> updates, String projectRepo) {
         this(id, name, shortDescription, description, version, new ArrayList<>(), updates, projectRepo);
     }
 
@@ -198,7 +198,7 @@ public class Project extends PandoroItem implements Serializable {
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
     public Project(String id, String name, String shortDescription, String description, String version,
-                   ArrayList<Update> updates) {
+                   ArrayList<ProjectUpdate> updates) {
         this(id, name, shortDescription, description, version, updates, "");
     }
 
@@ -215,7 +215,7 @@ public class Project extends PandoroItem implements Serializable {
      * @param projectRepo:      the repository of the project
      */
     public Project(String id, String name, String shortDescription, String description, String version,
-                   ArrayList<Group> groups, ArrayList<Update> updates, String projectRepo) {
+                   ArrayList<Group> groups, ArrayList<ProjectUpdate> updates, String projectRepo) {
         this(id, name, null, shortDescription, description, version, groups, updates, projectRepo);
     }
 
@@ -250,7 +250,7 @@ public class Project extends PandoroItem implements Serializable {
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
     public Project(String id, String name, User author, String shortDescription, String description, String version,
-                   ArrayList<Update> updates, String projectRepo) {
+                   ArrayList<ProjectUpdate> updates, String projectRepo) {
         this(id, name, author, shortDescription, description, version, new ArrayList<>(), updates, projectRepo);
     }
 
@@ -282,7 +282,7 @@ public class Project extends PandoroItem implements Serializable {
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
     public Project(String id, String name, User author, String shortDescription, String description, String version,
-                   ArrayList<Update> updates) {
+                   ArrayList<ProjectUpdate> updates) {
         this(id, name, author, shortDescription, description, version, updates, "");
     }
 
@@ -300,7 +300,7 @@ public class Project extends PandoroItem implements Serializable {
      * @param projectRepo:      the repository of the project
      */
     public Project(String id, String name, User author, String shortDescription, String description, String version,
-                   ArrayList<Group> groups, ArrayList<Update> updates, String projectRepo) {
+                   ArrayList<Group> groups, ArrayList<ProjectUpdate> updates, String projectRepo) {
         super(id, name);
         this.author = author;
         updatesNumber = updates.size();
@@ -406,9 +406,9 @@ public class Project extends PandoroItem implements Serializable {
      * Method to get {@link #updates} instance <br>
      * No-any params required
      *
-     * @return {@link #updates} instance as {@link ArrayList} of {@link Update}
+     * @return {@link #updates} instance as {@link ArrayList} of {@link ProjectUpdate}
      */
-    public ArrayList<Update> getUpdates() {
+    public ArrayList<ProjectUpdate> getUpdates() {
         return updates;
     }
 
@@ -416,11 +416,11 @@ public class Project extends PandoroItem implements Serializable {
      * Method to get the published updates <br>
      * No-any params required
      *
-     * @return published updates as {@link ArrayList} of {@link Update}
+     * @return published updates as {@link ArrayList} of {@link ProjectUpdate}
      */
-    public ArrayList<Update> getPublishedUpdates() {
-        ArrayList<Update> publishedUpdates = new ArrayList<>();
-        for (Update update : updates)
+    public ArrayList<ProjectUpdate> getPublishedUpdates() {
+        ArrayList<ProjectUpdate> publishedUpdates = new ArrayList<>();
+        for (ProjectUpdate update : updates)
             if (update.getStatus() == PUBLISHED)
                 publishedUpdates.add(update);
         return publishedUpdates;
@@ -434,7 +434,7 @@ public class Project extends PandoroItem implements Serializable {
      */
     public int getTotalDevelopmentDays() {
         int totalDevelopmentDays = 0;
-        for (Update update : getPublishedUpdates())
+        for (ProjectUpdate update : getPublishedUpdates())
             totalDevelopmentDays += update.getDevelopmentDuration();
         return totalDevelopmentDays;
     }

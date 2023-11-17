@@ -119,6 +119,12 @@ public class User extends PandoroItem {
                 new ArrayList<>(of(
                         new Changelog(
                                 "",
+                                Changelog.ChangelogEvent.INVITED_GROUP,
+                                System.currentTimeMillis(),
+                                new Group("FF", "Prova", "Prova join"),
+                                false),
+                        new Changelog(
+                                "",
                                 Changelog.ChangelogEvent.UPDATE_SCHEDULED,
                                 System.currentTimeMillis(),
                                 new Project("Prova"),
@@ -156,8 +162,8 @@ public class User extends PandoroItem {
                                         "TecknobitJOIN",
                                         "ciao",
                                         new ArrayList<>(List.of(
-                                                new Group.Member("manu0", "Manuel", "Maurizio", Group.Role.ADMIN),
-                                                new Group.Member("Gabriele", "Marengo", Group.Role.MAINTAINER))
+                                                new Group.GroupMember("manu0", "Manuel", "Maurizio", Group.Role.ADMIN, Group.GroupMember.InvitationStatus.JOINED),
+                                                new Group.GroupMember("Gabriele", "Marengo", Group.Role.MAINTAINER, Group.GroupMember.InvitationStatus.JOINED))
                                         ),
                                         new ArrayList<>()
                                 ), false),
@@ -170,8 +176,8 @@ public class User extends PandoroItem {
                                         "TecknobitJOIN",
                                         "ciao",
                                         new ArrayList<>(List.of(
-                                                new Group.Member("manu0", "Manuel", "Maurizio", Group.Role.ADMIN),
-                                                new Group.Member("Gabriele", "Marengo", Group.Role.MAINTAINER))
+                                                new Group.GroupMember("manu0", "Manuel", "Maurizio", Group.Role.ADMIN, Group.GroupMember.InvitationStatus.JOINED),
+                                                new Group.GroupMember("Gabriele", "Marengo", Group.Role.MAINTAINER, Group.GroupMember.InvitationStatus.PENDING))
                                         ),
                                         new ArrayList<>()
                                 ),
@@ -186,8 +192,8 @@ public class User extends PandoroItem {
                                         "TecknobitJOIN",
                                         "ciao",
                                         new ArrayList<>(List.of(
-                                                new Group.Member("manu0", "Manuel", "Maurizio", Group.Role.ADMIN),
-                                                new Group.Member("Gabriele", "Marengo", Group.Role.MAINTAINER))
+                                                new Group.GroupMember("manu0", "Manuel", "Maurizio", Group.Role.ADMIN, Group.GroupMember.InvitationStatus.JOINED),
+                                                new Group.GroupMember("Gabriele", "Marengo", Group.Role.MAINTAINER, Group.GroupMember.InvitationStatus.PENDING))
                                         ),
                                         new ArrayList<>()
                                 ), true),
@@ -200,8 +206,8 @@ public class User extends PandoroItem {
                                         "TecknobitJOIN",
                                         "ciao",
                                         new ArrayList<>(List.of(
-                                                new Group.Member("manu0", "Manuel", "Maurizio", Group.Role.ADMIN),
-                                                new Group.Member("Gabriele", "Marengo", Group.Role.MAINTAINER))
+                                                new Group.GroupMember("manu0", "Manuel", "Maurizio", Group.Role.ADMIN, Group.GroupMember.InvitationStatus.JOINED),
+                                                new Group.GroupMember("Gabriele", "Marengo", Group.Role.MAINTAINER, Group.GroupMember.InvitationStatus.PENDING))
                                         ),
                                         new ArrayList<>()
                                 ), true),
@@ -209,13 +215,13 @@ public class User extends PandoroItem {
                         PROJECT */
                         new Changelog(
                                 "",
-                                Changelog.ChangelogEvent.PROJECT_CREATED,
+                                Changelog.ChangelogEvent.PROJECT_REMOVED,
                                 System.currentTimeMillis(),
                                 new Project("Prova"),
                                 true),
                         new Changelog(
                                 "",
-                                Changelog.ChangelogEvent.PROJECT_DELETED,
+                                Changelog.ChangelogEvent.PROJECT_REMOVED,
                                 System.currentTimeMillis(),
                                 new Project("Prova1"),
                                 false)
@@ -226,9 +232,8 @@ public class User extends PandoroItem {
                                 "Tecknobit",
                                 "gagagagagagagwqgweagwegeggegrg",
                                 new ArrayList<>(List.of(
-                                        new Group.Member("manu0", "Manuel", "Maurizio", Group.Role.ADMIN),
-                                        new Group.Member("Gabriele", "Marengo", Group.Role.MAINTAINER),
-                                        new Group.Member("Gabriele", "Marengo", Group.Role.MAINTAINER))
+                                        new Group.GroupMember("manu0", "Manuel", "Maurizio", Group.Role.ADMIN, Group.GroupMember.InvitationStatus.JOINED),
+                                        new Group.GroupMember("Gabriele", "Marengo", Group.Role.MAINTAINER, Group.GroupMember.InvitationStatus.PENDING))
                                 ),
                                 new ArrayList<>()
                         ),
@@ -350,7 +355,7 @@ public class User extends PandoroItem {
                                         new Group("id3", "Prova3", "ciao")
                                 )),
                                 new ArrayList<>(List.of(
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gaga",
                                                 new User("manu0", "Manuel", "Maurizio"),
                                                 System.currentTimeMillis(),
@@ -371,7 +376,7 @@ public class User extends PandoroItem {
                                                                 "Fixed24",
                                                                 System.currentTimeMillis())))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga",
                                                 new User("manu0", "Manuel", "Maurizio"),
                                                 System.currentTimeMillis(),
@@ -384,6 +389,9 @@ public class User extends PandoroItem {
                                                                 "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
                                                                         "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
                                                                         "when an unknown printer took a galley of type and",
+                                                                System.currentTimeMillis(),
+                                                                true,
+                                                                new User("Gabriele", "Marengo"),
                                                                 System.currentTimeMillis()),
                                                         new Note(
                                                                 "gagaga1",
@@ -392,9 +400,11 @@ public class User extends PandoroItem {
                                                         new Note(
                                                                 "gagaga2",
                                                                 "Fixed2",
+                                                                System.currentTimeMillis(),
+                                                                true,
                                                                 System.currentTimeMillis())))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -419,7 +429,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -444,7 +454,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -471,7 +481,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -523,7 +533,7 @@ public class User extends PandoroItem {
                                 "1.0.1",
                                 new ArrayList<>(of(new Group("", "Tecknobit", "ciao"))),
                                 new ArrayList<>(List.of(
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga",
                                                 new User("manu0", "Manuel", "Maurizio"),
                                                 System.currentTimeMillis(),
@@ -546,7 +556,7 @@ public class User extends PandoroItem {
                                                                 "Fixed2",
                                                                 System.currentTimeMillis())))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -571,7 +581,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -598,7 +608,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gaga",
                                                 new User("manu0", "Manuel", "Maurizio"),
                                                 System.currentTimeMillis(),
@@ -619,7 +629,7 @@ public class User extends PandoroItem {
                                                                 "Fixed24",
                                                                 System.currentTimeMillis())))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -639,7 +649,7 @@ public class User extends PandoroItem {
                                 "The third project",
                                 "1.0.2",
                                 new ArrayList<>(List.of(
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -664,7 +674,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -689,7 +699,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -716,7 +726,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -727,7 +737,7 @@ public class User extends PandoroItem {
                                                         "Fixed",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -738,7 +748,7 @@ public class User extends PandoroItem {
                                                         "Fixed",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -757,7 +767,7 @@ public class User extends PandoroItem {
                                 "The fourth project",
                                 "1.0.3",
                                 new ArrayList<>(List.of(
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -782,7 +792,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -807,7 +817,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -834,7 +844,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -861,7 +871,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga1",
                                                 new User("Gabriele", "Marengo"),
                                                 System.currentTimeMillis(),
@@ -888,7 +898,7 @@ public class User extends PandoroItem {
                                                         "Fixed3",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -899,7 +909,7 @@ public class User extends PandoroItem {
                                                         "Fixed",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -910,7 +920,7 @@ public class User extends PandoroItem {
                                                         "Fixed",
                                                         1691852915000L)))
                                         ),
-                                        new Update(
+                                        new ProjectUpdate(
                                                 "gagagaga2",
                                                 System.currentTimeMillis(),
                                                 "0.0.0",
@@ -1080,16 +1090,16 @@ public class User extends PandoroItem {
     /**
      * Constructor to init a {@link User} object
      *
-     * @param id:         identifier of the user
-     * @param name:       name of the user
-     * @param profilePic: the profile picture of the user
-     * @param surname:    the surname of the user
-     * @param email:      the email of the user
-     * @param password:   the password of the user
+     * @param id:             identifier of the user
+     * @param name:           name of the user
+     * @param profilePic:     the profile picture of the user
+     * @param surname:        the surname of the user
+     * @param email:          the email of the user
+     * @param password:       the password of the user
      * @param changelogs: list of action messages for the user
-     * @param groups:     list of the groups of the user
-     * @param projects:   list of the projects of the user
-     * @param notes:      list of the notes of the user
+     * @param groups:         list of the groups of the user
+     * @param projects:       list of the projects of the user
+     * @param notes:          list of the notes of the user
      */
     public User(String id, String name, String profilePic, String surname, String email, String password,
                 ArrayList<Changelog> changelogs, ArrayList<Group> groups, ArrayList<Project> projects,
@@ -1225,4 +1235,3 @@ public class User extends PandoroItem {
     }
 
 }
-

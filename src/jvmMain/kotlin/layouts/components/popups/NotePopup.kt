@@ -18,7 +18,7 @@ import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import toImportFromLibrary.Note
-import toImportFromLibrary.Update
+import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to show the popup to create a new [Note]
@@ -26,7 +26,7 @@ import toImportFromLibrary.Update
  * @param update: the update where add the new [Note], if **null** will be create for the [user]
  */
 @Composable
-fun showCreateNotePopup(update: Update?) {
+fun showCreateNotePopup(update: ProjectUpdate?) {
     createPopup(
         width = 250.dp,
         height = 200.dp,
@@ -70,7 +70,7 @@ fun showCreateNotePopup(update: Update?) {
  * @param update: the update where get the [Note], if **null** will be get from the [user]
  */
 @Composable
-fun showNoteInfoPopup(note: Note, update: Update?) {
+fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
     val contentLength = note.content.length
     createPopup(
         height =
@@ -91,7 +91,7 @@ fun showNoteInfoPopup(note: Note, update: Update?) {
             ) {
                 if (update != null) {
                     Text(
-                        text = "Update version: v. ${update.targetVersion}",
+                        text = "ProjectUpdate version: v. ${update.targetVersion}",
                         fontSize = 14.sp
                     )
                 }

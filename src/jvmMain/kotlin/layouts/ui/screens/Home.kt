@@ -32,7 +32,7 @@ import toImportFromLibrary.Changelog
 import toImportFromLibrary.Changelog.ChangelogEvent.INVITED_GROUP
 import toImportFromLibrary.Note
 import toImportFromLibrary.Project
-import toImportFromLibrary.Update
+import toImportFromLibrary.ProjectUpdate
 
 /**
  * This is the layout for the home screen
@@ -141,9 +141,9 @@ class Home : UIScreen() {
         lateinit var currentNote: Note
 
         /**
-         * **currentUpdate** -> active [Update] instance
+         * **currentUpdate** -> active [ProjectUpdate] instance
          */
-        var currentUpdate: Update? = null
+        var currentUpdate: ProjectUpdate? = null
 
         /**
          * **currentGroup** -> active [Group] instance
@@ -218,13 +218,13 @@ class Home : UIScreen() {
                                             "ciao",
                                             ArrayList(
                                                 listOf(
-                                                    toImportFromLibrary.Group.Member(
+                                                    toImportFromLibrary.Group.GroupMember(
                                                         "manu0",
                                                         "Manuel",
                                                         "Maurizio",
                                                         toImportFromLibrary.Group.Role.ADMIN
                                                     ),
-                                                    toImportFromLibrary.Group.Member(
+                                                    toImportFromLibrary.Group.GroupMember(
                                                         "Gabriele",
                                                         "Marengo",
                                                         toImportFromLibrary.Group.Role.MAINTAINER
@@ -250,13 +250,13 @@ class Home : UIScreen() {
                                             "ciao",
                                             ArrayList(
                                                 listOf(
-                                                    toImportFromLibrary.Group.Member(
+                                                    toImportFromLibrary.Group.GroupMember(
                                                         "manu0",
                                                         "Manuel",
                                                         "Maurizio",
                                                         toImportFromLibrary.Group.Role.ADMIN
                                                     ),
-                                                    toImportFromLibrary.Group.Member(
+                                                    toImportFromLibrary.Group.GroupMember(
                                                         "Gabriele",
                                                         "Marengo",
                                                         toImportFromLibrary.Group.Role.MAINTAINER

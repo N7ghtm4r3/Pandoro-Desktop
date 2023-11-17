@@ -35,8 +35,8 @@ import layouts.ui.sections.Section.Sections.Project
 import toImportFromLibrary.Note
 import toImportFromLibrary.Project.RepositoryPlatform.GitLab
 import toImportFromLibrary.Project.RepositoryPlatform.Github
-import toImportFromLibrary.Update.Status.PUBLISHED
-import toImportFromLibrary.Update.Status.SCHEDULED
+import toImportFromLibrary.ProjectUpdate.Status.PUBLISHED
+import toImportFromLibrary.ProjectUpdate.Status.SCHEDULED
 
 /**
  * This is the layout for the project section

@@ -21,7 +21,7 @@ import com.netguru.multiplatform.charts.pie.PieChartData
 import helpers.GREEN_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
-import toImportFromLibrary.Update
+import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to show the [LineChart] of a project
@@ -29,7 +29,7 @@ import toImportFromLibrary.Update
  * @param publishedUpdates: the published updates of the project
  */
 @Composable
-fun showProjectChart(publishedUpdates: ArrayList<Update>) {
+fun showProjectChart(publishedUpdates: ArrayList<ProjectUpdate>) {
     val updates = mutableListOf<BarChartEntry>()
     publishedUpdates.forEach { update ->
         updates.add(

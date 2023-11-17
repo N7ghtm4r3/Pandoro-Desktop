@@ -21,8 +21,8 @@ import helpers.*
 import layouts.components.showOverviewChart
 import layouts.ui.screens.SplashScreen.Companion.user
 import toImportFromLibrary.Project
-import toImportFromLibrary.Update.Status
-import toImportFromLibrary.Update.Status.*
+import toImportFromLibrary.ProjectUpdate.Status
+import toImportFromLibrary.ProjectUpdate.Status.*
 import toImportFromLibrary.User
 
 /**

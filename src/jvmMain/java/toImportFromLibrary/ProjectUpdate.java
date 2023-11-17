@@ -7,12 +7,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * The {@code Update} class is useful to create a <b>Pandoro's update</b>
+ * The {@code ProjectUpdate} class is useful to create a <b>Pandoro's update</b>
  *
  * @author N7ghtm4r3 - Tecknobit
  * @see Serializable
  */
-public class Update implements Serializable {
+public class ProjectUpdate implements Serializable {
 
     /**
      * {@code TARGET_VERSION_MAX_LENGTH} the max length of the target version for an update
@@ -97,7 +97,7 @@ public class Update implements Serializable {
     private final ArrayList<Note> notes;
 
     /**
-     * Constructor to init a {@link Update} object
+     * Constructor to init a {@link ProjectUpdate} object
      *
      * @param id:            identifier of the update
      * @param createDate:    when the update has been created
@@ -105,12 +105,12 @@ public class Update implements Serializable {
      * @param notes:         the notes for the update to be done
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
-    public Update(String id, long createDate, String targetVersion, ArrayList<Note> notes) {
+    public ProjectUpdate(String id, long createDate, String targetVersion, ArrayList<Note> notes) {
         this(id, null, createDate, targetVersion, null, -1, null, -1, notes);
     }
 
     /**
-     * Constructor to init a {@link Update} object
+     * Constructor to init a {@link ProjectUpdate} object
      *
      * @param id:            identifier of the update
      * @param author:        the author of the update
@@ -119,12 +119,12 @@ public class Update implements Serializable {
      * @param notes:         the notes for the update to be done
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
-    public Update(String id, User author, long createDate, String targetVersion, ArrayList<Note> notes) {
+    public ProjectUpdate(String id, User author, long createDate, String targetVersion, ArrayList<Note> notes) {
         this(id, author, createDate, targetVersion, null, -1, null, -1, notes);
     }
 
     /**
-     * Constructor to init a {@link Update} object
+     * Constructor to init a {@link ProjectUpdate} object
      *
      * @param id:            identifier of the update
      * @param createDate:    when the update has been created
@@ -133,12 +133,12 @@ public class Update implements Serializable {
      * @param notes:         the notes for the update to be done
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
-    public Update(String id, long createDate, String targetVersion, long startDate, ArrayList<Note> notes) {
+    public ProjectUpdate(String id, long createDate, String targetVersion, long startDate, ArrayList<Note> notes) {
         this(id, null, createDate, targetVersion, null, startDate, null, -1, notes);
     }
 
     /**
-     * Constructor to init a {@link Update} object
+     * Constructor to init a {@link ProjectUpdate} object
      *
      * @param id:            identifier of the update
      * @param author:        the author of the update
@@ -149,13 +149,13 @@ public class Update implements Serializable {
      * @param notes:         the notes for the update to be doneea tee
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
-    public Update(String id, User author, long createDate, String targetVersion, User startedBy, long startDate,
-                  ArrayList<Note> notes) {
+    public ProjectUpdate(String id, User author, long createDate, String targetVersion, User startedBy, long startDate,
+                         ArrayList<Note> notes) {
         this(id, author, createDate, targetVersion, startedBy, startDate, null, -1, notes);
     }
 
     /**
-     * Constructor to init a {@link Update} object
+     * Constructor to init a {@link ProjectUpdate} object
      *
      * @param id:            identifier of the update
      * @param createDate:    when the update has been created
@@ -165,13 +165,13 @@ public class Update implements Serializable {
      * @param notes:         the notes for the update to be doneea tree
      */
     // TODO: 21/08/2023 CHECK TO REMOVE
-    public Update(String id, long createDate, String targetVersion, long startDate, long publishDate,
-                  ArrayList<Note> notes) {
+    public ProjectUpdate(String id, long createDate, String targetVersion, long startDate, long publishDate,
+                         ArrayList<Note> notes) {
         this(id, null, createDate, targetVersion, null, startDate, null, publishDate, notes);
     }
 
     /**
-     * Constructor to init a {@link Update} object
+     * Constructor to init a {@link ProjectUpdate} object
      *
      * @param id:            identifier of the update
      * @param author:        the author of the update
@@ -183,8 +183,8 @@ public class Update implements Serializable {
      * @param publishDate:   when the update has been published
      * @param notes:         the notes for the update to be done
      */
-    public Update(String id, User author, long createDate, String targetVersion, User startedBy, long startDate,
-                  User publishedBy, long publishDate, ArrayList<Note> notes) {
+    public ProjectUpdate(String id, User author, long createDate, String targetVersion, User startedBy, long startDate,
+                         User publishedBy, long publishDate, ArrayList<Note> notes) {
         this.id = id;
         this.author = author;
         this.createDate = createDate;
