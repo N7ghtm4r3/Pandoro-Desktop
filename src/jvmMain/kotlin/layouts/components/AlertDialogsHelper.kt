@@ -1,18 +1,27 @@
 package layouts.components
 
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import helpers.BACKGROUND_COLOR
+import helpers.PRIMARY_COLOR
+import layouts.ui.screens.SplashScreen.Companion.user
 import toImportFromLibrary.Group
+import toImportFromLibrary.Group.GroupMember
+import toImportFromLibrary.Group.GroupMember.InvitationStatus.JOINED
+import toImportFromLibrary.Group.GroupMember.InvitationStatus.PENDING
 import toImportFromLibrary.ProjectUpdate
 
 /**
@@ -79,12 +88,117 @@ fun RemoveUser(
  * @param show: the flaw whether show the [AlertDialog]
  * @param group: the group to leave
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Wrapper
 @Composable
 fun LeaveGroup(
     show: MutableState<Boolean>,
     group: Group
 ) {
+    val members = group.members
+    val showNextAdmin = remember { mutableStateOf(false) }
+    var nextAdmin by remember { mutableStateOf<GroupMember?>(null) }
+    for (member in members) {
+        if (!member.isLoggedUser(user) && member.invitationStatus == JOINED) {
+            nextAdmin = member
+            break
+        }
+    }
+    if (showNextAdmin.value) {
+        AlertDialog(
+            modifier = Modifier.size(width = 400.dp, height = 280.dp),
+            shape = RoundedCornerShape(25.dp),
+            backgroundColor = BACKGROUND_COLOR,
+            onDismissRequest = { show.value = false },
+            title = {},
+            text = {},
+            buttons = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp)
+                ) {
+                    Text(
+                        text = "Choose the next admin",
+                        fontSize = 18.sp
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(
+                                top = 20.dp,
+                                bottom = 10.dp
+                            )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .height(150.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            members.forEach { member ->
+                                if (member.invitationStatus == JOINED && !member.isLoggedUser(user)) {
+                                    ListItem(
+                                        icon = {
+                                            // TODO: USE REAL USER ICON member.profilePic
+                                            Image(
+                                                modifier = Modifier.size(45.dp).clip(CircleShape),
+                                                painter = painterResource("pillars-of-creation.jpg"),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop
+                                            )
+                                        },
+                                        text = {
+                                            Text(
+                                                text = member.completeName,
+                                                fontSize = 18.sp
+                                            )
+                                        },
+                                        secondaryText = {
+                                            val role = member.role
+                                            Text(
+                                                text = role.toString(),
+                                                color = PRIMARY_COLOR
+                                            )
+                                        },
+                                        trailing = {
+                                            RadioButton(
+                                                selected = member == nextAdmin,
+                                                colors = RadioButtonDefaults.colors(
+                                                    selectedColor = PRIMARY_COLOR
+                                                ),
+                                                onClick = { nextAdmin = member }
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                        Row(
+                            modifier = Modifier
+                                .padding(top = 5.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    // TODO: MAKE REQUEST THEN
+                                    show.value = false
+                                    showNextAdmin.value = false
+                                },
+                                content = { Text(text = "Dismiss") }
+                            )
+                            TextButton(
+                                onClick = {
+                                    leaveGroup(show, group, nextAdmin)
+                                    showNextAdmin.value = false
+                                },
+                                content = { Text(text = "Confirm") }
+                            )
+                        }
+                    }
+                }
+            }
+        )
+    }
     AlertDialogContainer(
         show = show,
         title = "Leave the ${group.name} group",
@@ -93,13 +207,42 @@ fun LeaveGroup(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // TODO: MAKE REQUEST THEN
-                    show.value = false
+                    if (group.isUserAdmin(user)) {
+                        var pendingMembers = 0
+                        members.forEach { member ->
+                            if (member.invitationStatus == PENDING)
+                                pendingMembers++
+                        }
+                        if ((members.size - 1 - pendingMembers) != 0) {
+                            var hasOtherAdmins = false
+                            for (member in members) {
+                                if (member.isAdmin && member.invitationStatus == JOINED && !member.isLoggedUser(user)) {
+                                    hasOtherAdmins = true
+                                    break
+                                }
+                            }
+                            if (!hasOtherAdmins)
+                                showNextAdmin.value = true
+                            else
+                                leaveGroup(show, group)
+                        } else
+                            leaveGroup(show, group)
+                    } else
+                        leaveGroup(show, group)
                 },
                 content = { Text(text = "Confirm") }
             )
         }
     )
+}
+
+private fun leaveGroup(
+    show: MutableState<Boolean>,
+    group: Group,
+    nextAdmin: GroupMember? = null
+) {
+    // TODO: MAKE REQUEST THEN
+    show.value = false
 }
 
 /**
