@@ -25,15 +25,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import helpers.BACKGROUND_COLOR
-import helpers.PRIMARY_COLOR
-import helpers.RED_COLOR
-import helpers.spaceContent
+import helpers.*
 import layouts.components.LeaveGroup
 import layouts.components.RemoveUser
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.user
+import toImportFromLibrary.Group.GroupMember.InvitationStatus.PENDING
 import toImportFromLibrary.Group.Role
 import toImportFromLibrary.Group.Role.ADMIN
 import kotlin.math.ceil
@@ -149,88 +147,99 @@ class GroupSection : Section() {
                                 contentPadding = PaddingValues(top = 20.dp, start = 10.dp, bottom = 10.dp, end = 10.dp)
                             ) {
                                 items(members) { member ->
-                                    Card(
-                                        modifier = Modifier.fillMaxWidth().height(65.dp),
-                                        backgroundColor = Color.White,
-                                        shape = RoundedCornerShape(10.dp),
-                                        elevation = 2.dp
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.padding(
-                                                start = 20.dp,
-                                                top = 10.dp,
-                                                end = 20.dp,
-                                                bottom = 10.dp
-                                            ),
-                                            verticalAlignment = Alignment.CenterVertically
+                                    val isMemberPending = member.invitationStatus == PENDING
+                                    if ((isCurrentUserAMaintainer && isMemberPending) || !isMemberPending) {
+                                        Card(
+                                            modifier = Modifier.fillMaxWidth().height(65.dp),
+                                            backgroundColor = Color.White,
+                                            shape = RoundedCornerShape(10.dp),
+                                            elevation = 2.dp
                                         ) {
-                                            // TODO: USE REAL USER ICON member.profilePic
-                                            Image(
-                                                modifier = Modifier.size(45.dp).clip(CircleShape),
-                                                painter = painterResource("pillars-of-creation.jpg"),
-                                                contentDescription = null,
-                                                contentScale = ContentScale.Crop
-                                            )
-                                            Text(
-                                                modifier = Modifier.padding(start = 20.dp),
-                                                text = member.completeName,
-                                                fontSize = 18.sp
-                                            )
-                                            var modifier = Modifier.padding(start = 20.dp)
-                                            if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
-                                                var showRoleMenu by remember { mutableStateOf(false) }
-                                                if (isCurrentUserAnAdmin || !member.isAdmin) {
-                                                    modifier = modifier.clickable { showRoleMenu = true }
-                                                }
-                                                DropdownMenu(
-                                                    modifier = Modifier.background(BACKGROUND_COLOR),
-                                                    expanded = showRoleMenu,
-                                                    onDismissRequest = { showRoleMenu = false },
-                                                    offset = DpOffset(150.dp, 0.dp)
-                                                ) {
-                                                    Role.values().forEach { role ->
-                                                        DropdownMenuItem(
-                                                            onClick = {
-                                                                // TODO: MAKE REQUEST THEN
-                                                                showRoleMenu = false
-                                                            }
-                                                        ) {
-                                                            Text(
-                                                                text = role.toString(),
-                                                                color = if (role == ADMIN) RED_COLOR else PRIMARY_COLOR
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            Text(
-                                                modifier = modifier,
-                                                text = member.role.toString(),
-                                                textAlign = TextAlign.Center,
-                                                color = if (member.role == ADMIN) RED_COLOR else PRIMARY_COLOR
-                                            )
-                                            if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
-                                                val showRemoveDialog = mutableStateOf(false)
-                                                if (isCurrentUserAnAdmin || !member.isAdmin) {
-                                                    Column(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        horizontalAlignment = Alignment.End
-                                                    ) {
-                                                        IconButton(
-                                                            onClick = { showRemoveDialog.value = true }
-                                                        ) {
-                                                            Icon(
-                                                                imageVector = Icons.Default.GroupRemove,
-                                                                contentDescription = null
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                                RemoveUser(
-                                                    show = showRemoveDialog,
-                                                    group = currentGroup,
-                                                    memberId = member.id
+                                            Row(
+                                                modifier = Modifier.padding(
+                                                    start = 20.dp,
+                                                    top = 10.dp,
+                                                    end = 20.dp,
+                                                    bottom = 10.dp
+                                                ),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                // TODO: USE REAL USER ICON member.profilePic
+                                                Image(
+                                                    modifier = Modifier.size(45.dp).clip(CircleShape),
+                                                    painter = painterResource("pillars-of-creation.jpg"),
+                                                    contentDescription = null,
+                                                    contentScale = ContentScale.Crop
                                                 )
+                                                Text(
+                                                    modifier = Modifier.padding(start = 20.dp),
+                                                    text = member.completeName,
+                                                    fontSize = 18.sp
+                                                )
+                                                var modifier = Modifier.padding(start = 20.dp)
+                                                if (!member.isLoggedUser(user) && isCurrentUserAMaintainer &&
+                                                    !isMemberPending
+                                                ) {
+                                                    var showRoleMenu by remember { mutableStateOf(false) }
+                                                    if (isCurrentUserAnAdmin || !member.isAdmin) {
+                                                        modifier = modifier.clickable { showRoleMenu = true }
+                                                    }
+                                                    DropdownMenu(
+                                                        modifier = Modifier.background(BACKGROUND_COLOR),
+                                                        expanded = showRoleMenu,
+                                                        onDismissRequest = { showRoleMenu = false },
+                                                        offset = DpOffset(150.dp, 0.dp)
+                                                    ) {
+                                                        Role.values().forEach { role ->
+                                                            DropdownMenuItem(
+                                                                onClick = {
+                                                                    // TODO: MAKE REQUEST THEN
+                                                                    showRoleMenu = false
+                                                                }
+                                                            ) {
+                                                                Text(
+                                                                    text = role.toString(),
+                                                                    color = if (role == ADMIN) RED_COLOR else PRIMARY_COLOR
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                Text(
+                                                    modifier = modifier,
+                                                    text = if (isMemberPending) PENDING.toString() else member.role.toString(),
+                                                    textAlign = TextAlign.Center,
+                                                    color = if (member.role == ADMIN) RED_COLOR
+                                                    else {
+                                                        if (isMemberPending)
+                                                            YELLOW_COLOR
+                                                        else
+                                                            PRIMARY_COLOR
+                                                    }
+                                                )
+                                                if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
+                                                    val showRemoveDialog = mutableStateOf(false)
+                                                    if (isCurrentUserAnAdmin || !member.isAdmin) {
+                                                        Column(
+                                                            modifier = Modifier.fillMaxWidth(),
+                                                            horizontalAlignment = Alignment.End
+                                                        ) {
+                                                            IconButton(
+                                                                onClick = { showRemoveDialog.value = true }
+                                                            ) {
+                                                                Icon(
+                                                                    imageVector = Icons.Default.GroupRemove,
+                                                                    contentDescription = null
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                    RemoveUser(
+                                                        show = showRemoveDialog,
+                                                        group = currentGroup,
+                                                        memberId = member.id
+                                                    )
+                                                }
                                             }
                                         }
                                     }

@@ -396,6 +396,8 @@ public class User extends PandoroItem {
                                                         new Note(
                                                                 "gagaga1",
                                                                 "Remove console property windows [DK]",
+                                                                System.currentTimeMillis(),
+                                                                true,
                                                                 System.currentTimeMillis()),
                                                         new Note(
                                                                 "gagaga2",

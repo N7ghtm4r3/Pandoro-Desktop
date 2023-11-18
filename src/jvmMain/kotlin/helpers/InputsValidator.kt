@@ -5,6 +5,7 @@ import org.apache.commons.validator.routines.EmailValidator
 import org.apache.commons.validator.routines.UrlValidator
 import toImportFromLibrary.Group.GROUP_DESCRIPTION_MAX_LENGTH
 import toImportFromLibrary.Group.GROUP_NAME_MAX_LENGTH
+import toImportFromLibrary.Note
 import toImportFromLibrary.Note.NOTE_CONTENT_MAX_LENGTH
 import toImportFromLibrary.Project.*
 import toImportFromLibrary.Project.RepositoryPlatform.isValidPlatform
@@ -248,4 +249,21 @@ fun isValidVersion(version: String): Boolean {
  */
 fun isValidRepository(repository: String): Boolean {
     return repository.isEmpty() || (urlValidator.isValid(repository) && isValidPlatform(repository))
+}
+
+// TODO: TO PACK IN THE LIBRARY
+/**
+ * Function to check whether the change notes are all done before the publishing of the update
+ *
+ * @param changeNotes: the change notes to check
+ * @return whether the change notes are all done before the publishing of the update as [Boolean]
+ */
+fun areAllChangeNotesDone(changeNotes: List<Note>?): Boolean {
+    if (changeNotes == null)
+        return false
+    changeNotes.forEach { note ->
+        if (!note.isMarkedAsDone)
+            return false
+    }
+    return true
 }

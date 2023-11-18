@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.*
 import layouts.components.DeleteUpdate
+import layouts.components.PublishUpdate
 import layouts.components.showProjectChart
 import layouts.ui.screens.Home.Companion.currentNote
 import layouts.ui.screens.Home.Companion.currentProject
@@ -35,6 +36,7 @@ import layouts.ui.sections.Section.Sections.Project
 import toImportFromLibrary.Note
 import toImportFromLibrary.Project.RepositoryPlatform.GitLab
 import toImportFromLibrary.Project.RepositoryPlatform.Github
+import toImportFromLibrary.ProjectUpdate
 import toImportFromLibrary.ProjectUpdate.Status.PUBLISHED
 import toImportFromLibrary.ProjectUpdate.Status.SCHEDULED
 
@@ -175,6 +177,7 @@ class ProjectSection : Section() {
                                     val isScheduled by remember { mutableStateOf(update.status == SCHEDULED) }
                                     var showMenu by remember { mutableStateOf(false) }
                                     val showDeleteDialog = mutableStateOf(false)
+                                    val changeNotes = update.notes
                                     DeleteUpdate(
                                         show = showDeleteDialog,
                                         update = update
@@ -288,7 +291,7 @@ class ProjectSection : Section() {
                                                 LazyColumn(
                                                     modifier = Modifier.padding(top = 5.dp)
                                                 ) {
-                                                    items(update.notes) { note ->
+                                                    items(changeNotes) { note ->
                                                         if (!isPublished) {
                                                             if (isScheduled) {
                                                                 Row(
@@ -388,7 +391,22 @@ class ProjectSection : Section() {
                                                 verticalArrangement = Arrangement.Center
                                             ) {
                                                 Row {
+                                                    val showPublishUpdate = remember { mutableStateOf(false) }
+                                                    val showNotes = remember { mutableStateOf(false) }
                                                     Box {
+                                                        if (showPublishUpdate.value) {
+                                                            PublishUpdate(showNotes) {
+                                                                TextButton(
+                                                                    onClick = {
+                                                                        publishUpdate(
+                                                                            showNotes, showPublishUpdate,
+                                                                            update
+                                                                        )
+                                                                    },
+                                                                    content = { Text(text = "Confirm") }
+                                                                )
+                                                            }
+                                                        }
                                                         DropdownMenu(
                                                             modifier = Modifier.background(Color.White).width(200.dp),
                                                             expanded = showMenu,
@@ -400,9 +418,15 @@ class ProjectSection : Section() {
                                                                     if (isScheduled) {
                                                                         // TODO: MAKE REQUEST THEN
                                                                     } else if (!isPublished) {
-                                                                        // TODO: BEFORE THE REQUEST CHECK IF ALL THE NOTES ARE MARKED AS DONE
-                                                                        //  AND WARN THE USER ON THAT IF NOT
-                                                                        // TODO: MAKE REQUEST THEN
+                                                                        if (!areAllChangeNotesDone(changeNotes)) {
+                                                                            showPublishUpdate.value = true
+                                                                            showNotes.value = true
+                                                                        } else {
+                                                                            publishUpdate(
+                                                                                showNotes, showPublishUpdate,
+                                                                                update
+                                                                            )
+                                                                        }
                                                                     }
                                                                 },
                                                                 content = {
@@ -629,6 +653,23 @@ class ProjectSection : Section() {
                 }
             }
         }
+    }
+
+    /**
+     * Function to perform a [ProjectUpdate] publishing
+     *
+     * @param showNotes: whether show the alert dialog for the change notes check
+     * @param showPublishUpdate: whether execute the publishing check
+     * @param projectUpdate: the note to publish
+     */
+    private fun publishUpdate(
+        showNotes: MutableState<Boolean>,
+        showPublishUpdate: MutableState<Boolean>,
+        projectUpdate: ProjectUpdate
+    ) {
+        // TODO: MAKE REQUEST THEN
+        showPublishUpdate.value = false
+        showNotes.value = false
     }
 
     /**

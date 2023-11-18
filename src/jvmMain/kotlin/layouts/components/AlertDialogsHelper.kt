@@ -24,7 +24,7 @@ import toImportFromLibrary.ProjectUpdate
 @Wrapper
 @Composable
 fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
-    alertDialogContainer(
+    AlertDialogContainer(
         show = show,
         title = "Delete update ${update.targetVersion}",
         text = "If you confirm this action the update and its all "
@@ -56,7 +56,7 @@ fun RemoveUser(
     group: Group,
     memberId: String
 ) {
-    alertDialogContainer(
+    AlertDialogContainer(
         show = show,
         title = "Remove the user from ${group.name}",
         text = "If you confirm this action, the user will be removed from the group and will no longer have access to the" +
@@ -85,7 +85,7 @@ fun LeaveGroup(
     show: MutableState<Boolean>,
     group: Group
 ) {
-    alertDialogContainer(
+    AlertDialogContainer(
         show = show,
         title = "Leave the ${group.name} group",
         text = "If you confirm this action, you will be removed from the group and will no longer have access to the" +
@@ -114,7 +114,7 @@ fun DeleteGroup(
     show: MutableState<Boolean>,
     group: Group
 ) {
-    alertDialogContainer(
+    AlertDialogContainer(
         show = show,
         title = "Delete the ${group.name} group",
         text = "If you confirm this action, the group and all its information will be deleted and no more recoverable",
@@ -131,6 +131,26 @@ fun DeleteGroup(
 }
 
 /**
+ * Function to publish a new [ProjectUpdate]
+ *
+ * @param show: the flaw whether show the [AlertDialog]
+ * @param confirmButton: the confirm button and its action to execute
+ */
+@Composable
+fun PublishUpdate(
+    show: MutableState<Boolean>,
+    confirmButton: @Composable () -> Unit
+) {
+    AlertDialogContainer(
+        show = show,
+        title = "Not all the change notes are done",
+        text = "You are publishing an update where not all the change notes are marked as done, do you want anyway " +
+                "publish the update?",
+        confirmButton = confirmButton
+    )
+}
+
+/**
  * Function to create an [AlertDialog]
  *
  * @param show: the flag whether show the [AlertDialog]
@@ -141,7 +161,7 @@ fun DeleteGroup(
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun alertDialogContainer(
+private fun AlertDialogContainer(
     show: MutableState<Boolean>,
     title: String,
     text: String,
