@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.netguru.multiplatform.charts.pie.PieChart
 import com.tecknobit.apimanager.trading.TradingTools.computeProportion
+import com.tecknobit.pandoro.helpers.ui.OverviewUIHelper
 import com.tecknobit.pandoro.records.Project
 import com.tecknobit.pandoro.records.ProjectUpdate.Status
 import com.tecknobit.pandoro.records.ProjectUpdate.Status.*
@@ -35,14 +36,9 @@ import layouts.ui.screens.SplashScreen.Companion.user
 class OverviewSection : Section() {
 
     /**
-     * **bestPersonalProject** -> the best personal project
+     * **overviewUIHelper** -> the manager of the overview UI
      */
-    private var bestPersonalProject: Project? = null
-
-    /**
-     * **bestGroupProject** -> the best group project
-     */
-    private var bestGroupProject: Project? = null
+    private lateinit var overviewUIHelper: OverviewUIHelper
 
     /**
      * Function to show the content of the [OverviewSection]
@@ -51,6 +47,7 @@ class OverviewSection : Section() {
      */
     @Composable
     override fun showSection() {
+        overviewUIHelper = OverviewUIHelper(user.projects)
         LazyColumn(
             modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp).fillMaxSize()
         ) {
@@ -210,9 +207,9 @@ class OverviewSection : Section() {
                     }
                 }
             }
-            bestPersonalProject = getBestPersonalProject()
-            bestGroupProject = getBestGroupProject()
-            if (bestPersonalProject != null || bestGroupProject != null) {
+            overviewUIHelper.bestPersonalVProject = overviewUIHelper.getBestPersonalProject()
+            overviewUIHelper.bestGroupVProject = overviewUIHelper.getBestGroupProject()
+            if (overviewUIHelper.bestPersonalVProject != null || overviewUIHelper.bestGroupVProject != null) {
                 item {
                     Text(
                         text = "Projects performance",
@@ -228,7 +225,7 @@ class OverviewSection : Section() {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
-                            if (bestPersonalProject != null) {
+                            if (overviewUIHelper.bestPersonalVProject != null) {
                                 Column(
                                     modifier = Modifier.weight(1f).fillMaxWidth()
                                 ) {
@@ -246,13 +243,13 @@ class OverviewSection : Section() {
                                         ) {
                                             createPerformanceCard(
                                                 title = "Best",
-                                                project = bestPersonalProject!!
+                                                project = overviewUIHelper.bestPersonalVProject!!
                                             )
                                         }
                                         Column(
                                             modifier = Modifier.weight(1f).fillMaxWidth()
                                         ) {
-                                            val worstProject = getWorstPersonalProject()
+                                            val worstProject = overviewUIHelper.getWorstPersonalProject()
                                             if (worstProject != null) {
                                                 createPerformanceCard(
                                                     title = "Worst",
@@ -263,7 +260,7 @@ class OverviewSection : Section() {
                                     }
                                 }
                             }
-                            if (bestGroupProject != null) {
+                            if (overviewUIHelper.bestGroupVProject != null) {
                                 Column(
                                     modifier = Modifier.weight(1f).fillMaxWidth()
                                 ) {
@@ -281,13 +278,13 @@ class OverviewSection : Section() {
                                         ) {
                                             createPerformanceCard(
                                                 title = "Best",
-                                                project = bestGroupProject!!
+                                                project = overviewUIHelper.bestGroupVProject!!
                                             )
                                         }
                                         Column(
                                             modifier = Modifier.weight(1f).fillMaxWidth()
                                         ) {
-                                            val worstProject = getWorstGroupProject()
+                                            val worstProject = overviewUIHelper.getWorstGroupProject()
                                             if (worstProject != null) {
                                                 createPerformanceCard(
                                                     title = "Worst",
@@ -575,166 +572,6 @@ class OverviewSection : Section() {
             }
         }
         return updates
-    }
-
-    /**
-     * Function to get the personal best project in terms of performance
-     *
-     * No-any params required
-     *
-     * @return the best personal project in terms of performance as [Project]
-     */
-    private fun getBestPersonalProject(): Project? {
-        var bestProject: Project? = null
-        var updatesNumber = 0
-        var developmentDays = 0
-        var averageDevelopmentTime = 0
-        user.projects.forEach { project ->
-            if (!project.hasGroups()) {
-                val pAverageDevelopmentTime = project.averageDevelopmentTime
-                if (pAverageDevelopmentTime > averageDevelopmentTime) {
-                    averageDevelopmentTime = pAverageDevelopmentTime
-                    developmentDays = project.totalDevelopmentDays
-                }
-            }
-        }
-        user.projects.forEach { project ->
-            val pUpdatesNumber = project.updatesNumber
-            if (!project.hasGroups() && pUpdatesNumber > 0) {
-                val pDevelopmentDays = project.totalDevelopmentDays
-                val pAverageDevelopmentTime = project.averageDevelopmentTime
-                if (pUpdatesNumber >= updatesNumber && pDevelopmentDays <= developmentDays) {
-                    if (pAverageDevelopmentTime < averageDevelopmentTime || bestProject == null) {
-                        bestProject = project
-                        updatesNumber = pUpdatesNumber
-                        developmentDays = pDevelopmentDays
-                        averageDevelopmentTime = pAverageDevelopmentTime
-                    }
-                }
-            }
-        }
-        return bestProject
-    }
-
-    /**
-     * Function to get the worst personal project in terms of performance
-     *
-     * No-any params required
-     *
-     * @return the worst personal project in terms of performance as [Project]
-     */
-    private fun getWorstPersonalProject(): Project? {
-        var worstProject: Project? = null
-        var updatesNumber = 0
-        var developmentDays = 0
-        var averageDevelopmentTime = 0
-        if (bestPersonalProject != null) {
-            user.projects.forEach { project ->
-                if (!project.hasGroups() && !project.id.equals(bestPersonalProject!!.id)) {
-                    val pUpdatesNumber = project.updatesNumber
-                    if (pUpdatesNumber > updatesNumber) {
-                        updatesNumber = pUpdatesNumber
-                        developmentDays = project.totalDevelopmentDays
-                    }
-                }
-            }
-            user.projects.forEach { project ->
-                val pUpdatesNumber = project.updatesNumber
-                if (!project.hasGroups() && pUpdatesNumber > 0 && !project.id.equals(bestPersonalProject!!.id)) {
-                    val pDevelopmentDays = project.totalDevelopmentDays
-                    val pAverageDevelopmentTime = project.averageDevelopmentTime
-                    if (pUpdatesNumber <= updatesNumber && pDevelopmentDays >= developmentDays) {
-                        if (pAverageDevelopmentTime > averageDevelopmentTime || worstProject == null) {
-                            worstProject = project
-                            updatesNumber = pUpdatesNumber
-                            developmentDays = pDevelopmentDays
-                            averageDevelopmentTime = pAverageDevelopmentTime
-                        }
-                    }
-                }
-            }
-        }
-        return worstProject
-    }
-
-    /**
-     * Function to get the best group project in terms of performance
-     *
-     * No-any params required
-     *
-     * @return the best group project in terms of performance as [Project]
-     */
-    private fun getBestGroupProject(): Project? {
-        var bestProject: Project? = null
-        var updatesNumber = 0
-        var developmentDays = 0
-        var averageDevelopmentTime = 0
-        user.projects.forEach { project ->
-            if (project.hasGroups()) {
-                val pAverageDevelopmentTime = project.averageDevelopmentTime
-                if (pAverageDevelopmentTime > averageDevelopmentTime) {
-                    averageDevelopmentTime = pAverageDevelopmentTime
-                    developmentDays = project.totalDevelopmentDays
-                }
-            }
-        }
-        user.projects.forEach { project ->
-            val pUpdatesNumber = project.updatesNumber
-            if (project.hasGroups() && pUpdatesNumber > 0) {
-                val pDevelopmentDays = project.totalDevelopmentDays
-                val pAverageDevelopmentTime = project.averageDevelopmentTime
-                if (pUpdatesNumber >= updatesNumber && pDevelopmentDays <= developmentDays) {
-                    if (pAverageDevelopmentTime < averageDevelopmentTime || bestProject == null) {
-                        bestProject = project
-                        updatesNumber = pUpdatesNumber
-                        developmentDays = pDevelopmentDays
-                        averageDevelopmentTime = pAverageDevelopmentTime
-                    }
-                }
-            }
-        }
-        return bestProject
-    }
-
-    /**
-     * Function to get the worst group project in terms of performance
-     *
-     * No-any params required
-     *
-     * @return the worst group project in terms of performance as [Project]
-     */
-    private fun getWorstGroupProject(): Project? {
-        var worstProject: Project? = null
-        var updatesNumber = 0
-        var developmentDays = 0
-        var averageDevelopmentTime = 0
-        if (bestGroupProject != null) {
-            user.projects.forEach { project ->
-                if (project.hasGroups() && !project.id.equals(bestGroupProject!!.id)) {
-                    val pUpdatesNumber = project.updatesNumber
-                    if (pUpdatesNumber > updatesNumber) {
-                        updatesNumber = pUpdatesNumber
-                        developmentDays = project.totalDevelopmentDays
-                    }
-                }
-            }
-            user.projects.forEach { project ->
-                val pUpdatesNumber = project.updatesNumber
-                if (project.hasGroups() && pUpdatesNumber > 0 && !project.id.equals(bestGroupProject!!.id)) {
-                    val pDevelopmentDays = project.totalDevelopmentDays
-                    val pAverageDevelopmentTime = project.averageDevelopmentTime
-                    if (pUpdatesNumber <= updatesNumber && pDevelopmentDays >= developmentDays) {
-                        if (pAverageDevelopmentTime > averageDevelopmentTime || worstProject == null) {
-                            worstProject = project
-                            updatesNumber = pUpdatesNumber
-                            developmentDays = pDevelopmentDays
-                            averageDevelopmentTime = pAverageDevelopmentTime
-                        }
-                    }
-                }
-            }
-        }
-        return worstProject
     }
 
 }

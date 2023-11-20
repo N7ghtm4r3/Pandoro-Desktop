@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.ui.filterProjects
+import com.tecknobit.pandoro.helpers.ui.populateFrequentProjects
 import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Project
 import helpers.BACKGROUND_COLOR
@@ -57,39 +59,12 @@ class ProjectsSection : Section() {
         Spacer(Modifier.height(10.dp))
         LazyColumn {
             item {
-                populateLazyGrid("Frequent projects", populateFrequentProjects())
+                populateLazyGrid("Frequent projects", populateFrequentProjects(projectsList).toMutableStateList())
             }
             item {
                 populateLazyGrid("Current projects", projectsList)
             }
         }
-    }
-
-    /**
-     * Function to populate the frequent projects list
-     *
-     * No-any params required
-     * @return frequent projects list as [SnapshotStateList] of [Project]
-     */
-    private fun populateFrequentProjects(): SnapshotStateList<Project> {
-        val frequentProjects = mutableStateListOf<Project>()
-        val updatesNumber = ArrayList<Int>()
-        for (project in projectsList)
-            updatesNumber.add(project.updatesNumber)
-        updatesNumber.sortDescending()
-        for (updates in updatesNumber) {
-            if (frequentProjects.size < 9) {
-                for (project in projectsList) {
-                    if (project.updatesNumber == updates && !frequentProjects.contains(project)) {
-                        frequentProjects.add(project)
-                        break
-                    }
-                }
-            }
-        }
-        if (frequentProjects.size > 9)
-            frequentProjects.removeRange(8, frequentProjects.size - 1)
-        return frequentProjects
     }
 
     /**
@@ -103,7 +78,7 @@ class ProjectsSection : Section() {
     @Composable
     private fun populateLazyGrid(title: String, list: SnapshotStateList<Project>) {
         var query by remember { mutableStateOf("") }
-        val projects = filterProjects(query = query, list)
+        val projects = filterProjects(query = query, list).toMutableStateList()
         Text(
             modifier = Modifier.padding(start = 20.dp),
             text = title,
@@ -282,54 +257,6 @@ class ProjectsSection : Section() {
                 }
             }
         }
-    }
-
-    /**
-     * Function to filter the projects list
-     *
-     * @param query: the query to filter the projects list
-     * @param list: the list of the [Project] to filter
-     *
-     * @return projects list filtered as [SnapshotStateList] of [Project]
-     */
-    private fun filterProjects(
-        query: String,
-        list: SnapshotStateList<Project>
-    ): SnapshotStateList<Project> {
-        return if (query.isEmpty())
-            list
-        else {
-            val checkQuery = query.uppercase()
-            val filteredList = mutableStateListOf<Project>()
-            for (project in list) {
-                if (project.name.uppercase().contains(checkQuery) || project.shortDescription.uppercase()
-                        .contains(checkQuery) || project.description.uppercase().contains(checkQuery) || project.version
-                        .uppercase().contains(checkQuery) || groupMatch(project.groups, checkQuery)
-                ) {
-                    filteredList.add(project)
-                }
-            }
-            filteredList
-        }
-    }
-
-    /**
-     * Function to check whether name match with a group of the list
-     *
-     * @param groups: the groups of the project
-     * @param name: the name to do the check
-     *
-     * @return whether name match with a group of the list as [Boolean]
-     */
-    private fun groupMatch(
-        groups: ArrayList<Group>,
-        name: String
-    ): Boolean {
-        groups.forEach { group: Group ->
-            if (group.name.uppercase().contains(name))
-                return true
-        }
-        return false
     }
 
 }

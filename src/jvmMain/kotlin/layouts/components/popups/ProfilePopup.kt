@@ -15,6 +15,8 @@ import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
+import layouts.ui.screens.SplashScreen.Companion.requester
 
 /**
  * Function to show the popup to edit the email of the [User]
@@ -67,6 +69,7 @@ private fun showEditProfilePopup(
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
+            val isEditingEmail = label == "Email"
             var profileInfo by remember { mutableStateOf("") }
             Column(
                 modifier = Modifier.padding(20.dp)
@@ -82,7 +85,19 @@ private fun showEditProfilePopup(
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
                         if (isInputValid(item, profileInfo)) {
-                            // TODO: MAKE REQUEST THEN
+                            if (isEditingEmail) {
+                                requester!!.execChangeEmail(profileInfo)
+                                if (requester!!.successResponse())
+                                    localAuthHelper.storeEmail(profileInfo, true)
+                                else
+                                    showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
+                            } else {
+                                requester!!.execChangePassword(profileInfo)
+                                if (requester!!.successResponse())
+                                    localAuthHelper.storePassword(profileInfo, true)
+                                else
+                                    showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
+                            }
                             show.value = false
                         } else
                             showSnack(coroutineScope, scaffoldState, "Insert a correct $item")

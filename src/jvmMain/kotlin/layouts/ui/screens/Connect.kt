@@ -78,7 +78,6 @@ class Connect : UIScreen() {
         scaffoldState = rememberScaffoldState()
         coroutineScope = rememberCoroutineScope()
         Box(
-            // TODO: CHECK IF SET A CUSTOM IMAGE
             modifier = Modifier.fillMaxSize().background(Color.LightGray),
             contentAlignment = Alignment.Center
         ) {
@@ -382,8 +381,8 @@ class Connect : UIScreen() {
             email: String?,
             password: String?
         ) {
-            storeCredential(IDENTIFIER_KEY, response.getString(IDENTIFIER_KEY))
-            storeCredential(TOKEN_KEY, response.getString(TOKEN_KEY))
+            storeUserValue(IDENTIFIER_KEY, response.getString(IDENTIFIER_KEY))
+            storeUserValue(TOKEN_KEY, response.getString(TOKEN_KEY))
             storeHost(host)
             storeProfilePic(response.getString(PROFILE_PIC_KEY))
             storeName(name)
@@ -395,36 +394,54 @@ class Connect : UIScreen() {
 
         @Wrapper
         fun storeHost(host: String?) {
-            storeCredential(SERVER_ADDRESS_KEY, host)
+            storeUserValue(SERVER_ADDRESS_KEY, host, false)
         }
 
         @Wrapper
-        fun storeProfilePic(profilePic: String?) {
-            storeCredential(PROFILE_PIC_KEY, profilePic)
+        fun storeProfilePic(
+            profilePic: String?,
+            refreshUser: Boolean = false
+        ) {
+            storeUserValue(
+                PROFILE_PIC_KEY, preferences.get(SERVER_ADDRESS_KEY, "") + "/$profilePic",
+                refreshUser
+            )
         }
 
         @Wrapper
         private fun storeName(name: String?) {
-            storeCredential(NAME_KEY, name)
+            storeUserValue(NAME_KEY, name, false)
         }
 
         @Wrapper
         private fun storeSurname(surname: String?) {
-            storeCredential(SURNAME_KEY, surname)
+            storeUserValue(SURNAME_KEY, surname, false)
         }
 
         @Wrapper
-        fun storeEmail(email: String?) {
-            storeCredential(EMAIL_KEY, email)
+        fun storeEmail(
+            email: String?,
+            refreshUser: Boolean = false
+        ) {
+            storeUserValue(EMAIL_KEY, email, refreshUser)
         }
 
         @Wrapper
-        fun storePassword(password: String?) {
-            storeCredential(PASSWORD_KEY, password)
+        fun storePassword(
+            password: String?,
+            refreshUser: Boolean = false
+        ) {
+            storeUserValue(PASSWORD_KEY, password, refreshUser)
         }
 
-        private fun storeCredential(key: String, credential: String?) {
+        private fun storeUserValue(
+            key: String,
+            credential: String?,
+            refreshUser: Boolean = false
+        ) {
             preferences.put(key, credential)
+            if (refreshUser)
+                initUserCredentials()
         }
 
         fun logout() {

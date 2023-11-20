@@ -1,8 +1,13 @@
 package layouts.ui.sections
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Project
+import helpers.BACKGROUND_COLOR
+import kotlinx.coroutines.CoroutineScope
 import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.currentProject
@@ -75,12 +80,54 @@ abstract class Section {
     }
 
     /**
+     * **scaffoldState** -> the scaffold state for the scaffold of the popup
+     */
+    private lateinit var scaffoldState: ScaffoldState
+
+    /**
+     * **coroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
+     */
+    private lateinit var coroutineScope: CoroutineScope
+
+    /**
      * Function to show the content of the section
      *
      * No-any params required
      */
     @Composable
     abstract fun showSection()
+
+    /**
+     * Function to show the content of the section
+     *
+     * @param content: the content of the section to show
+     */
+    @Composable
+    protected fun showSection(content: @Composable (PaddingValues) -> Unit) {
+        coroutineScope = rememberCoroutineScope()
+        scaffoldState = rememberScaffoldState()
+        Scaffold(
+            scaffoldState = scaffoldState,
+            snackbarHost = {
+                SnackbarHost(it) { data ->
+                    Snackbar(
+                        backgroundColor = BACKGROUND_COLOR,
+                        snackbarData = data
+                    )
+                }
+            },
+            content = content
+        )
+    }
+
+    /**
+     * Function to show a snackbar from a section
+     *
+     * @param message: message to show
+     */
+    protected fun showSnack(message: String) {
+        helpers.showSnack(coroutineScope, scaffoldState, message)
+    }
 
     /**
      * Function to navigate to the [ProjectSection]

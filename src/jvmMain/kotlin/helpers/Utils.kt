@@ -12,45 +12,52 @@ import androidx.compose.material.SnackbarDuration.Short
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.tecknobit.pandoro.helpers.ui.BACKGROUND_COLOR
+import com.tecknobit.pandoro.helpers.ui.GREEN_COLOR
+import com.tecknobit.pandoro.helpers.ui.PRIMARY_COLOR
+import com.tecknobit.pandoro.helpers.ui.YELLOW_COLOR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.awt.Desktop
 import java.net.URI
+import java.net.URL
+import javax.imageio.ImageIO
 
 /**
  * app name constant
  */
 const val appName: String = "Pandoro"
 
-// TODO: IMPORT COLORS FROM THE LIBRARY
 /**
  * the primary color value
  */
-val PRIMARY_COLOR: Color = fromHexToColor("#07020d")
+val PRIMARY_COLOR: Color = fromHexToColor(PRIMARY_COLOR)
 
 /**
  * the background color value
  */
-val BACKGROUND_COLOR: Color = fromHexToColor("#f9f6f0")
+val BACKGROUND_COLOR: Color = fromHexToColor(BACKGROUND_COLOR)
 
 /**
  * the green color value
  */
 
-val GREEN_COLOR: Color = fromHexToColor("#61892f")
+val GREEN_COLOR: Color = fromHexToColor(GREEN_COLOR)
 
 /**
  * the yellow color value
  */
 
-val YELLOW_COLOR: Color = fromHexToColor("#bfae19")
+val YELLOW_COLOR: Color = fromHexToColor(YELLOW_COLOR)
 
 /**
  * the red color value
  */
-val RED_COLOR: Color = fromHexToColor("#A81515")
+val RED_COLOR: Color = fromHexToColor(com.tecknobit.pandoro.helpers.ui.RED_COLOR)
 
 /**
  * Function to create a [Color] from an hex [String]
@@ -145,6 +152,11 @@ fun createDivider(
  *
  * @param url: the url to open
  */
-fun openUrl(url: String) {
-    Desktop.getDesktop().browse(URI(url))
-}
+fun openUrl(url: String) = Desktop.getDesktop().browse(URI(url))
+
+/**
+ * Function to load an image from an ul
+ *
+ * @param url: the url from load the image
+ */
+fun loadImageBitmap(url: String): ImageBitmap = ImageIO.read(URL(url)).toComposeImageBitmap()

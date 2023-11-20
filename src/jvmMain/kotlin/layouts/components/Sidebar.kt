@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
+import helpers.loadImageBitmap
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section
 import layouts.ui.sections.Section.Sections.Projects
@@ -54,9 +54,8 @@ class Sidebar {
                     modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // TODO: USE REAL USER ICON
                     Image(
-                        painterResource("ic.jpg"),
+                        bitmap = loadImageBitmap(user.profilePic),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.size(100.dp)
