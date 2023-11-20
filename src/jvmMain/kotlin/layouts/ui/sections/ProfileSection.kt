@@ -33,6 +33,7 @@ import helpers.spaceContent
 import layouts.components.DeleteGroup
 import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section.Sections.Profile
 
@@ -125,56 +126,58 @@ class ProfileSection : Section() {
                                     Column(
                                         modifier = Modifier.padding(top = 20.dp)
                                     ) {
-                                        listOf(
-                                            Pair("Name", user.name),
-                                            Pair("Surname", user.surname),
-                                            Pair("Email", user.email),
-                                            Pair("Password", HIDE_PASSWORD)
-                                        ).forEach { details ->
-                                            val isEmail = details.first == "Email"
-                                            val isPassword = details.first == "Password"
-                                            var bottom = 10.dp
-                                            if (isEmail || isPassword)
-                                                bottom = 0.dp
-                                            Row(
-                                                modifier = Modifier.padding(bottom = bottom),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                var property by remember { mutableStateOf(details.second) }
-                                                Text(
-                                                    text = "${details.first}:"
-                                                )
-                                                Text(
-                                                    modifier = Modifier.then(
-                                                        if (isPassword) {
-                                                            var top: Dp = 0.dp
-                                                            if (property.equals(HIDE_PASSWORD))
-                                                                top = 5.dp
-                                                            Modifier.padding(start = 5.dp, top = top).onClick {
-                                                                property = visualizePassword(property)
+                                        if (user.name != null) {
+                                            listOf(
+                                                Pair("Name", user.name),
+                                                Pair("Surname", user.surname),
+                                                Pair("Email", user.email),
+                                                Pair("Password", HIDE_PASSWORD)
+                                            ).forEach { details ->
+                                                val isEmail = details.first == "Email"
+                                                val isPassword = details.first == "Password"
+                                                var bottom = 10.dp
+                                                if (isEmail || isPassword)
+                                                    bottom = 0.dp
+                                                Row(
+                                                    modifier = Modifier.padding(bottom = bottom),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    var property by remember { mutableStateOf(details.second) }
+                                                    Text(
+                                                        text = "${details.first}:"
+                                                    )
+                                                    Text(
+                                                        modifier = Modifier.then(
+                                                            if (isPassword) {
+                                                                var top: Dp = 0.dp
+                                                                if (property.equals(HIDE_PASSWORD))
+                                                                    top = 5.dp
+                                                                Modifier.padding(start = 5.dp, top = top).onClick {
+                                                                    property = visualizePassword(property)
+                                                                }
+                                                            } else
+                                                                Modifier.padding(start = 5.dp)
+                                                        ),
+                                                        text = property,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                    if (isEmail || isPassword) {
+                                                        IconButton(
+                                                            modifier = Modifier.size(30.dp).padding(start = 5.dp),
+                                                            onClick = {
+                                                                if (isEmail)
+                                                                    showEditEmailPopup.value = true
+                                                                else
+                                                                    showEditPasswordPopup.value = true
                                                             }
-                                                        } else
-                                                            Modifier.padding(start = 5.dp)
-                                                    ),
-                                                    text = property,
-                                                    fontWeight = FontWeight.Bold
-                                                )
-                                                if (isEmail || isPassword) {
-                                                    IconButton(
-                                                        modifier = Modifier.size(30.dp).padding(start = 5.dp),
-                                                        onClick = {
-                                                            if (isEmail)
-                                                                showEditEmailPopup.value = true
-                                                            else
-                                                                showEditPasswordPopup.value = true
+                                                        ) {
+                                                            Icon(
+                                                                modifier = Modifier.size(20.dp),
+                                                                imageVector = Icons.Default.Edit,
+                                                                tint = RED_COLOR,
+                                                                contentDescription = null
+                                                            )
                                                         }
-                                                    ) {
-                                                        Icon(
-                                                            modifier = Modifier.size(20.dp),
-                                                            imageVector = Icons.Default.Edit,
-                                                            tint = RED_COLOR,
-                                                            contentDescription = null
-                                                        )
                                                     }
                                                 }
                                             }
@@ -186,9 +189,7 @@ class ProfileSection : Section() {
                                         ) {
                                             Button(
                                                 modifier = Modifier.weight(1f),
-                                                onClick = {
-                                                    // TODO: MAKE REQUEST THEN
-                                                }
+                                                onClick = { localAuthHelper.logout() }
                                             ) {
                                                 Text(
                                                     text = "Logout"
@@ -418,7 +419,7 @@ class ProfileSection : Section() {
         return if (!password.contains(HIDE_PASSWORD))
             HIDE_PASSWORD
         else
-            "password from the preferences"
+            user.password
     }
 
     private fun readChangelog(changelog: Changelog) {

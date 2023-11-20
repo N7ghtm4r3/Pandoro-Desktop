@@ -1,6 +1,7 @@
 package layouts.ui.screens
 
 import Routes.home
+import Routes.splashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
+import com.tecknobit.apimanager.formatters.JsonHelper
 import com.tecknobit.pandoro.controllers.PandoroController.IDENTIFIER_KEY
 import com.tecknobit.pandoro.helpers.*
 import com.tecknobit.pandoro.helpers.InputStatus.*
@@ -34,8 +36,11 @@ import com.tecknobit.pandoro.services.UsersHelper.*
 import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
+import layouts.components.Sidebar.Companion.activeScreen
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.Section.Sections
 import navigator
 import org.json.JSONObject
 import java.util.prefs.Preferences
@@ -180,7 +185,7 @@ class Connect : UIScreen() {
                                             modifier = Modifier.height(55.dp),
                                             label = "Name",
                                             isError = !isNameValid(name),
-                                            onValueChange = { name = it },
+                                            onValueChange = { name = it.replace(" ", "") },
                                             value = name
                                         )
                                         Spacer(Modifier.height(20.dp))
@@ -188,7 +193,7 @@ class Connect : UIScreen() {
                                             modifier = Modifier.height(55.dp),
                                             label = "Surname",
                                             isError = !isSurnameValid(surname),
-                                            onValueChange = { surname = it },
+                                            onValueChange = { surname = it.replace(" ", "") },
                                             value = surname
                                         )
                                         Spacer(Modifier.height(20.dp))
@@ -200,7 +205,7 @@ class Connect : UIScreen() {
                                         modifier = Modifier.height(55.dp),
                                         label = "Email",
                                         isError = !isEmailValid(email),
-                                        onValueChange = { email = it },
+                                        onValueChange = { email = it.replace(" ", "") },
                                         value = email
                                     )
                                     Spacer(Modifier.height(20.dp))
@@ -209,7 +214,7 @@ class Connect : UIScreen() {
                                         visualTransformation = if (isVisible) None else PasswordVisualTransformation(),
                                         label = "Password",
                                         isError = !isPasswordValid(password),
-                                        onValueChange = { password = it },
+                                        onValueChange = { password = it.replace(" ", "") },
                                         value = password,
                                         trailingIcon = {
                                             IconButton(
@@ -231,9 +236,12 @@ class Connect : UIScreen() {
                                                 SignUp -> {
                                                     if (isServerAddressValid(serverAddress)) {
                                                         if (isNameValid(name)) {
-                                                            if (isSurnameValid(surname))
-                                                                checkCredentials(email, password)
-                                                            else
+                                                            if (isSurnameValid(surname)) {
+                                                                checkCredentials(
+                                                                    serverAddress, email, password, name,
+                                                                    surname
+                                                                )
+                                                            } else
                                                                 showAuthError("You must insert a correct surname")
                                                         } else
                                                             showAuthError("You must insert a correct name")
@@ -243,7 +251,7 @@ class Connect : UIScreen() {
 
                                                 SignIn -> {
                                                     if (isServerAddressValid(serverAddress))
-                                                        checkCredentials(email, password)
+                                                        checkCredentials(serverAddress, email, password, name, surname)
                                                     else
                                                         showAuthError("You must insert a correct server address")
                                                 }
@@ -255,6 +263,8 @@ class Connect : UIScreen() {
                                     Text(
                                         modifier = Modifier.padding(top = 25.dp)
                                             .clickable(true, onClick = {
+                                                name = ""
+                                                surname = ""
                                                 if (screenType.value == SignUp)
                                                     screenType.value = SignIn
                                                 else
@@ -280,21 +290,42 @@ class Connect : UIScreen() {
     /**
      * Function to check the validity of the credentials
      *
+     * @param serverAddress: the address of the Pandoro's backend
      * @param email: email to check
      * @param password: password to check
      * @return whether the credentials are valid as [Boolean]
      */
-    private fun checkCredentials(email: String, password: String) {
+    private fun checkCredentials(
+        serverAddress: String,
+        email: String,
+        password: String,
+        name: String,
+        surname: String,
+    ) {
         when (areCredentialsValid(email, password)) {
             OK -> {
-                // TODO: MAKE REQUEST THEN
-                navigator.navigate(home.name)
+                if (requester == null)
+                    requester = Requester(serverAddress)
+                val response = if (name.isEmpty())
+                    JsonHelper(requester!!.execSignIn(email, password))
+                else
+                    JsonHelper(requester!!.execSignUp(name, surname, email, password))
+                if (requester!!.successResponse()) {
+                    localAuthHelper.initUserSession(
+                        response,
+                        serverAddress,
+                        name.ifEmpty { response.getString(NAME_KEY) },
+                        surname.ifEmpty { response.getString(SURNAME_KEY) },
+                        email,
+                        password
+                    )
+                    navigator.navigate(home.name)
+                } else
+                    showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
             }
-
             WRONG_PASSWORD -> {
                 showAuthError("You must insert a correct password")
             }
-
             WRONG_EMAIL -> {
                 showAuthError("You must insert a correct email")
             }
@@ -328,42 +359,79 @@ class Connect : UIScreen() {
             if (userId != null) {
                 user = User(
                     JSONObject()
+                        .put(IDENTIFIER_KEY, userId)
+                        .put(TOKEN_KEY, userToken)
+                        .put(PROFILE_PIC_KEY, preferences.get(PROFILE_PIC_KEY, null))
                         .put(NAME_KEY, preferences.get(NAME_KEY, null))
                         .put(SURNAME_KEY, preferences.get(SURNAME_KEY, null))
                         .put(EMAIL_KEY, preferences.get(EMAIL_KEY, null))
                         .put(PASSWORD_KEY, preferences.get(PASSWORD_KEY, null))
                 )
                 requester = Requester(host, userId, userToken)
+            } else {
+                requester = null
+                user = User()
             }
+        }
+
+        fun initUserSession(
+            response: JsonHelper,
+            host: String?,
+            name: String,
+            surname: String,
+            email: String?,
+            password: String?
+        ) {
+            storeCredential(IDENTIFIER_KEY, response.getString(IDENTIFIER_KEY))
+            storeCredential(TOKEN_KEY, response.getString(TOKEN_KEY))
+            storeHost(host)
+            storeProfilePic(response.getString(PROFILE_PIC_KEY))
+            storeName(name)
+            storeSurname(surname)
+            storeEmail(email)
+            storePassword(password)
+            initUserCredentials()
         }
 
         @Wrapper
         fun storeHost(host: String?) {
-
+            storeCredential(SERVER_ADDRESS_KEY, host)
         }
 
         @Wrapper
-        fun storeName(name: String?) {
-
+        fun storeProfilePic(profilePic: String?) {
+            storeCredential(PROFILE_PIC_KEY, profilePic)
         }
 
         @Wrapper
-        fun storeSurname(surname: String?) {
+        private fun storeName(name: String?) {
+            storeCredential(NAME_KEY, name)
+        }
 
+        @Wrapper
+        private fun storeSurname(surname: String?) {
+            storeCredential(SURNAME_KEY, surname)
         }
 
         @Wrapper
         fun storeEmail(email: String?) {
-
+            storeCredential(EMAIL_KEY, email)
         }
 
         @Wrapper
         fun storePassword(password: String?) {
-
+            storeCredential(PASSWORD_KEY, password)
         }
 
-        private fun storeCredential(key: String, credential: String) {
+        private fun storeCredential(key: String, credential: String?) {
             preferences.put(key, credential)
+        }
+
+        fun logout() {
+            preferences.clear()
+            initUserCredentials()
+            activeScreen.value = Sections.Projects
+            navigator.navigate(splashScreen.name)
         }
 
     }
