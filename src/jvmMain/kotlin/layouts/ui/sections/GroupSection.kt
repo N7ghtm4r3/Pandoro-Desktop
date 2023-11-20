@@ -25,15 +25,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.PENDING
+import com.tecknobit.pandoro.records.users.GroupMember.Role
+import com.tecknobit.pandoro.records.users.GroupMember.Role.ADMIN
 import helpers.*
 import layouts.components.LeaveGroup
 import layouts.components.RemoveUser
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.user
-import toImportFromLibrary.Group.GroupMember.InvitationStatus.PENDING
-import toImportFromLibrary.Group.Role
-import toImportFromLibrary.Group.Role.ADMIN
 import kotlin.math.ceil
 
 /**

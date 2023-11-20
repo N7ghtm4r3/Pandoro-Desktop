@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import com.tecknobit.pandoro.records.Changelog
+import com.tecknobit.pandoro.records.users.GroupMember.Role.*
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
 import helpers.spaceContent
@@ -33,8 +35,6 @@ import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section.Sections.Profile
-import toImportFromLibrary.Changelog
-import toImportFromLibrary.Group.Role.*
 
 /**
  * This is the layout for the profile section
@@ -408,7 +408,7 @@ class ProfileSection : Section() {
     }
 
     /**
-     * Function to show or hide the [user]'s password
+     * Function to show or hide the [User]'s password
      *
      * @param password: the password to show or hide
      *
@@ -418,7 +418,7 @@ class ProfileSection : Section() {
         return if (!password.contains(HIDE_PASSWORD))
             HIDE_PASSWORD
         else
-            user.password
+            "password from the preferences"
     }
 
     private fun readChangelog(changelog: Changelog) {

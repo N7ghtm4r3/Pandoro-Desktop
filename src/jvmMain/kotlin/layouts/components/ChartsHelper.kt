@@ -18,10 +18,10 @@ import com.netguru.multiplatform.charts.line.LineChart
 import com.netguru.multiplatform.charts.pie.PieChart
 import com.netguru.multiplatform.charts.pie.PieChartConfig
 import com.netguru.multiplatform.charts.pie.PieChartData
+import com.tecknobit.pandoro.records.ProjectUpdate
 import helpers.GREEN_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
-import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to show the [LineChart] of a project
@@ -31,39 +31,41 @@ import toImportFromLibrary.ProjectUpdate
 @Composable
 fun showProjectChart(publishedUpdates: ArrayList<ProjectUpdate>) {
     val updates = mutableListOf<BarChartEntry>()
-    publishedUpdates.forEach { update ->
-        updates.add(
-            BarChartEntry(
-                x = "v. ${update.targetVersion}",
-                y = update.developmentDuration.toFloat(),
-                color = RED_COLOR
-            )
-        )
-    }
-    BarChart(
-        data = BarChartData(
-            categories = listOf(
-                BarChartCategory(
-                    name = "Development duration",
-                    entries = updates
+    if (publishedUpdates.isNotEmpty()) {
+        publishedUpdates.forEach { update ->
+            updates.add(
+                BarChartEntry(
+                    x = "v. ${update.targetVersion}",
+                    y = update.developmentDuration.toFloat(),
+                    color = RED_COLOR
                 )
             )
-        ),
-        overlayDataEntryLabel = { dataName, value ->
-            Text(
-                text = "$dataName: ${(value as Float).toInt()} days",
-                color = Color.Black,
-                fontSize = 14.sp
-            )
-        },
-        config = BarChartConfig(
-            thickness = 75.dp,
-            cornerRadius = 5.dp,
-            barsSpacing = 10.dp
-        ),
-        modifier = Modifier.height(300.dp),
-        animation = ChartAnimation.Sequenced(),
-    )
+        }
+        BarChart(
+            data = BarChartData(
+                categories = listOf(
+                    BarChartCategory(
+                        name = "Development duration",
+                        entries = updates
+                    )
+                )
+            ),
+            overlayDataEntryLabel = { dataName, value ->
+                Text(
+                    text = "$dataName: ${(value as Float).toInt()} days",
+                    color = Color.Black,
+                    fontSize = 14.sp
+                )
+            },
+            config = BarChartConfig(
+                thickness = 75.dp,
+                cornerRadius = 5.dp,
+                barsSpacing = 10.dp
+            ),
+            modifier = Modifier.height(300.dp),
+            animation = ChartAnimation.Sequenced(),
+        )
+    }
 }
 
 /**

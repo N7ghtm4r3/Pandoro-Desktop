@@ -15,15 +15,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
-import helpers.*
+import com.tecknobit.pandoro.helpers.*
+import com.tecknobit.pandoro.records.Group
+import com.tecknobit.pandoro.records.Project
+import helpers.BACKGROUND_COLOR
+import helpers.PRIMARY_COLOR
+import helpers.showSnack
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.ProjectsSection.Companion.projectsList
-import toImportFromLibrary.Group
-import toImportFromLibrary.Project
-import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to show the popup to add a new project
@@ -155,40 +156,8 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                                     if (isValidRepository(repository)) {
                                         if (project == null) {
                                             // TODO: MAKE ADD REQUEST THEN
-                                            projectsList.add(
-                                                Project(
-                                                    "id0",
-                                                    name,
-                                                    shortDescription,
-                                                    description,
-                                                    version,
-                                                    groups,
-                                                    arrayListOf<ProjectUpdate>(),
-                                                    repository
-                                                )
-                                            )
                                         } else {
                                             // TODO: MAKE EDIT REQUEST THEN
-                                            lateinit var projectToRemove: Project
-                                            for (pro in projectsList) {
-                                                if (pro.id.equals(project.id)) {
-                                                    projectToRemove = pro
-                                                    projectsList.add(
-                                                        Project(
-                                                            pro.id,
-                                                            name,
-                                                            shortDescription,
-                                                            description,
-                                                            version,
-                                                            groups,
-                                                            pro.updates,
-                                                            repository
-                                                        )
-                                                    )
-                                                    break
-                                                }
-                                            }
-                                            projectsList.remove(projectToRemove)
                                         }
                                         flag.value = false
                                     } else

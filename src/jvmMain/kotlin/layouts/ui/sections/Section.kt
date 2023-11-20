@@ -1,10 +1,11 @@
 package layouts.ui.sections
 
 import androidx.compose.runtime.Composable
+import com.tecknobit.pandoro.records.Group
+import com.tecknobit.pandoro.records.Project
 import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.currentProject
-import layouts.ui.sections.Section.Sections.*
 
 /**
  * The [Section] class is useful to give the base structure that a Pandoro's section must have
@@ -64,10 +65,10 @@ abstract class Section {
          */
         fun sidebarMenu(): List<Sections> {
             val sections = mutableListOf<Sections>()
-            sections.add(Projects)
-            sections.add(Notes)
-            sections.add(Overview)
-            sections.add(Profile)
+            sections.add(Sections.Projects)
+            sections.add(Sections.Notes)
+            sections.add(Sections.Overview)
+            sections.add(Sections.Profile)
             return sections
         }
 
@@ -87,9 +88,9 @@ abstract class Section {
      * @param previousSection: the previous section to show when navigate back
      * @param project: the project to show
      */
-    protected fun navToProject(previousSection: Sections, project: toImportFromLibrary.Project) {
+    protected fun navToProject(previousSection: Sections, project: Project) {
         currentProject = project
-        navToSection(previousSection, Project)
+        navToSection(previousSection, Sections.Project)
     }
 
     /**
@@ -98,9 +99,9 @@ abstract class Section {
      * @param previousSection: the previous section to show when navigate back
      * @param group: the group to show
      */
-    protected fun navToGroup(previousSection: Sections, group: toImportFromLibrary.Group) {
+    protected fun navToGroup(previousSection: Sections, group: Group) {
         currentGroup = group
-        navToSection(previousSection, Group)
+        navToSection(previousSection, Sections.Group)
     }
 
     /**

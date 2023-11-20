@@ -15,14 +15,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
+import com.tecknobit.pandoro.records.Group
+import com.tecknobit.pandoro.records.ProjectUpdate
+import com.tecknobit.pandoro.records.users.GroupMember
+import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.JOINED
+import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.PENDING
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import layouts.ui.screens.SplashScreen.Companion.user
-import toImportFromLibrary.Group
-import toImportFromLibrary.Group.GroupMember
-import toImportFromLibrary.Group.GroupMember.InvitationStatus.JOINED
-import toImportFromLibrary.Group.GroupMember.InvitationStatus.PENDING
-import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to delete an update

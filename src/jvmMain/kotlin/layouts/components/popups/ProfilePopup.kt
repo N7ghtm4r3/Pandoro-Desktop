@@ -9,9 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
-import helpers.isGroupDescriptionValid
-import helpers.isGroupNameValid
-import helpers.isInputValid
+import com.tecknobit.pandoro.helpers.*
 import helpers.showSnack
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
@@ -19,7 +17,7 @@ import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 
 /**
- * Function to show the popup to edit the email of the [user]
+ * Function to show the popup to edit the email of the [User]
  *
  * No-any params required
  */
@@ -34,7 +32,7 @@ fun showEditEmailPopup() {
 }
 
 /**
- * Function to show the popup to edit the password of the [user]
+ * Function to show the popup to edit the password of the [User]
  *
  * No-any params required
  */
@@ -49,7 +47,7 @@ fun showEditPasswordPopup() {
 }
 
 /**
- * Function to show the popup to edit a profile info of the [user]
+ * Function to show the popup to edit a profile info of the [User]
  *
  * @param show: the flag whether show the [Popup]
  * @param label: the label of the [PandoroTextField]

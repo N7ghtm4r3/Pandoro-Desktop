@@ -23,13 +23,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.apimanager.annotations.Wrapper
+import com.tecknobit.pandoro.controllers.PandoroController.IDENTIFIER_KEY
+import com.tecknobit.pandoro.helpers.*
+import com.tecknobit.pandoro.helpers.InputStatus.*
+import com.tecknobit.pandoro.helpers.ScreenType.SignIn
+import com.tecknobit.pandoro.helpers.ScreenType.SignUp
+import com.tecknobit.pandoro.records.users.User
+import com.tecknobit.pandoro.services.UsersHelper.*
 import helpers.*
-import helpers.InputStatus.*
-import helpers.ScreenType.SignIn
-import helpers.ScreenType.SignUp
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
+import layouts.ui.screens.SplashScreen.Companion.requester
+import layouts.ui.screens.SplashScreen.Companion.user
 import navigator
+import org.json.JSONObject
+import java.util.prefs.Preferences
 
 /**
  * This is the layout for the connect screen
@@ -303,6 +312,60 @@ class Connect : UIScreen() {
             scaffoldState = scaffoldState,
             message = errorMessage
         )
+    }
+
+
+    open inner class LocalAuthHelper {
+
+        private val SERVER_ADDRESS_KEY = "server_address"
+
+        private val preferences = Preferences.userRoot().node("/user/tecknobit/pandoro")
+
+        fun initUserCredentials() {
+            val host = preferences.get(SERVER_ADDRESS_KEY, null)
+            val userId = preferences.get(IDENTIFIER_KEY, null)
+            val userToken = preferences.get(TOKEN_KEY, null)
+            if (userId != null) {
+                user = User(
+                    JSONObject()
+                        .put(NAME_KEY, preferences.get(NAME_KEY, null))
+                        .put(SURNAME_KEY, preferences.get(SURNAME_KEY, null))
+                        .put(EMAIL_KEY, preferences.get(EMAIL_KEY, null))
+                        .put(PASSWORD_KEY, preferences.get(PASSWORD_KEY, null))
+                )
+                requester = Requester(host, userId, userToken)
+            }
+        }
+
+        @Wrapper
+        fun storeHost(host: String?) {
+
+        }
+
+        @Wrapper
+        fun storeName(name: String?) {
+
+        }
+
+        @Wrapper
+        fun storeSurname(surname: String?) {
+
+        }
+
+        @Wrapper
+        fun storeEmail(email: String?) {
+
+        }
+
+        @Wrapper
+        fun storePassword(password: String?) {
+
+        }
+
+        private fun storeCredential(key: String, credential: String) {
+            preferences.put(key, credential)
+        }
+
     }
 
 }

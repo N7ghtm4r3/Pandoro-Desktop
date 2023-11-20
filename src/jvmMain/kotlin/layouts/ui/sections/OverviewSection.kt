@@ -17,13 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.netguru.multiplatform.charts.pie.PieChart
 import com.tecknobit.apimanager.trading.TradingTools.computeProportion
+import com.tecknobit.pandoro.records.Project
+import com.tecknobit.pandoro.records.ProjectUpdate.Status
+import com.tecknobit.pandoro.records.ProjectUpdate.Status.*
+import com.tecknobit.pandoro.records.users.PublicUser
+import com.tecknobit.pandoro.records.users.User
 import helpers.*
 import layouts.components.showOverviewChart
 import layouts.ui.screens.SplashScreen.Companion.user
-import toImportFromLibrary.Project
-import toImportFromLibrary.ProjectUpdate.Status
-import toImportFromLibrary.ProjectUpdate.Status.*
-import toImportFromLibrary.User
 
 /**
  * This is the layout for the overview section
@@ -554,17 +555,17 @@ class OverviewSection : Section() {
     }
 
     /**
-     * Function to get the number of the updates when the [user] is the author by their status
+     * Function to get the number of the updates when the [User] is the author by their status
      *
      * @param status: the status of the updates to fetch
      *
-     * @return the number of the updates when the [user] is the author by their status as [Int]
+     * @return the number of the updates when the [User] is the author by their status as [Int]
      */
     private fun fetchUserAuthorUpdates(status: Status): Int {
         var updates = 0
         user.projects.forEach { project ->
             project.updates.forEach { update ->
-                val author: User? = when (status) {
+                val author: PublicUser? = when (status) {
                     SCHEDULED -> update.author
                     IN_DEVELOPMENT -> update.startedBy
                     PUBLISHED -> update.publishedBy

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.records.Group
+import com.tecknobit.pandoro.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.RED_COLOR
 import layouts.components.PandoroTextField
@@ -24,8 +26,6 @@ import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.Section.Sections.*
-import toImportFromLibrary.Project
 import kotlin.math.ceil
 
 /**
@@ -157,8 +157,8 @@ class ProjectsSection : Section() {
                         shape = RoundedCornerShape(15.dp),
                         elevation = 2.dp,
                         onClick = {
-                            previousSections.add(Projects)
-                            activeScreen.value = Project
+                            previousSections.add(Sections.Projects)
+                            activeScreen.value = Sections.Projects
                             currentProject = project
                         }
                     ) {
@@ -322,10 +322,10 @@ class ProjectsSection : Section() {
      * @return whether name match with a group of the list as [Boolean]
      */
     private fun groupMatch(
-        groups: ArrayList<toImportFromLibrary.Group>,
+        groups: ArrayList<Group>,
         name: String
     ): Boolean {
-        groups.forEach { group: toImportFromLibrary.Group ->
+        groups.forEach { group: Group ->
             if (group.name.uppercase().contains(name))
                 return true
         }

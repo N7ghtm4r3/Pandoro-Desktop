@@ -11,19 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import helpers.isContentNoteValid
+import com.tecknobit.pandoro.helpers.isContentNoteValid
+import com.tecknobit.pandoro.records.Note
+import com.tecknobit.pandoro.records.ProjectUpdate
 import helpers.showSnack
 import helpers.spaceContent
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
-import toImportFromLibrary.Note
-import toImportFromLibrary.ProjectUpdate
 
 /**
  * Function to show the popup to create a new [Note]
  *
- * @param update: the update where add the new [Note], if **null** will be create for the [user]
+ * @param update: the update where add the new [Note], if **null** will be create for the [User]
  */
 @Composable
 fun showCreateNotePopup(update: ProjectUpdate?) {
@@ -67,7 +67,7 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
  * Function to show the popup to show the info details of a [Note]
  *
  * @param note: the note where get the info details to show
- * @param update: the update where get the [Note], if **null** will be get from the [user]
+ * @param update: the update where get the [Note], if **null** will be got from the [User]
  */
 @Composable
 fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {

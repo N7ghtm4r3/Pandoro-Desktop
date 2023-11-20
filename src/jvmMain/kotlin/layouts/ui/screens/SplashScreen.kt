@@ -14,12 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.Requester
+import com.tecknobit.pandoro.records.users.User
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.appName
 import kotlinx.coroutines.delay
 import navigator
-import toImportFromLibrary.User
 
 /**
  * This is the layout for the splash screen
@@ -31,10 +32,14 @@ class SplashScreen : UIScreen() {
 
     companion object {
 
+        val localAuthHelper = Connect().LocalAuthHelper()
+
         /**
          * **user** -> the user connected for the session
          */
-        val user = User()
+        var user = User()
+
+        var requester: Requester? = null
 
     }
 
@@ -45,6 +50,7 @@ class SplashScreen : UIScreen() {
      */
     @Composable
     override fun showScreen() {
+        localAuthHelper.initUserCredentials()
         val blink = remember { Animatable(0f) }
         LaunchedEffect(key1 = true, block = {
             blink.animateTo(
@@ -52,8 +58,7 @@ class SplashScreen : UIScreen() {
                 animationSpec = tween(durationMillis = 1000)
             )
             delay(500)
-            // TODO: NAVIGATE CORRECTLY TO THE FIRST SCREEN OF THE APPLICATION
-            if (!false)
+            if (requester != null)
                 navigator.navigate(home.name)
             else
                 navigator.navigate(connect.name)

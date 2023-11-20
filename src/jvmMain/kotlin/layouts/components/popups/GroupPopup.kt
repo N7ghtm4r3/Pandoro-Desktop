@@ -18,12 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.isEmailValid
+import com.tecknobit.pandoro.records.Group
 import helpers.*
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddMembersPopup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.user
-import toImportFromLibrary.Group
 
 /**
  * Function to show the popup to add members to a [Group]

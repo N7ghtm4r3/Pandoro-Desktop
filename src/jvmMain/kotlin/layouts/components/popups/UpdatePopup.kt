@@ -17,16 +17,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.*
 import helpers.RED_COLOR
-import helpers.isContentNoteValid
-import helpers.isValidVersion
 import helpers.showSnack
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
 
 /**
- * Function to show the popup to schedule a new [Update]
+ * Function to show the popup to schedule a new [ProjectUpdate]
  *
  * No-any params required
  */

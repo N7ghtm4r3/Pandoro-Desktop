@@ -23,6 +23,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.areAllChangeNotesDone
+import com.tecknobit.pandoro.records.Note
+import com.tecknobit.pandoro.records.Project.RepositoryPlatform.GitLab
+import com.tecknobit.pandoro.records.Project.RepositoryPlatform.Github
+import com.tecknobit.pandoro.records.ProjectUpdate
+import com.tecknobit.pandoro.records.ProjectUpdate.Status.PUBLISHED
+import com.tecknobit.pandoro.records.ProjectUpdate.Status.SCHEDULED
 import helpers.*
 import layouts.components.DeleteUpdate
 import layouts.components.PublishUpdate
@@ -33,12 +40,6 @@ import layouts.ui.screens.Home.Companion.currentUpdate
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import layouts.ui.sections.Section.Sections.Project
-import toImportFromLibrary.Note
-import toImportFromLibrary.Project.RepositoryPlatform.GitLab
-import toImportFromLibrary.Project.RepositoryPlatform.Github
-import toImportFromLibrary.ProjectUpdate
-import toImportFromLibrary.ProjectUpdate.Status.PUBLISHED
-import toImportFromLibrary.ProjectUpdate.Status.SCHEDULED
 
 /**
  * This is the layout for the project section

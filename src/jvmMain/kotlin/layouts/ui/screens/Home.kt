@@ -16,6 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.records.Changelog
+import com.tecknobit.pandoro.records.Changelog.ChangelogEvent.INVITED_GROUP
+import com.tecknobit.pandoro.records.Group
+import com.tecknobit.pandoro.records.Note
+import com.tecknobit.pandoro.records.ProjectUpdate
 import helpers.BACKGROUND_COLOR
 import helpers.GREEN_COLOR
 import helpers.RED_COLOR
@@ -28,11 +33,6 @@ import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
 import layouts.ui.sections.Section.Sections.*
-import toImportFromLibrary.Changelog
-import toImportFromLibrary.Changelog.ChangelogEvent.INVITED_GROUP
-import toImportFromLibrary.Note
-import toImportFromLibrary.Project
-import toImportFromLibrary.ProjectUpdate
 
 /**
  * This is the layout for the home screen
@@ -75,7 +75,7 @@ class Home : UIScreen() {
     companion object {
 
         /**
-         * **notifies** -> list of [Changelog] as notifies for the [user]
+         * **notifies** -> list of [Changelog] as notifies for the [User]
          */
         // TODO: CHECK TO CHANGE
         val notifies = mutableStateListOf<Changelog>()
@@ -133,7 +133,7 @@ class Home : UIScreen() {
         /**
          * **currentProject** -> active [Project] instance
          */
-        lateinit var currentProject: Project
+        lateinit var currentProject: com.tecknobit.pandoro.records.Project
 
         /**
          * **currentNote** -> active [Note] instance
@@ -148,7 +148,7 @@ class Home : UIScreen() {
         /**
          * **currentGroup** -> active [Group] instance
          */
-        lateinit var currentGroup: toImportFromLibrary.Group
+        lateinit var currentGroup: Group
 
     }
 
