@@ -40,6 +40,7 @@ import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.screens.SplashScreen.Companion.userProfilePic
 import layouts.ui.sections.Section.Sections
 import navigator
 import org.json.JSONObject
@@ -366,6 +367,7 @@ class Connect : UIScreen() {
                         .put(EMAIL_KEY, preferences.get(EMAIL_KEY, null))
                         .put(PASSWORD_KEY, preferences.get(PASSWORD_KEY, null))
                 )
+                userProfilePic.value = loadImageBitmap(user.profilePic)
                 requester = Requester(host, userId, userToken)
             } else {
                 requester = null
@@ -402,10 +404,9 @@ class Connect : UIScreen() {
             profilePic: String?,
             refreshUser: Boolean = false
         ) {
-            storeUserValue(
-                PROFILE_PIC_KEY, preferences.get(SERVER_ADDRESS_KEY, "") + "/$profilePic",
-                refreshUser
-            )
+            val profilePicValue = preferences.get(SERVER_ADDRESS_KEY, "") + "/$profilePic"
+            userProfilePic.value = loadImageBitmap(profilePicValue)
+            storeUserValue(PROFILE_PIC_KEY, profilePicValue, refreshUser)
         }
 
         @Wrapper

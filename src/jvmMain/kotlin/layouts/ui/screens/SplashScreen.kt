@@ -7,11 +7,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.Requester
@@ -41,6 +41,8 @@ class SplashScreen : UIScreen() {
 
         var requester: Requester? = null
 
+        lateinit var userProfilePic: MutableState<ImageBitmap?>
+
     }
 
     /**
@@ -50,6 +52,7 @@ class SplashScreen : UIScreen() {
      */
     @Composable
     override fun showScreen() {
+        userProfilePic = rememberSaveable { mutableStateOf(null) }
         localAuthHelper.initUserCredentials()
         val blink = remember { Animatable(0f) }
         LaunchedEffect(key1 = true, block = {

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
-import helpers.loadImageBitmap
+import layouts.ui.screens.SplashScreen
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section
 import layouts.ui.sections.Section.Sections.Projects
@@ -55,7 +55,7 @@ class Sidebar {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        bitmap = loadImageBitmap(user.profilePic),
+                        bitmap = SplashScreen.userProfilePic.value!!,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.size(100.dp)
