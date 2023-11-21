@@ -23,6 +23,7 @@ import helpers.showSnack
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 
 /**
  * Function to show the popup to schedule a new [ProjectUpdate]
@@ -115,8 +116,11 @@ fun showScheduleUpdatePopup() {
                                     break
                             }
                             if (notesCorrect) {
-                                // TODO: MAKE REQUEST THEN
-                                showScheduleUpdatePopup.value = false
+                                requester!!.execScheduleUpdate(currentProject.id, targetVersion, notes)
+                                if (requester!!.successResponse())
+                                    showScheduleUpdatePopup.value = false
+                                else
+                                    showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                             } else
                                 showSnack(coroutineScope, scaffoldState, "You must insert correct notes")
                         } else

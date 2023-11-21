@@ -352,8 +352,10 @@ class Connect : UIScreen() {
 
         private val preferences = Preferences.userRoot().node("/user/tecknobit/pandoro")
 
+        lateinit var host: String
+
         fun initUserCredentials() {
-            val host = preferences.get(SERVER_ADDRESS_KEY, null)
+            host = preferences.get(SERVER_ADDRESS_KEY, null)
             val userId = preferences.get(IDENTIFIER_KEY, null)
             val userToken = preferences.get(TOKEN_KEY, null)
             if (userId != null) {
@@ -404,7 +406,7 @@ class Connect : UIScreen() {
             profilePic: String?,
             refreshUser: Boolean = false
         ) {
-            val profilePicValue = preferences.get(SERVER_ADDRESS_KEY, "") + "/$profilePic"
+            val profilePicValue = "$host/$profilePic"
             userProfilePic.value = loadImageBitmap(profilePicValue)
             storeUserValue(PROFILE_PIC_KEY, profilePicValue, refreshUser)
         }

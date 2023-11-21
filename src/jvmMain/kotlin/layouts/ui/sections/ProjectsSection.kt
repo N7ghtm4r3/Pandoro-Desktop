@@ -19,15 +19,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.ui.filterProjects
 import com.tecknobit.pandoro.helpers.ui.populateFrequentProjects
-import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.RED_COLOR
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import layouts.components.PandoroTextField
 import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.json.JSONArray
+import org.json.JSONObject
 import kotlin.math.ceil
 
 /**
@@ -55,7 +61,7 @@ class ProjectsSection : Section() {
     @Composable
     override fun showSection() {
         projectsList = mutableStateListOf()
-        projectsList.addAll(user.projects)
+        refreshValues()
         Spacer(Modifier.height(10.dp))
         LazyColumn {
             item {
@@ -63,6 +69,22 @@ class ProjectsSection : Section() {
             }
             item {
                 populateLazyGrid("Current projects", projectsList)
+            }
+        }
+    }
+
+    private fun refreshValues() {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (user.id != null && activeScreen.value == Sections.Projects) {
+                val response = requester!!.execProjectsList()
+                if (requester!!.successResponse()) {
+                    projectsList.clear()
+                    val jProjects = JSONArray(response)
+                    jProjects.forEach { jProject ->
+                        projectsList.add(Project(jProject as JSONObject))
+                    }
+                }
+                delay(1000)
             }
         }
     }
@@ -133,7 +155,7 @@ class ProjectsSection : Section() {
                         elevation = 2.dp,
                         onClick = {
                             previousSections.add(Sections.Projects)
-                            activeScreen.value = Sections.Projects
+                            activeScreen.value = Sections.Project
                             currentProject = project
                         }
                     ) {
@@ -198,10 +220,12 @@ class ProjectsSection : Section() {
                                                         confirmButton = {
                                                             TextButton(
                                                                 onClick = {
-                                                                    // TODO: MAKE REQUEST THEN
-                                                                    user.projects.remove(project)
-                                                                    showDeleteAlertDialog = false
-                                                                    actionsSelected = false
+                                                                    requester!!.execDeleteProject(project.id)
+                                                                    if (requester!!.successResponse()) {
+                                                                        showDeleteAlertDialog = false
+                                                                        actionsSelected = false
+                                                                    } else
+                                                                        showSnack(requester!!.errorMessage())
                                                                 },
                                                                 content = { Text(text = "Confirm") }
                                                             )

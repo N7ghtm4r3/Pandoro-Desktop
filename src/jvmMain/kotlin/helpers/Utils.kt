@@ -22,6 +22,7 @@ import com.tecknobit.pandoro.helpers.ui.PRIMARY_COLOR
 import com.tecknobit.pandoro.helpers.ui.YELLOW_COLOR
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import java.awt.Desktop
 import java.net.URI
 import java.net.URL
@@ -159,4 +160,9 @@ fun openUrl(url: String) = Desktop.getDesktop().browse(URI(url))
  *
  * @param url: the url from load the image
  */
-fun loadImageBitmap(url: String): ImageBitmap = ImageIO.read(URL(url)).toComposeImageBitmap()
+fun loadImageBitmap(url: String): ImageBitmap {
+    var iUrl = url
+    if (!iUrl.startsWith(localAuthHelper.host))
+        iUrl = localAuthHelper.host + "/$url"
+    return ImageIO.read(URL(iUrl)).toComposeImageBitmap()
+}

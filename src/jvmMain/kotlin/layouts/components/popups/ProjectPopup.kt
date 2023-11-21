@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.pandoro.helpers.*
-import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
@@ -24,6 +23,7 @@ import helpers.showSnack
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.Home.Companion.showEditPopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 
 /**
@@ -103,7 +103,8 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                 onValueChange = { repository = it },
                 value = repository
             )
-            val groups = if (project != null) project.groups else ArrayList<Group>()
+            val groups = ArrayList<String>()
+            project?.groups?.forEach { group -> groups.add(group.id) }
             if (user.adminGroups.isNotEmpty()) {
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(start = 15.dp, top = 15.dp),
@@ -118,7 +119,8 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(user.adminGroups) { group ->
-                        var selected by remember { mutableStateOf(groups.contains(group)) }
+                        val groupId = group.id
+                        var selected by remember { mutableStateOf(groups.contains(groupId)) }
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -129,12 +131,11 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                                 ),
                                 checked = selected,
                                 onCheckedChange = {
-                                    // TODO: CREATE THE REAL WORKFLOW
                                     selected = it
                                     if (it)
-                                        groups.add(group)
+                                        groups.add(groupId)
                                     else
-                                        groups.remove(group)
+                                        groups.remove(groupId)
                                 }
                             )
                             Text(
@@ -155,11 +156,24 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                                     version = version.replace("v. ", "")
                                     if (isValidRepository(repository)) {
                                         if (project == null) {
-                                            // TODO: MAKE ADD REQUEST THEN
+                                            requester!!.execAddProject(
+                                                name, description, shortDescription, version,
+                                                groups, repository
+                                            )
+                                            if (requester!!.successResponse())
+                                                flag.value = false
+                                            else
+                                                showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                                         } else {
-                                            // TODO: MAKE EDIT REQUEST THEN
+                                            requester!!.execEditProject(
+                                                project.id, name, description, shortDescription,
+                                                version, groups, repository
+                                            )
+                                            if (requester!!.successResponse())
+                                                flag.value = false
+                                            else
+                                                showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                                         }
-                                        flag.value = false
                                     } else
                                         showSnack(coroutineScope, scaffoldState, "Insert a correct repository url")
                                 } else

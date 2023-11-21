@@ -111,11 +111,10 @@ class ProjectSection : Section() {
                 Column(
                     modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                 ) {
-                    val author = currentProject.author
-                    if (author != null) {
+                    if (currentProject.hasGroups()) {
                         Text(
                             modifier = Modifier.padding(top = if (isGitHub) 5.dp else 0.dp),
-                            text = "Author: ${author.completeName}",
+                            text = "Author: ${currentProject.author.completeName}",
                             textAlign = TextAlign.Justify,
                             fontSize = 20.sp
                         )
@@ -205,11 +204,10 @@ class ProjectSection : Section() {
                                                     fontSize = 14.sp
                                                 )
                                                 spaceContent()
-                                                val projectAuthor = update.author
-                                                if (projectAuthor != null) {
+                                                if (currentProject.hasGroups()) {
                                                     Text(
                                                         modifier = Modifier.padding(top = 5.dp),
-                                                        text = "Author: ${projectAuthor.completeName}",
+                                                        text = "Author: ${update.author.completeName}",
                                                         fontSize = 14.sp
                                                     )
                                                 }
