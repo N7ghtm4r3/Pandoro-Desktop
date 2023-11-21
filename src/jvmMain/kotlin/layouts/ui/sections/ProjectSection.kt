@@ -167,7 +167,9 @@ class ProjectSection : Section() {
                         if (updates.isNotEmpty()) {
                             spaceContent()
                             LazyVerticalGrid(
-                                modifier = Modifier.padding(top = 20.dp).height(820.dp),
+                                modifier = Modifier
+                                    .padding(top = 20.dp)
+                                    .heightIn(0.dp, 820.dp),
                                 columns = GridCells.Fixed(2),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -415,7 +417,7 @@ class ProjectSection : Section() {
                                                                 onClick = {
                                                                     showMenu = false
                                                                     if (isScheduled) {
-                                                                        // TODO: MAKE REQUEST THEN
+
                                                                     } else if (!isPublished) {
                                                                         if (!areAllChangeNotesDone(changeNotes)) {
                                                                             showPublishUpdate.value = true
@@ -521,9 +523,9 @@ class ProjectSection : Section() {
                             }
                         }
                     }
-                    spaceContent()
                     val groups = currentProject.groups
                     if (groups.isNotEmpty()) {
+                        spaceContent()
                         var showGroupsSection by remember { mutableStateOf(true) }
                         var showGroupsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
                         Row(
@@ -595,60 +597,62 @@ class ProjectSection : Section() {
                                 }
                             }
                         }
+                    }
+                    if (currentProject.publishedUpdates.isNotEmpty()) {
+                        spaceContent()
+                        var showStatsSection by remember { mutableStateOf(true) }
+                        var showStatsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Stats",
+                                fontSize = 20.sp
+                            )
+                            IconButton(
+                                onClick = {
+                                    showStatsSection = !showStatsSection
+                                    showStatsIcon =
+                                        if (showStatsSection)
+                                            Icons.Default.VisibilityOff
+                                        else
+                                            Icons.Default.Visibility
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = showStatsIcon,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                        val publishedUpdates = currentProject.publishedUpdates
+                        if (showStatsSection) {
+                            Text(
+                                modifier = Modifier.padding(top = 10.dp),
+                                text = "Total development days: ${currentProject.totalDevelopmentDays}",
+                                fontSize = 14.sp
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 5.dp),
+                                text = "Average development time: ${currentProject.averageDevelopmentTime} days",
+                                fontSize = 14.sp
+                            )
+                            if (publishedUpdates.isNotEmpty()) {
+                                spaceContent()
+                                Column(
+                                    modifier = Modifier.padding(
+                                        top = 15.dp,
+                                        start = 10.dp,
+                                        end = 10.dp,
+                                        bottom = 10.dp
+                                    ),
+                                    content = { showProjectChart(publishedUpdates) }
+                                )
+                            }
+                        }
                         spaceContent()
                     }
-                    var showStatsSection by remember { mutableStateOf(true) }
-                    var showStatsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Stats",
-                            fontSize = 20.sp
-                        )
-                        IconButton(
-                            onClick = {
-                                showStatsSection = !showStatsSection
-                                showStatsIcon =
-                                    if (showStatsSection)
-                                        Icons.Default.VisibilityOff
-                                    else
-                                        Icons.Default.Visibility
-                            }
-                        ) {
-                            Icon(
-                                imageVector = showStatsIcon,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                    val publishedUpdates = currentProject.publishedUpdates
-                    if (showStatsSection) {
-                        Text(
-                            modifier = Modifier.padding(top = 10.dp),
-                            text = "Total development days: ${currentProject.totalDevelopmentDays}",
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            modifier = Modifier.padding(top = 5.dp),
-                            text = "Average development time: ${currentProject.averageDevelopmentTime} days",
-                            fontSize = 14.sp
-                        )
-                        if (publishedUpdates.isNotEmpty()) {
-                            spaceContent()
-                            Column(
-                                modifier = Modifier.padding(
-                                    top = 15.dp,
-                                    start = 10.dp,
-                                    end = 10.dp,
-                                    bottom = 10.dp
-                                ),
-                                content = { showProjectChart(publishedUpdates) }
-                            )
-                        }
-                    }
-                    spaceContent()
                 }
             }
         }

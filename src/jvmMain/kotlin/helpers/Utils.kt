@@ -162,7 +162,7 @@ fun openUrl(url: String) = Desktop.getDesktop().browse(URI(url))
  */
 fun loadImageBitmap(url: String): ImageBitmap {
     var iUrl = url
-    if (!iUrl.startsWith(localAuthHelper.host))
+    if (!iUrl.startsWith(localAuthHelper.host!!))
         iUrl = localAuthHelper.host + "/$url"
     return ImageIO.read(URL(iUrl)).toComposeImageBitmap()
 }

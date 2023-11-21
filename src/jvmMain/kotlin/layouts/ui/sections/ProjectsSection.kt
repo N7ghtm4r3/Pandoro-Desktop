@@ -76,12 +76,16 @@ class ProjectsSection : Section() {
     private fun refreshValues() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Projects) {
+                val tmpProjectsList = mutableStateListOf<Project>()
                 val response = requester!!.execProjectsList()
                 if (requester!!.successResponse()) {
-                    projectsList.clear()
                     val jProjects = JSONArray(response)
                     jProjects.forEach { jProject ->
-                        projectsList.add(Project(jProject as JSONObject))
+                        tmpProjectsList.add(Project(jProject as JSONObject))
+                    }
+                    if (needToRefresh(projectsList, tmpProjectsList)) {
+                        projectsList.clear()
+                        projectsList.addAll(tmpProjectsList)
                     }
                 }
                 delay(1000)

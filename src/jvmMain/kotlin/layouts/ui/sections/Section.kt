@@ -120,6 +120,10 @@ abstract class Section {
         )
     }
 
+    protected inline fun <reified T> needToRefresh(currentList: List<T>, newList: List<T>): Boolean {
+        return !currentList.toTypedArray().contentDeepEquals(newList.toTypedArray())
+    }
+
     /**
      * Function to show a snackbar from a section
      *
