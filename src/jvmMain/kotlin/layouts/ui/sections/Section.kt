@@ -6,11 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Project
+import com.tecknobit.pandoro.records.structures.PandoroItem
 import helpers.BACKGROUND_COLOR
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.currentProject
+import org.json.JSONArray
 
 /**
  * The [Section] class is useful to give the base structure that a Pandoro's section must have
@@ -120,8 +122,14 @@ abstract class Section {
         )
     }
 
-    protected inline fun <reified T> needToRefresh(currentList: List<T>, newList: List<T>): Boolean {
-        return !currentList.toTypedArray().contentDeepEquals(newList.toTypedArray())
+    protected inline fun <reified T : PandoroItem> needToRefresh(currentList: List<T>, newList: List<T>): Boolean {
+        val sortedCurrentList = currentList.sortedBy { item -> item.id }
+        val sortedNewList = newList.sortedBy { item -> item.id }
+        return JSONArray(sortedCurrentList).toString() != JSONArray(sortedNewList).toString()
+    }
+
+    protected inline fun <reified T : PandoroItem> needToRefresh(currentItem: T, newItem: T): Boolean {
+        return currentItem.toString() != newItem.toString()
     }
 
     /**

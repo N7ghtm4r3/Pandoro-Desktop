@@ -65,6 +65,7 @@ class ProjectSection : Section() {
     @Composable
     override fun showSection() {
         var isGitHub = false
+        val hasGroup = currentProject.value.hasGroups()
         refreshItem()
         showSection {
             LazyColumn {
@@ -184,8 +185,8 @@ class ProjectSection : Section() {
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 items(updates) { update ->
-                                    val isPublished by remember { mutableStateOf(update.status == PUBLISHED) }
-                                    val isScheduled by remember { mutableStateOf(update.status == SCHEDULED) }
+                                    val isPublished = update.status == PUBLISHED
+                                    val isScheduled = update.status == SCHEDULED
                                     var showMenu by remember { mutableStateOf(false) }
                                     val showDeleteDialog = mutableStateOf(false)
                                     val changeNotes = update.notes
@@ -215,7 +216,7 @@ class ProjectSection : Section() {
                                                     fontSize = 14.sp
                                                 )
                                                 spaceContent()
-                                                if (currentProject.value.hasGroups()) {
+                                                if (hasGroup) {
                                                     Text(
                                                         modifier = Modifier.padding(top = 5.dp),
                                                         text = "Author: ${update.author.completeName}",
@@ -229,11 +230,10 @@ class ProjectSection : Section() {
                                                 )
                                                 spaceContent()
                                                 if (!isScheduled) {
-                                                    val startedBy = update.startedBy
-                                                    if (startedBy != null) {
+                                                    if (hasGroup) {
                                                         Text(
                                                             modifier = Modifier.padding(top = 5.dp),
-                                                            text = "Started by: ${startedBy.completeName}",
+                                                            text = "Started by: ${update.startedBy.completeName}",
                                                             fontSize = 14.sp
                                                         )
                                                     }
@@ -245,11 +245,10 @@ class ProjectSection : Section() {
                                                     spaceContent()
                                                 }
                                                 if (isPublished) {
-                                                    val publishedBy = update.publishedBy
-                                                    if (publishedBy != null) {
+                                                    if (hasGroup) {
                                                         Text(
                                                             modifier = Modifier.padding(top = 5.dp),
-                                                            text = "Published by: ${publishedBy.completeName}",
+                                                            text = "Published by: ${update.publishedBy.completeName}",
                                                             fontSize = 14.sp
                                                         )
                                                     }
@@ -693,9 +692,7 @@ class ProjectSection : Section() {
                 val response = requester!!.execGetSingleProject(currentProject.value.id)
                 if (requester!!.successResponse()) {
                     val tmpProject = Project(response)
-                    println(tmpProject.hashCode())
-                    println(currentProject.value.hashCode())
-                    if (tmpProject.hashCode() != currentProject.value.hashCode())
+                    if (needToRefresh(currentProject.value, tmpProject))
                         currentProject.value = tmpProject
                 } else
                     showSnack(requester!!.errorMessage())
