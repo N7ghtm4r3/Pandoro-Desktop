@@ -17,8 +17,10 @@ import com.tecknobit.pandoro.records.ProjectUpdate
 import helpers.showSnack
 import helpers.spaceContent
 import layouts.components.PandoroTextField
+import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 
 /**
  * Function to show the popup to create a new [Note]
@@ -50,8 +52,19 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
                         if (isContentNoteValid(content)) {
-                            // TODO: MAKE REQUEST THEN
-                            showCreateNotePopup.value = false
+                            if (update != null) {
+                                requester!!.execAddChangeNote(currentProject.value.id, update.id, content)
+                                if (requester!!.successResponse())
+                                    showCreateNotePopup.value = false
+                                else
+                                    showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
+                            } else {
+                                requester!!.execAddNote(content)
+                                if (requester!!.successResponse())
+                                    showCreateNotePopup.value = false
+                                else
+                                    showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
+                            }
                         } else
                             showSnack(coroutineScope, scaffoldState, "Insert a correct content")
                     },
@@ -91,7 +104,7 @@ fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
             ) {
                 if (update != null) {
                     Text(
-                        text = "ProjectUpdate version: v. ${update.targetVersion}",
+                        text = "Update version: v. ${update.targetVersion}",
                         fontSize = 14.sp
                     )
                 }
@@ -102,11 +115,11 @@ fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
                     fontSize = 14.sp
                 )
                 spaceContent(5.dp, end = 10.dp)
-                val author = note.author
-                if (author != null) {
+                val showUsers = update != null && currentProject.value.hasGroups()
+                if (showUsers) {
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = "Author: ${author.completeName}",
+                        text = "Author: ${note.author.completeName}",
                         fontSize = 14.sp
                     )
                     spaceContent(5.dp, end = 10.dp)
@@ -118,11 +131,10 @@ fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
                 )
                 spaceContent(5.dp, end = 10.dp)
                 if (note.isMarkedAsDone) {
-                    val doneAuthor = note.markedAsDoneBy
-                    if (doneAuthor != null) {
+                    if (showUsers) {
                         Text(
                             modifier = Modifier.padding(top = 10.dp),
-                            text = "Marked as done by: ${doneAuthor.completeName}",
+                            text = "Marked as done by: ${note.markedAsDoneBy.completeName}",
                             fontSize = 14.sp
                         )
                         spaceContent(5.dp, end = 10.dp)

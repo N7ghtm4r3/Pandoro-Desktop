@@ -25,21 +25,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.areAllChangeNotesDone
 import com.tecknobit.pandoro.records.Note
+import com.tecknobit.pandoro.records.Project
 import com.tecknobit.pandoro.records.Project.RepositoryPlatform.GitLab
 import com.tecknobit.pandoro.records.Project.RepositoryPlatform.Github
 import com.tecknobit.pandoro.records.ProjectUpdate
 import com.tecknobit.pandoro.records.ProjectUpdate.Status.PUBLISHED
 import com.tecknobit.pandoro.records.ProjectUpdate.Status.SCHEDULED
 import helpers.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import layouts.components.DeleteUpdate
 import layouts.components.PublishUpdate
+import layouts.components.Sidebar.Companion.activeScreen
 import layouts.components.showProjectChart
 import layouts.ui.screens.Home.Companion.currentNote
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.currentUpdate
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
-import layouts.ui.sections.Section.Sections.Project
+import layouts.ui.screens.SplashScreen.Companion.requester
+import layouts.ui.screens.SplashScreen.Companion.user
 
 /**
  * This is the layout for the project section
@@ -58,7 +65,9 @@ class ProjectSection : Section() {
     @Composable
     override fun showSection() {
         var isGitHub = false
-        LazyColumn {
+        refreshItem()
+        showSection {
+            LazyColumn {
             stickyHeader {
                 Row(
                     modifier = Modifier.fillParentMaxWidth().background(BACKGROUND_COLOR),
@@ -77,17 +86,17 @@ class ProjectSection : Section() {
                         modifier = Modifier.wrapContentHeight()
                     ) {
                         Text(
-                            text = currentProject.name,
+                            text = currentProject.value.name,
                             fontSize = 25.sp
                         )
                         Text(
                             modifier = Modifier.padding(start = 10.dp, bottom = 5.dp).align(Alignment.Bottom),
-                            text = "v. " + currentProject.version,
+                            text = "v. " + currentProject.value.version,
                             fontSize = 12.sp
                         )
                     }
                     var logoPath = ""
-                    when (currentProject.repositoryPlatform) {
+                    when (currentProject.value.repositoryPlatform) {
                         Github -> logoPath = "github-mark.svg"
                         GitLab -> logoPath = "gitlab-logo-500.svg"
                         else -> {}
@@ -96,7 +105,7 @@ class ProjectSection : Section() {
                     if (logoPath.isNotEmpty()) {
                         IconButton(
                             modifier = if (isGitHub) Modifier.padding(start = 5.dp) else Modifier,
-                            onClick = { openUrl(currentProject.projectRepo) }
+                            onClick = { openUrl(currentProject.value.projectRepo) }
                         ) {
                             Icon(
                                 modifier = Modifier.size(if (isGitHub) 35.dp else 60.dp),
@@ -111,17 +120,17 @@ class ProjectSection : Section() {
                 Column(
                     modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                 ) {
-                    if (currentProject.hasGroups()) {
+                    if (currentProject.value.hasGroups()) {
                         Text(
                             modifier = Modifier.padding(top = if (isGitHub) 5.dp else 0.dp),
-                            text = "Author: ${currentProject.author.completeName}",
+                            text = "Author: ${currentProject.value.author.completeName}",
                             textAlign = TextAlign.Justify,
                             fontSize = 20.sp
                         )
                     }
                     Text(
                         modifier = Modifier.padding(top = 5.dp),
-                        text = currentProject.description,
+                        text = currentProject.value.description,
                         textAlign = TextAlign.Justify,
                         fontSize = 14.sp
                     )
@@ -155,15 +164,15 @@ class ProjectSection : Section() {
                     if (showUpdatesSection) {
                         Text(
                             modifier = Modifier.padding(top = 10.dp),
-                            text = "Updates number: ${currentProject.updatesNumber}",
+                            text = "Updates number: ${currentProject.value.updatesNumber}",
                             fontSize = 14.sp
                         )
                         Text(
                             modifier = Modifier.padding(top = 5.dp),
-                            text = "Last update: ${currentProject.lastUpdateDate}",
+                            text = "Last update: ${currentProject.value.lastUpdateDate}",
                             fontSize = 14.sp
                         )
-                        val updates = currentProject.updates
+                        val updates = currentProject.value.updates
                         if (updates.isNotEmpty()) {
                             spaceContent()
                             LazyVerticalGrid(
@@ -206,7 +215,7 @@ class ProjectSection : Section() {
                                                     fontSize = 14.sp
                                                 )
                                                 spaceContent()
-                                                if (currentProject.hasGroups()) {
+                                                if (currentProject.value.hasGroups()) {
                                                     Text(
                                                         modifier = Modifier.padding(top = 5.dp),
                                                         text = "Author: ${update.author.completeName}",
@@ -319,7 +328,7 @@ class ProjectSection : Section() {
                                                                             textAlign = TextAlign.Justify
                                                                         )
                                                                     }
-                                                                    deleteNoteButton(note)
+                                                                    deleteNoteButton(update, note)
                                                                 }
                                                             } else {
                                                                 var isMarkedAsDone by remember { mutableStateOf(note.isMarkedAsDone) }
@@ -334,8 +343,27 @@ class ProjectSection : Section() {
                                                                         ),
                                                                         checked = isMarkedAsDone,
                                                                         onCheckedChange = {
-                                                                            // TODO: MAKE REQUEST THEN
-                                                                            isMarkedAsDone = it
+                                                                            if (it) {
+                                                                                requester!!.execMarkChangeNoteAsDone(
+                                                                                    currentProject.value.id,
+                                                                                    update.id,
+                                                                                    note.id
+                                                                                )
+                                                                                if (requester!!.successResponse())
+                                                                                    isMarkedAsDone = true
+                                                                                else
+                                                                                    showSnack(requester!!.errorMessage())
+                                                                            } else {
+                                                                                requester!!.execMarkChangeNoteAsToDo(
+                                                                                    currentProject.value.id,
+                                                                                    update.id,
+                                                                                    note.id
+                                                                                )
+                                                                                if (requester!!.successResponse())
+                                                                                    isMarkedAsDone = false
+                                                                                else
+                                                                                    showSnack(requester!!.errorMessage())
+                                                                            }
                                                                         }
                                                                     )
                                                                     Text(
@@ -357,7 +385,7 @@ class ProjectSection : Section() {
                                                                         )
                                                                     )
                                                                     if (!isMarkedAsDone)
-                                                                        deleteNoteButton(note)
+                                                                        deleteNoteButton(update, note)
                                                                 }
                                                             }
                                                         } else {
@@ -416,9 +444,9 @@ class ProjectSection : Section() {
                                                             DropdownMenuItem(
                                                                 onClick = {
                                                                     showMenu = false
-                                                                    if (isScheduled) {
-
-                                                                    } else if (!isPublished) {
+                                                                    if (isScheduled)
+                                                                        startUpdate(update)
+                                                                    else if (!isPublished) {
                                                                         if (!areAllChangeNotesDone(changeNotes)) {
                                                                             showPublishUpdate.value = true
                                                                             showNotes.value = true
@@ -523,7 +551,7 @@ class ProjectSection : Section() {
                             }
                         }
                     }
-                    val groups = currentProject.groups
+                    val groups = currentProject.value.groups
                     if (groups.isNotEmpty()) {
                         spaceContent()
                         var showGroupsSection by remember { mutableStateOf(true) }
@@ -571,7 +599,7 @@ class ProjectSection : Section() {
                                         shape = RoundedCornerShape(15),
                                         backgroundColor = Color.White,
                                         elevation = 2.dp,
-                                        onClick = { navToGroup(Project, group) },
+                                        onClick = { navToGroup(Sections.Project, group) },
                                     ) {
                                         Column(
                                             modifier = Modifier.fillMaxSize(),
@@ -598,7 +626,7 @@ class ProjectSection : Section() {
                             }
                         }
                     }
-                    if (currentProject.publishedUpdates.isNotEmpty()) {
+                    if (currentProject.value.publishedUpdates.isNotEmpty()) {
                         spaceContent()
                         var showStatsSection by remember { mutableStateOf(true) }
                         var showStatsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
@@ -626,16 +654,16 @@ class ProjectSection : Section() {
                                 )
                             }
                         }
-                        val publishedUpdates = currentProject.publishedUpdates
+                        val publishedUpdates = currentProject.value.publishedUpdates
                         if (showStatsSection) {
                             Text(
                                 modifier = Modifier.padding(top = 10.dp),
-                                text = "Total development days: ${currentProject.totalDevelopmentDays}",
+                                text = "Total development days: ${currentProject.value.totalDevelopmentDays}",
                                 fontSize = 14.sp
                             )
                             Text(
                                 modifier = Modifier.padding(top = 5.dp),
-                                text = "Average development time: ${currentProject.averageDevelopmentTime} days",
+                                text = "Average development time: ${currentProject.value.averageDevelopmentTime} days",
                                 fontSize = 14.sp
                             )
                             if (publishedUpdates.isNotEmpty()) {
@@ -655,7 +683,36 @@ class ProjectSection : Section() {
                     }
                 }
             }
+            }
         }
+    }
+
+    private fun refreshItem() {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (user.id != null && activeScreen.value == Sections.Project) {
+                val response = requester!!.execGetSingleProject(currentProject.value.id)
+                if (requester!!.successResponse()) {
+                    val tmpProject = Project(response)
+                    println(tmpProject.hashCode())
+                    println(currentProject.value.hashCode())
+                    if (tmpProject.hashCode() != currentProject.value.hashCode())
+                        currentProject.value = tmpProject
+                } else
+                    showSnack(requester!!.errorMessage())
+                delay(1000)
+            }
+        }
+    }
+
+    /**
+     * Function to perform a [ProjectUpdate] start
+     *
+     * @param projectUpdate: the update to start
+     */
+    private fun startUpdate(projectUpdate: ProjectUpdate) {
+        requester!!.execStartUpdate(currentProject.value.id, projectUpdate.id)
+        if (!requester!!.successResponse())
+            showSnack(requester!!.errorMessage())
     }
 
     /**
@@ -663,28 +720,37 @@ class ProjectSection : Section() {
      *
      * @param showNotes: whether show the alert dialog for the change notes check
      * @param showPublishUpdate: whether execute the publishing check
-     * @param projectUpdate: the note to publish
+     * @param projectUpdate: the update to publish
      */
     private fun publishUpdate(
         showNotes: MutableState<Boolean>,
         showPublishUpdate: MutableState<Boolean>,
         projectUpdate: ProjectUpdate
     ) {
-        // TODO: MAKE REQUEST THEN
-        showPublishUpdate.value = false
-        showNotes.value = false
+        requester!!.execPublishUpdate(currentProject.value.id, projectUpdate.id)
+        if (requester!!.successResponse()) {
+            showPublishUpdate.value = false
+            showNotes.value = false
+        } else
+            showSnack(requester!!.errorMessage())
     }
 
     /**
      * Function to perform a [Note] deletion
      *
+     * @param update: the update where delete the change note
      * @param note: the note to delete
      */
     @Composable
-    private fun deleteNoteButton(note: Note) {
+    private fun deleteNoteButton(
+        update: ProjectUpdate,
+        note: Note
+    ) {
         IconButton(
             onClick = {
-                // TODO: MAKE REQUEST THEN
+                requester!!.execDeleteChangeNote(currentProject.value.id, update.id, note.id)
+                if (!requester!!.successResponse())
+                    showSnack(requester!!.errorMessage())
             }
         ) {
             Icon(

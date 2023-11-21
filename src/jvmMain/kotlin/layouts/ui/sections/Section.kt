@@ -64,6 +64,16 @@ abstract class Section {
         var previousSections: MutableList<Sections> = mutableListOf()
 
         /**
+         * **sectionScaffoldState** -> the scaffold state for the scaffold of the popup
+         */
+        lateinit var sectionScaffoldState: ScaffoldState
+
+        /**
+         * **sectionCoroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
+         */
+        lateinit var sectionCoroutineScope: CoroutineScope
+
+        /**
          * Function to create the items list for the sidebar
          *
          * No-any params required
@@ -80,16 +90,6 @@ abstract class Section {
     }
 
     /**
-     * **scaffoldState** -> the scaffold state for the scaffold of the popup
-     */
-    private lateinit var scaffoldState: ScaffoldState
-
-    /**
-     * **coroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
-     */
-    private lateinit var coroutineScope: CoroutineScope
-
-    /**
      * Function to show the content of the section
      *
      * No-any params required
@@ -104,10 +104,10 @@ abstract class Section {
      */
     @Composable
     protected fun showSection(content: @Composable (PaddingValues) -> Unit) {
-        coroutineScope = rememberCoroutineScope()
-        scaffoldState = rememberScaffoldState()
+        sectionCoroutineScope = rememberCoroutineScope()
+        sectionScaffoldState = rememberScaffoldState()
         Scaffold(
-            scaffoldState = scaffoldState,
+            scaffoldState = sectionScaffoldState,
             snackbarHost = {
                 SnackbarHost(it) { data ->
                     Snackbar(
@@ -130,7 +130,7 @@ abstract class Section {
      * @param message: message to show
      */
     protected fun showSnack(message: String) {
-        helpers.showSnack(coroutineScope, scaffoldState, message)
+        helpers.showSnack(sectionCoroutineScope, sectionScaffoldState, message)
     }
 
     /**
@@ -140,7 +140,7 @@ abstract class Section {
      * @param project: the project to show
      */
     protected fun navToProject(previousSection: Sections, project: Project) {
-        currentProject = project
+        currentProject.value = project
         navToSection(previousSection, Sections.Project)
     }
 

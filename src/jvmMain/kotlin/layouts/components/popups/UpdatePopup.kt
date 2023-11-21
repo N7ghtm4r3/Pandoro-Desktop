@@ -37,7 +37,7 @@ fun showScheduleUpdatePopup() {
     createPopup(
         height = 450.dp,
         flag = showScheduleUpdatePopup,
-        title = "Schedule an update for ${currentProject.name} project",
+        title = "Schedule an update for ${currentProject.value.name} project",
         content = {
             var targetVersion by remember { mutableStateOf("") }
             PandoroTextField(
@@ -116,7 +116,7 @@ fun showScheduleUpdatePopup() {
                                     break
                             }
                             if (notesCorrect) {
-                                requester!!.execScheduleUpdate(currentProject.id, targetVersion, notes)
+                                requester!!.execScheduleUpdate(currentProject.value.id, targetVersion, notes)
                                 if (requester!!.successResponse())
                                     showScheduleUpdatePopup.value = false
                                 else

@@ -17,12 +17,12 @@ import helpers.BACKGROUND_COLOR
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * **scaffoldState** -> the scaffold state for the scaffold of the popup
+ * **sectionScaffoldState** -> the scaffold state for the scaffold of the popup
  */
 lateinit var scaffoldState: ScaffoldState
 
 /**
- * **coroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
+ * **sectionCoroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
  */
 lateinit var coroutineScope: CoroutineScope
 

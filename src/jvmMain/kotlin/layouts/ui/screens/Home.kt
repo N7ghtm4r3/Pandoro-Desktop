@@ -32,6 +32,7 @@ import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
+import layouts.ui.sections.Section.*
 import layouts.ui.sections.Section.Sections.*
 
 /**
@@ -133,7 +134,7 @@ class Home : UIScreen() {
         /**
          * **currentProject** -> active [Project] instance
          */
-        lateinit var currentProject: com.tecknobit.pandoro.records.Project
+        lateinit var currentProject: MutableState<com.tecknobit.pandoro.records.Project>
 
         /**
          * **currentNote** -> active [Note] instance
@@ -159,6 +160,7 @@ class Home : UIScreen() {
      */
     @Composable
     override fun showScreen() {
+        currentProject = remember { mutableStateOf(com.tecknobit.pandoro.records.Project()) }
         showAddProjectPopup = remember { mutableStateOf(false) }
         showEditPopup = remember { mutableStateOf(false) }
         showScheduleUpdatePopup = remember { mutableStateOf(false) }
@@ -293,7 +295,7 @@ class Home : UIScreen() {
             if (showAddProjectPopup.value)
                 showAddProjectPopup()
             if (showEditPopup.value)
-                showEditProjectPopup(currentProject)
+                showEditProjectPopup(currentProject.value)
             if (showScheduleUpdatePopup.value)
                 showScheduleUpdatePopup()
             if (showCreateNotePopup.value)

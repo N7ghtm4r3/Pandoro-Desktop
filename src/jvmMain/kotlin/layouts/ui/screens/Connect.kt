@@ -55,12 +55,12 @@ import java.util.prefs.Preferences
 class Connect : UIScreen() {
 
     /**
-     * **scaffoldState** -> the scaffold state for the scaffold of the page
+     * **sectionScaffoldState** -> the scaffold state for the scaffold of the page
      */
     private lateinit var scaffoldState: ScaffoldState
 
     /**
-     * **coroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
+     * **sectionCoroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
      */
     private lateinit var coroutineScope: CoroutineScope
 

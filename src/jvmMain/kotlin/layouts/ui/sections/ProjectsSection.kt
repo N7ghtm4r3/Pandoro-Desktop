@@ -160,7 +160,7 @@ class ProjectsSection : Section() {
                         onClick = {
                             previousSections.add(Sections.Projects)
                             activeScreen.value = Sections.Project
-                            currentProject = project
+                            currentProject.value = project
                         }
                     ) {
                         Column(Modifier.size(100.dp).padding(15.dp)) {
@@ -177,7 +177,7 @@ class ProjectsSection : Section() {
                                                 IconButton(
                                                     modifier = Modifier.size(18.dp),
                                                     onClick = {
-                                                        currentProject = project
+                                                        currentProject.value = project
                                                         showEditPopup.value = true
                                                         actionsSelected = false
                                                     }

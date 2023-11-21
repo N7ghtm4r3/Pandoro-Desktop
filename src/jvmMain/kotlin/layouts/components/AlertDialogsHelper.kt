@@ -22,7 +22,11 @@ import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.JOINED
 import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.PENDING
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
+import helpers.showSnack
+import layouts.ui.screens.Home.Companion.currentProject
+import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.Section
 
 /**
  * Function to delete an update
@@ -42,8 +46,14 @@ fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    // TODO: MAKE REQUEST THEN
+                    requester!!.execDeleteUpdate(currentProject.value.id, update.id)
                     show.value = false
+                    if (!requester!!.successResponse())
+                        showSnack(
+                            Section.sectionCoroutineScope,
+                            Section.sectionScaffoldState,
+                            requester!!.errorMessage()
+                        )
                 },
                 content = { Text(text = "Confirm") }
             )
