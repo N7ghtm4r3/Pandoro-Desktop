@@ -119,7 +119,7 @@ private fun showEditProfilePopup(
 fun showAddGroupPopup() {
     val members = mutableStateListOf("")
     createPopup(
-        height = 400.dp,
+        height = 500.dp,
         flag = showAddGroupPopup,
         title = "Create a new group",
         columnModifier = Modifier,
@@ -154,8 +154,11 @@ fun showAddGroupPopup() {
                         if (isGroupNameValid(groupName)) {
                             if (isGroupDescriptionValid(groupDescription)) {
                                 if (checkMembersValidity(members)) {
-                                    // TODO: MAKE REQUEST THEN
-                                    showAddGroupPopup.value = false
+                                    requester!!.execCreateGroup(groupName, groupDescription, members)
+                                    if (requester!!.successResponse())
+                                        showAddGroupPopup.value = false
+                                    else
+                                        showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                                 }
                             } else
                                 showSnack(coroutineScope, scaffoldState, "You must insert a correct group description")

@@ -147,9 +147,9 @@ class Home : UIScreen() {
         var currentUpdate: ProjectUpdate? = null
 
         /**
-         * **currentGroup** -> active [Group] instance
+         * **currentGroup.value** -> active [Group] instance
          */
-        lateinit var currentGroup: Group
+        lateinit var currentGroup: MutableState<Group>
 
     }
 
@@ -161,6 +161,7 @@ class Home : UIScreen() {
     @Composable
     override fun showScreen() {
         currentProject = remember { mutableStateOf(com.tecknobit.pandoro.records.Project()) }
+        currentGroup = remember { mutableStateOf(Group()) }
         showAddProjectPopup = remember { mutableStateOf(false) }
         showEditPopup = remember { mutableStateOf(false) }
         showScheduleUpdatePopup = remember { mutableStateOf(false) }
@@ -180,7 +181,7 @@ class Home : UIScreen() {
                     when (activeScreen.value) {
                         Projects, Project, Notes, Profile -> createFab()
                         Group -> {
-                            if (currentGroup.isUserMaintainer(user))
+                            if (currentGroup.value.isUserMaintainer(user))
                                 createFab()
                         }
 
@@ -303,9 +304,9 @@ class Home : UIScreen() {
             if (showNoteInfoPopup.value)
                 showNoteInfoPopup(currentNote, currentUpdate)
             if (showAddMembersPopup.value)
-                showAddMembersPopup(currentGroup)
+                showAddMembersPopup(currentGroup.value)
             if (showEditProjectGroupPopup.value)
-                showEditProjectGroupPopup(currentGroup)
+                showEditProjectGroupPopup()
             if (showEditEmailPopup.value)
                 showEditEmailPopup()
             if (showEditPasswordPopup.value)

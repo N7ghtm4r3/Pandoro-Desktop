@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
@@ -22,11 +21,14 @@ import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.JOINED
 import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.PENDING
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
+import helpers.loadImageBitmap
 import helpers.showSnack
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.Section
+import layouts.ui.sections.Section.Companion.navBack
+import layouts.ui.sections.Section.Companion.sectionCoroutineScope
+import layouts.ui.sections.Section.Companion.sectionScaffoldState
 
 /**
  * Function to delete an update
@@ -49,11 +51,7 @@ fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
                     requester!!.execDeleteUpdate(currentProject.value.id, update.id)
                     show.value = false
                     if (!requester!!.successResponse())
-                        showSnack(
-                            Section.sectionCoroutineScope,
-                            Section.sectionScaffoldState,
-                            requester!!.errorMessage()
-                        )
+                        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
                 },
                 content = { Text(text = "Confirm") }
             )
@@ -83,8 +81,10 @@ fun RemoveUser(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // TODO: MAKE REQUEST THEN
+                    requester!!.execRemoveMember(group.id, memberId)
                     show.value = false
+                    if (!requester!!.successResponse())
+                        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
                 },
                 content = { Text(text = "Confirm") }
             )
@@ -148,10 +148,9 @@ fun LeaveGroup(
                                 if (member.invitationStatus == JOINED && !member.isLoggedUser(user)) {
                                     ListItem(
                                         icon = {
-                                            // TODO: USE REAL USER ICON member.profilePic
                                             Image(
                                                 modifier = Modifier.size(45.dp).clip(CircleShape),
-                                                painter = painterResource("pillars-of-creation.jpg"),
+                                                bitmap = loadImageBitmap(member.profilePic),
                                                 contentDescription = null,
                                                 contentScale = ContentScale.Crop
                                             )
@@ -190,7 +189,6 @@ fun LeaveGroup(
                         ) {
                             TextButton(
                                 onClick = {
-                                    // TODO: MAKE REQUEST THEN
                                     show.value = false
                                     showNextAdmin.value = false
                                 },
@@ -251,8 +249,15 @@ private fun leaveGroup(
     group: Group,
     nextAdmin: GroupMember? = null
 ) {
-    // TODO: MAKE REQUEST THEN
+    var nextAdminId: String? = null
+    if (nextAdmin != null)
+        nextAdminId = nextAdmin.id
+    requester!!.execLeaveGroup(group.id, nextAdminId)
     show.value = false
+    if (requester!!.successResponse())
+        navBack()
+    else
+        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
 }
 
 /**
@@ -274,8 +279,10 @@ fun DeleteGroup(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // TODO: MAKE REQUEST THEN
+                    requester!!.execDeleteGroup(group.id)
                     show.value = false
+                    if (!requester!!.successResponse())
+                        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
                 },
                 content = { Text(text = "Confirm") }
             )

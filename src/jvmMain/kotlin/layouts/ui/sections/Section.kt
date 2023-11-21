@@ -89,6 +89,16 @@ abstract class Section {
             return sections
         }
 
+        /**
+         * Function to navigate back and show the last item of [previousSections]
+         *
+         * No-any params required
+         */
+        fun navBack() {
+            activeScreen.value = previousSections[previousSections.lastIndex]
+            previousSections.removeLast()
+        }
+
     }
 
     /**
@@ -159,7 +169,7 @@ abstract class Section {
      * @param group: the group to show
      */
     protected fun navToGroup(previousSection: Sections, group: Group) {
-        currentGroup = group
+        currentGroup.value = group
         navToSection(previousSection, Sections.Group)
     }
 
@@ -172,16 +182,6 @@ abstract class Section {
     private fun navToSection(previousSection: Sections, destinationSection: Sections) {
         previousSections.add(previousSection)
         activeScreen.value = destinationSection
-    }
-
-    /**
-     * Function to navigate back and show the last item of [previousSections]
-     *
-     * No-any params required
-     */
-    protected fun navBack() {
-        activeScreen.value = previousSections[previousSections.lastIndex]
-        previousSections.removeLast()
     }
 
 }

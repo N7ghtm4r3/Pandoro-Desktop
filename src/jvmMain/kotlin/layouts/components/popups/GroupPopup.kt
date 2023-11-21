@@ -18,12 +18,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.checkMembersValidity
 import com.tecknobit.pandoro.helpers.isEmailValid
 import com.tecknobit.pandoro.records.Group
-import helpers.*
+import com.tecknobit.pandoro.records.Project
+import helpers.BACKGROUND_COLOR
+import helpers.PRIMARY_COLOR
+import helpers.RED_COLOR
+import helpers.showSnack
 import layouts.components.PandoroTextField
+import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.showAddMembersPopup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 
 /**
@@ -52,9 +59,13 @@ fun showAddMembersPopup(group: Group) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
                         if (checkMembersValidity(members)) {
-                            // TODO: MAKE REQUEST THEN
-                            showAddMembersPopup.value = false
-                        }
+                            requester!!.execAddMembers(group.id, members.toList())
+                            if (requester!!.successResponse())
+                                showAddMembersPopup.value = false
+                            else
+                                showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
+                        } else
+                            showSnack(coroutineScope, scaffoldState, "Wrong groups list")
                     },
                     text = "Add members",
                     fontSize = 14.sp
@@ -130,36 +141,15 @@ fun showMembersSection(
     }
 }
 
-/**
- * Function to check the validity of a members list
- *
- * @param members: members list to check
- * @return whether the members list is valid as [Boolean]
- */
-fun checkMembersValidity(members: SnapshotStateList<String>): Boolean {
-    if (members.isNotEmpty()) {
-        var membersCorrect = true
-        for (member in members) {
-            membersCorrect = isEmailValid(member)
-            if (!membersCorrect)
-                break
-        }
-        if (membersCorrect)
-            return true
-        else
-            showSnack(coroutineScope, scaffoldState, "You must insert a correct members list")
-    } else
-        showSnack(coroutineScope, scaffoldState, "You must insert one member at least")
-    return false
-}
+
 
 /**
  * Function to show the popup to edit a [Project] of a [Group]
  *
- * @param group: the group where edit the [Project]
+ * No any params required
  */
 @Composable
-fun showEditProjectGroupPopup(group: Group) {
+fun showEditProjectGroupPopup() {
     createPopup(
         height = 400.dp,
         flag = showEditProjectGroupPopup,
@@ -167,7 +157,11 @@ fun showEditProjectGroupPopup(group: Group) {
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
-            val projects = user.projects
+            val projects = ArrayList<String>()
+            val groupProjects = arrayListOf<String>()
+            currentGroup.value.projects.forEach { project ->
+                groupProjects.add(project.id)
+            }
             LazyVerticalGrid(
                 modifier = Modifier.height(310.dp).padding(top = 10.dp),
                 columns = GridCells.Fixed(3),
@@ -175,8 +169,8 @@ fun showEditProjectGroupPopup(group: Group) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(projects) { project ->
-                    var selected by remember { mutableStateOf(group.projects.contains(project)) }
+                items(user.projects) { project ->
+                    var selected by remember { mutableStateOf(groupProjects.contains(project.id)) }
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -187,12 +181,11 @@ fun showEditProjectGroupPopup(group: Group) {
                             ),
                             checked = selected,
                             onCheckedChange = {
-                                // TODO: CREATE THE REAL WORKFLOW
                                 selected = it
                                 if (it)
-                                    projects.add(project)
+                                    projects.add(project.id)
                                 else
-                                    projects.remove(project)
+                                    projects.remove(project.id)
                             }
                         )
                         Text(
@@ -205,8 +198,11 @@ fun showEditProjectGroupPopup(group: Group) {
             Spacer(Modifier.height(20.dp))
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
-                    // TODO: MAKE REQUEST THEN
-                    showEditProjectGroupPopup.value = false
+                    requester!!.execEditProjects(currentGroup.value.id, projects)
+                    if (requester!!.successResponse())
+                        showEditProjectGroupPopup.value = false
+                    else
+                        showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                 },
                 text = "Edit projects",
                 fontSize = 14.sp

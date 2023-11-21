@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,16 +24,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import com.tecknobit.apimanager.formatters.JsonHelper
+import com.tecknobit.pandoro.helpers.ui.ListManager
 import com.tecknobit.pandoro.records.Changelog
+import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.users.GroupMember.Role.*
 import com.tecknobit.pandoro.services.UsersHelper.PROFILE_PIC_KEY
 import helpers.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import layouts.components.DeleteGroup
+import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.screens.SplashScreen.Companion.userProfilePic
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 
 /**
@@ -40,8 +50,9 @@ import java.io.File
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
+ * @see ListManager
  */
-class ProfileSection : Section() {
+class ProfileSection : Section(), ListManager {
 
     companion object {
 
@@ -52,6 +63,8 @@ class ProfileSection : Section() {
 
     }
 
+    private lateinit var groups: SnapshotStateList<Group>
+
     /**
      * Function to show the content of the [ProfileSection]
      *
@@ -60,6 +73,8 @@ class ProfileSection : Section() {
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
     @Composable
     override fun showSection() {
+        groups = mutableStateListOf()
+        refreshValues()
         showSection {
             LazyColumn(
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp).fillMaxSize(),
@@ -340,7 +355,6 @@ class ProfileSection : Section() {
                                 }
                             }
                         }
-                        val groups = user.groups
                         val itemHeight = 95.dp
                         if (groups.isNotEmpty()) {
                             Column(
@@ -358,17 +372,22 @@ class ProfileSection : Section() {
                                     fontSize = 14.sp
                                 )
                                 spaceContent()
+                                var units = groups.size
+                                if (units < 4)
+                                    units = 4
                                 LazyVerticalGrid(
                                     modifier = Modifier.padding(top = 20.dp)
                                         .fillMaxWidth()
-                                        .height(((groups.size / 4) * itemHeight.value).dp),
+                                        .height(((units / 4) * (itemHeight.value) * 1).dp),
                                     columns = GridCells.Fixed(5),
                                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                                 ) {
                                     items(groups) { group ->
                                         val isAdmin = group.isUserAdmin(user)
                                         Card(
-                                            modifier = Modifier.fillMaxWidth().height(itemHeight)
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(itemHeight)
                                                 .padding(bottom = 20.dp),
                                             backgroundColor = Color.White,
                                             shape = RoundedCornerShape(10.dp),
@@ -436,6 +455,28 @@ class ProfileSection : Section() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    override fun refreshValues() {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (user.id != null && activeScreen.value == Sections.Profile) {
+                val tmpGroups = mutableStateListOf<Group>()
+                val response = requester!!.execGroupsList()
+                if (requester!!.successResponse()) {
+                    val jGroups = JSONArray(response)
+                    jGroups.forEach { jGroup ->
+                        tmpGroups.add(Group(jGroup as JSONObject))
+                    }
+                    if (needToRefresh(groups, tmpGroups)) {
+                        groups.clear()
+                        groups.addAll(tmpGroups)
+                        user.setGroups(groups)
+                    }
+                } else
+                    showSnack(requester!!.errorMessage())
+                delay(1000)
             }
         }
     }

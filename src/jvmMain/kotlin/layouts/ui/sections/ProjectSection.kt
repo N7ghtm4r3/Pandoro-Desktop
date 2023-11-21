@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.areAllChangeNotesDone
+import com.tecknobit.pandoro.helpers.ui.SingleItemManager
 import com.tecknobit.pandoro.records.Note
 import com.tecknobit.pandoro.records.Project
 import com.tecknobit.pandoro.records.Project.RepositoryPlatform.GitLab
@@ -53,8 +54,9 @@ import layouts.ui.screens.SplashScreen.Companion.user
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
+ * @see SingleItemManager
  */
-class ProjectSection : Section() {
+class ProjectSection : Section(), SingleItemManager {
 
     /**
      * Function to show the content of the [ProjectSection]
@@ -686,7 +688,7 @@ class ProjectSection : Section() {
         }
     }
 
-    private fun refreshItem() {
+    override fun refreshItem() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Project) {
                 val response = requester!!.execGetSingleProject(currentProject.value.id)

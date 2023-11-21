@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.ui.ListManager
 import com.tecknobit.pandoro.helpers.ui.filterProjects
 import com.tecknobit.pandoro.helpers.ui.populateFrequentProjects
 import com.tecknobit.pandoro.records.Project
@@ -41,8 +42,9 @@ import kotlin.math.ceil
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
+ * @see ListManager
  */
-class ProjectsSection : Section() {
+class ProjectsSection : Section(), ListManager {
 
     companion object {
 
@@ -73,7 +75,7 @@ class ProjectsSection : Section() {
         }
     }
 
-    private fun refreshValues() {
+    override fun refreshValues() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Projects) {
                 val tmpProjectsList = mutableStateListOf<Project>()
@@ -86,6 +88,8 @@ class ProjectsSection : Section() {
                     if (needToRefresh(projectsList, tmpProjectsList)) {
                         projectsList.clear()
                         projectsList.addAll(tmpProjectsList)
+                        user.setProjects(projectsList)
+                        user.setProjects(projectsList)
                     }
                 }
                 delay(1000)
@@ -225,10 +229,9 @@ class ProjectsSection : Section() {
                                                             TextButton(
                                                                 onClick = {
                                                                     requester!!.execDeleteProject(project.id)
-                                                                    if (requester!!.successResponse()) {
-                                                                        showDeleteAlertDialog = false
-                                                                        actionsSelected = false
-                                                                    } else
+                                                                    showDeleteAlertDialog = false
+                                                                    actionsSelected = false
+                                                                    if (!requester!!.successResponse())
                                                                         showSnack(requester!!.errorMessage())
                                                                 },
                                                                 content = { Text(text = "Confirm") }
