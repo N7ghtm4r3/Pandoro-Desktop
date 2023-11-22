@@ -88,6 +88,9 @@ class Home : UIScreen(), ListManager {
          */
         val changelogs = mutableStateListOf<Changelog>()
 
+        /**
+         * **isRefreshing** -> whether is current allowed refresh the lists
+         */
         var isRefreshing = false
 
         /**
@@ -383,6 +386,11 @@ class Home : UIScreen(), ListManager {
         }
     }
 
+    /**
+     * Function to refresh a list of items to display in the UI
+     *
+     * No-any params required
+     */
     override fun refreshValues() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null) {

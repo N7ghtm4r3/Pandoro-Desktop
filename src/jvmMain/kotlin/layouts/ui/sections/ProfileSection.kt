@@ -461,6 +461,11 @@ class ProfileSection : Section(), ListManager {
         }
     }
 
+    /**
+     * Function to refresh a list of items to display in the UI
+     *
+     * No-any params required
+     */
     override fun refreshValues() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Profile) {

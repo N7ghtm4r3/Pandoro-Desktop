@@ -33,7 +33,7 @@ kotlin {
                 api(compose.animation)
                 api(compose.materialIconsExtended)
                 implementation("com.github.N7ghtm4r3:APIManager:2.1.7")
-                implementation("com.tecknobit.pandoro:Pandoro:0.0.0.8")
+                implementation("com.tecknobit.pandoro:Pandoro:0.0.0.0")
                 implementation("com.netguru.multiplatform-charts:multiplatform-charts-desktop:1.0.0")
                 implementation("org.json:json:20230227")
                 implementation("com.darkrockstudios:mpfilepicker:2.0.2")

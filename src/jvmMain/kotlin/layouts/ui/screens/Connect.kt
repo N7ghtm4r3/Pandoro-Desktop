@@ -345,15 +345,33 @@ class Connect : UIScreen() {
         )
     }
 
-
+    /**
+     * This **LocalAuthHelper** class is useful to manage the auth credentials in local
+     *
+     * @author Tecknobit - N7ghtm4r3
+     */
     open inner class LocalAuthHelper {
 
+        /**
+         * **SERVER_ADDRESS_KEY** -> server address key
+         */
         private val SERVER_ADDRESS_KEY = "server_address"
 
+        /**
+         * **preferences** -> the instance to manage the user preferences
+         */
         private val preferences = Preferences.userRoot().node("/user/tecknobit/pandoro")
 
+        /**
+         * **host** -> the host to used in the requests
+         */
         var host: String? = null
 
+        /**
+         * Function to init the user credentials
+         *
+         * No-any params required
+         */
         fun initUserCredentials() {
             host = preferences.get(SERVER_ADDRESS_KEY, null)
             val userId = preferences.get(IDENTIFIER_KEY, null)
@@ -377,6 +395,16 @@ class Connect : UIScreen() {
             }
         }
 
+        /**
+         * Function to init the user credentials
+         *
+         * @param response: the response of the auth request
+         * @param host: the host to used in the requests
+         * @param name: the name of the user
+         * @param surname: the surname of the user
+         * @param email: the email of the user
+         * @param password: the password of the user
+         */
         fun initUserSession(
             response: JsonHelper,
             host: String?,
@@ -396,12 +424,23 @@ class Connect : UIScreen() {
             initUserCredentials()
         }
 
+        /**
+         * Function to store the host value
+         *
+         * @param host: the host to used in the requests
+         */
         @Wrapper
         fun storeHost(host: String?) {
             storeUserValue(SERVER_ADDRESS_KEY, host, false)
             this.host = host
         }
 
+        /**
+         * Function to store the profile pic value
+         *
+         * @param profilePic: the profile pic of the user
+         * @param refreshUser: whether refresh the user
+         */
         @Wrapper
         fun storeProfilePic(
             profilePic: String?,
@@ -412,16 +451,32 @@ class Connect : UIScreen() {
             storeUserValue(PROFILE_PIC_KEY, profilePicValue, refreshUser)
         }
 
+        /**
+         * Function to store the name value
+         *
+         * @param name: the name of the user
+         */
         @Wrapper
         private fun storeName(name: String?) {
             storeUserValue(NAME_KEY, name, false)
         }
 
+        /**
+         * Function to store the surname value
+         *
+         * @param surname: the surname of the user
+         */
         @Wrapper
         private fun storeSurname(surname: String?) {
             storeUserValue(SURNAME_KEY, surname, false)
         }
 
+        /**
+         * Function to store the email value
+         *
+         * @param email: the email of the user
+         * @param refreshUser: whether refresh the user
+         */
         @Wrapper
         fun storeEmail(
             email: String?,
@@ -430,6 +485,12 @@ class Connect : UIScreen() {
             storeUserValue(EMAIL_KEY, email, refreshUser)
         }
 
+        /**
+         * Function to store the password value
+         *
+         * @param password: the password of the user
+         * @param refreshUser: whether refresh the user
+         */
         @Wrapper
         fun storePassword(
             password: String?,
@@ -438,16 +499,28 @@ class Connect : UIScreen() {
             storeUserValue(PASSWORD_KEY, password, refreshUser)
         }
 
+        /**
+         * Function to store a user value
+         *
+         * @param key: the key of the value to store
+         * @param value: the value to store
+         * @param refreshUser: whether refresh the user
+         */
         private fun storeUserValue(
             key: String,
-            credential: String?,
+            value: String?,
             refreshUser: Boolean = false
         ) {
-            preferences.put(key, credential)
+            preferences.put(key, value)
             if (refreshUser)
                 initUserCredentials()
         }
 
+        /**
+         * Function to disconnect the user and clear the [preferences]
+         *
+         * No-any params required
+         */
         fun logout() {
             preferences.clear()
             initUserCredentials()

@@ -688,6 +688,11 @@ class ProjectSection : Section(), SingleItemManager {
         }
     }
 
+    /**
+     * Function to refresh an item to display in the UI
+     *
+     * No-any params required
+     */
     override fun refreshItem() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Project) {

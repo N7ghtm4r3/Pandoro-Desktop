@@ -32,6 +32,9 @@ class SplashScreen : UIScreen() {
 
     companion object {
 
+        /**
+         * **localAuthHelper** -> the instance to manage the auth credentials in local
+         */
         val localAuthHelper = Connect().LocalAuthHelper()
 
         /**
@@ -39,8 +42,14 @@ class SplashScreen : UIScreen() {
          */
         var user = User()
 
+        /**
+         * **requester** -> the stance to manage the requests with the backend
+         */
         var requester: Requester? = null
 
+        /**
+         * **userProfilePic** -> the profile pic of the current user
+         */
         lateinit var userProfilePic: MutableState<ImageBitmap?>
 
     }

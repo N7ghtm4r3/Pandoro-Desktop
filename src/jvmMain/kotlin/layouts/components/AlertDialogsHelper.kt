@@ -244,6 +244,13 @@ fun LeaveGroup(
     )
 }
 
+/**
+ * Function to execute the request to leave a [Group]
+ *
+ * @param show: the flaw whether show the [AlertDialog]
+ * @param group: the group to leave
+ * @param nextAdmin: the next admin chosen whan a ADMIN leaves
+ */
 private fun leaveGroup(
     show: MutableState<Boolean>,
     group: Group,
