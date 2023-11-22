@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,22 +18,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.ui.ListManager
+import com.tecknobit.pandoro.records.Note
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
 import helpers.spaceContent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentNote
 import layouts.ui.screens.Home.Companion.currentUpdate
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * This is the layout for the notes section
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
+ * @see ListManager
  */
-class NotesSection : Section() {
+class NotesSection : Section(), ListManager {
+
+    private lateinit var notes: SnapshotStateList<Note>
 
     /**
      * Function to show the content of the [NotesSection]
@@ -43,96 +57,136 @@ class NotesSection : Section() {
     @Composable
     override fun showSection() {
         var markModeEnabled by remember { mutableStateOf(false) }
-        Row(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Notes",
-                fontSize = 25.sp
-            )
-            IconButton(
-                modifier = Modifier.padding(top = 5.dp),
-                onClick = { markModeEnabled = !markModeEnabled }
-            ) {
-                Icon(
-                    imageVector = if (!markModeEnabled) Icons.Default.EditNote else Icons.Default.Notes,
-                    contentDescription = null
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(top = 5.dp),
-                text = "Notes number: ${user.notes.size}",
-                fontSize = 14.sp
-            )
-            spaceContent()
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(top = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(user.notes) { note ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().height(65.dp),
-                        backgroundColor = Color.White,
-                        shape = RoundedCornerShape(10.dp),
-                        elevation = 2.dp,
-                        onClick = {
-                            currentNote = note
-                            currentUpdate = null
-                            showNoteInfoPopup.value = true
-                        }
+        notes = remember { mutableStateListOf() }
+        refreshValues()
+        showSection {
+            Column {
+                Row(
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Notes",
+                        fontSize = 25.sp
+                    )
+                    IconButton(
+                        modifier = Modifier.padding(top = 5.dp),
+                        onClick = { markModeEnabled = !markModeEnabled }
                     ) {
-                        Row(
-                            modifier = Modifier.padding(start = 20.dp, end = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            var markAsDone by remember { mutableStateOf(note.isMarkedAsDone) }
-                            if (markModeEnabled) {
-                                Checkbox(
-                                    modifier = Modifier.size(20.dp),
-                                    colors = CheckboxDefaults.colors(
-                                        checkedColor = PRIMARY_COLOR,
-                                        checkmarkColor = BACKGROUND_COLOR
-                                    ),
-                                    checked = markAsDone,
-                                    onCheckedChange = {
-                                        // TODO: MAKE REQUEST THEN
-                                        markAsDone = it
-                                    }
-                                )
-                                Spacer(Modifier.width(10.dp))
-                            }
-                            Text(
-                                modifier = Modifier.weight(15f).fillMaxWidth(),
-                                text = note.content,
-                                textAlign = TextAlign.Justify,
-                                fontSize = 14.sp,
-                                textDecoration = if (markAsDone) TextDecoration.LineThrough else null
-                            )
-                            Column(
-                                modifier = Modifier.weight(1f).fillMaxWidth(),
-                                horizontalAlignment = Alignment.End
+                        Icon(
+                            imageVector = if (!markModeEnabled) Icons.Default.EditNote else Icons.Default.Notes,
+                            contentDescription = null
+                        )
+                    }
+                }
+                Column(
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(top = 5.dp),
+                        text = "Notes number: ${notes.size}",
+                        fontSize = 14.sp
+                    )
+                    spaceContent()
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().padding(top = 10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(notes) { note ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth().height(65.dp),
+                                backgroundColor = Color.White,
+                                shape = RoundedCornerShape(10.dp),
+                                elevation = 2.dp,
+                                onClick = {
+                                    currentNote = note
+                                    currentUpdate = null
+                                    showNoteInfoPopup.value = true
+                                }
                             ) {
-                                IconButton(
-                                    onClick = {
-                                        // TODO: MAKE REQUEST THEN
-                                    }
+                                Row(
+                                    modifier = Modifier.padding(start = 20.dp, end = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        imageVector = Icons.Default.Delete,
-                                        tint = RED_COLOR,
-                                        contentDescription = null
+                                    var markAsDone = note.isMarkedAsDone
+                                    if (markModeEnabled) {
+                                        Checkbox(
+                                            modifier = Modifier.size(20.dp),
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = PRIMARY_COLOR,
+                                                checkmarkColor = BACKGROUND_COLOR
+                                            ),
+                                            checked = markAsDone,
+                                            onCheckedChange = {
+                                                if (it) {
+                                                    requester!!.execMarkNoteAsDone(note.id)
+                                                    if (requester!!.successResponse())
+                                                        markAsDone = true
+                                                    else
+                                                        showSnack(requester!!.errorMessage())
+                                                } else {
+                                                    requester!!.execMarkNoteAsToDo(note.id)
+                                                    if (requester!!.successResponse())
+                                                        markAsDone = false
+                                                    else
+                                                        showSnack(requester!!.errorMessage())
+                                                }
+                                            }
+                                        )
+                                        Spacer(Modifier.width(10.dp))
+                                    }
+                                    Text(
+                                        modifier = Modifier.weight(15f).fillMaxWidth(),
+                                        text = note.content,
+                                        textAlign = TextAlign.Justify,
+                                        fontSize = 14.sp,
+                                        textDecoration = if (markAsDone) TextDecoration.LineThrough else null
                                     )
+                                    Column(
+                                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                                        horizontalAlignment = Alignment.End
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                requester!!.execDeleteNote(note.id)
+                                                if (!requester!!.successResponse())
+                                                    showSnack(requester!!.errorMessage())
+                                            }
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(20.dp),
+                                                imageVector = Icons.Default.Delete,
+                                                tint = RED_COLOR,
+                                                contentDescription = null
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    override fun refreshValues() {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (user.id != null && activeScreen.value == Sections.Notes) {
+                val tmpNotes = mutableStateListOf<Note>()
+                val response = requester!!.execNotesList()
+                if (requester!!.successResponse()) {
+                    val jNotes = JSONArray(response)
+                    jNotes.forEach { jNote ->
+                        tmpNotes.add(Note(jNote as JSONObject))
+                    }
+                    if (needToRefresh(notes, tmpNotes)) {
+                        notes.clear()
+                        notes.addAll(tmpNotes)
+                    }
+                } else
+                    showSnack(requester!!.errorMessage())
+                delay(1000)
             }
         }
     }

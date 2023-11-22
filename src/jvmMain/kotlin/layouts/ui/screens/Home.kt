@@ -16,32 +16,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.pandoro.helpers.ui.ListManager
 import com.tecknobit.pandoro.records.Changelog
 import com.tecknobit.pandoro.records.Changelog.ChangelogEvent.INVITED_GROUP
 import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Note
 import com.tecknobit.pandoro.records.ProjectUpdate
-import helpers.BACKGROUND_COLOR
-import helpers.GREEN_COLOR
-import helpers.RED_COLOR
-import helpers.spaceContent
+import helpers.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import layouts.components.Sidebar
 import layouts.components.Sidebar.Companion.activeScreen
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
+import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
 import layouts.ui.sections.Section.*
+import layouts.ui.sections.Section.Companion.sectionCoroutineScope
+import layouts.ui.sections.Section.Companion.sectionScaffoldState
 import layouts.ui.sections.Section.Sections.*
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * This is the layout for the home screen
  *
  * @author Tecknobit - N7ghtm4r3
  * @see UIScreen
+ * @see ListManager
  */
-class Home : UIScreen() {
+class Home : UIScreen(), ListManager {
 
     /**
      * **projects** -> instance to show the [ProjectsSection]
@@ -76,10 +84,11 @@ class Home : UIScreen() {
     companion object {
 
         /**
-         * **notifies** -> list of [Changelog] as notifies for the [User]
+         * **changelogs** -> list of [Changelog] as changelogs for the [User]
          */
-        // TODO: CHECK TO CHANGE
-        val notifies = mutableStateListOf<Changelog>()
+        val changelogs = mutableStateListOf<Changelog>()
+
+        var isRefreshing = false
 
         /**
          * **showAddProjectPopup** -> flag whether show the [showAddProjectPopup]
@@ -175,7 +184,7 @@ class Home : UIScreen() {
         Scaffold(
             topBar = { TopAppBar(title = {}) },
             floatingActionButton = {
-                if (notifies.isNotEmpty())
+                if (changelogs.isNotEmpty())
                     showNotifies()
                 else {
                     when (activeScreen.value) {
@@ -191,90 +200,6 @@ class Home : UIScreen() {
             }
         ) {
             Box {
-                // TODO: REMOVE THIS SNIPPET OF THE LAUNCH
-                /*rememberCoroutineScope().launch {
-                    while (true) {
-                        delay(Random().nextLong(40000))
-                        when (Random().nextInt(3)) {
-                            0 -> {
-                                notifies.add(
-                                    Changelog(
-                                        "",
-                                        Changelog.ChangelogEvent.UPDATE_DELETED,
-                                        System.currentTimeMillis(),
-                                        Project("TecknobitCiaoaa"),
-                                        "1.0.1.0.10",
-                                        true
-                                    )
-                                )
-                            }
-
-                            1 -> {
-                                notifies.add(
-                                    Changelog(
-                                        "",
-                                        INVITED_GROUP,
-                                        System.currentTimeMillis(),
-                                        toImportFromLibrary.Group(
-                                            "",
-                                            "TecknobitCiaoaa",
-                                            "ciao",
-                                            ArrayList(
-                                                listOf(
-                                                    toImportFromLibrary.Group.GroupMember(
-                                                        "manu0",
-                                                        "Manuel",
-                                                        "Maurizio",
-                                                        toImportFromLibrary.Group.Role.ADMIN
-                                                    ),
-                                                    toImportFromLibrary.Group.GroupMember(
-                                                        "Gabriele",
-                                                        "Marengo",
-                                                        toImportFromLibrary.Group.Role.MAINTAINER
-                                                    )
-                                                )
-                                            ),
-                                            ArrayList()
-                                        ),
-                                        true
-                                    )
-                                )
-                            }
-
-                            2 -> {
-                                notifies.add(
-                                    Changelog(
-                                        "",
-                                        Changelog.ChangelogEvent.GROUP_DELETED,
-                                        System.currentTimeMillis(),
-                                        toImportFromLibrary.Group(
-                                            "",
-                                            "TecknobitJOIN",
-                                            "ciao",
-                                            ArrayList(
-                                                listOf(
-                                                    toImportFromLibrary.Group.GroupMember(
-                                                        "manu0",
-                                                        "Manuel",
-                                                        "Maurizio",
-                                                        toImportFromLibrary.Group.Role.ADMIN
-                                                    ),
-                                                    toImportFromLibrary.Group.GroupMember(
-                                                        "Gabriele",
-                                                        "Marengo",
-                                                        toImportFromLibrary.Group.Role.MAINTAINER
-                                                    )
-                                                )
-                                            ),
-                                            ArrayList()
-                                        ),
-                                        false
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }*/
                 Row {
                     Column(modifier = Modifier.width(250.dp).fillMaxHeight()) {
                         Sidebar().createSidebar()
@@ -283,7 +208,13 @@ class Home : UIScreen() {
                         modifier = Modifier.fillMaxSize().padding(20.dp).background(BACKGROUND_COLOR)
                     ) {
                         when (activeScreen.value) {
-                            Projects -> projects.showSection()
+                            Projects -> {
+                                projects.showSection()
+                                if (!isRefreshing) {
+                                    refreshValues()
+                                    isRefreshing = true
+                                }
+                            }
                             Notes -> notes.showSection()
                             Overview -> overview.showSection()
                             Profile -> profile.showSection()
@@ -343,7 +274,7 @@ class Home : UIScreen() {
     }
 
     /**
-     * Function to show the [notifies] list
+     * Function to show the [changelogs] list
      *
      * No-any params required
      */
@@ -352,8 +283,8 @@ class Home : UIScreen() {
         LazyColumn(
             contentPadding = PaddingValues(20.dp)
         ) {
-            items(notifies) { notify ->
-                val isJoinRequest = notify.changelogEvent == INVITED_GROUP
+            items(changelogs) { changelog ->
+                val isJoinRequest = changelog.changelogEvent == INVITED_GROUP
                 Card(
                     modifier = Modifier.padding(bottom = 10.dp)
                         .size(
@@ -373,7 +304,7 @@ class Home : UIScreen() {
                                     top = 5.dp,
                                     end = 5.dp
                                 ).align(alignment = Alignment.End),
-                            onClick = { notifies.remove(notify) }
+                            onClick = { changelogs.remove(changelog) }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
@@ -384,12 +315,12 @@ class Home : UIScreen() {
                             modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
                         ) {
                             Text(
-                                text = notify.title,
+                                text = changelog.title,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 modifier = Modifier.padding(top = 10.dp),
-                                text = notify.content,
+                                text = changelog.content,
                                 fontSize = 15.sp
                             )
                             if (isJoinRequest) {
@@ -406,8 +337,15 @@ class Home : UIScreen() {
                                             contentColor = Color.White
                                         ),
                                         onClick = {
-                                            // TODO: MAKE REQUEST THEN
-                                            notifies.remove(notify)
+                                            requester!!.execDeclineInvitation(changelog.group.id)
+                                            if (requester!!.successResponse())
+                                                changelogs.remove(changelog)
+                                            else {
+                                                showSnack(
+                                                    sectionCoroutineScope, sectionScaffoldState,
+                                                    requester!!.errorMessage()
+                                                )
+                                            }
                                         }
                                     ) {
                                         Text(
@@ -421,8 +359,15 @@ class Home : UIScreen() {
                                             contentColor = Color.White
                                         ),
                                         onClick = {
-                                            // TODO: MAKE REQUEST THEN
-                                            notifies.remove(notify)
+                                            requester!!.execAcceptInvitation(changelog.group.id)
+                                            if (requester!!.successResponse())
+                                                changelogs.remove(changelog)
+                                            else {
+                                                showSnack(
+                                                    sectionCoroutineScope, sectionScaffoldState,
+                                                    requester!!.errorMessage()
+                                                )
+                                            }
                                         }
                                     ) {
                                         Text(
@@ -434,6 +379,27 @@ class Home : UIScreen() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    override fun refreshValues() {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (user.id != null) {
+                val tmpChangelogs = mutableStateListOf<Changelog>()
+                val response = requester!!.execChangelogsList()
+                if (requester!!.successResponse()) {
+                    val jChangelogs = JSONArray(response)
+                    jChangelogs.forEach { jChangelog ->
+                        tmpChangelogs.add(Changelog(jChangelog as JSONObject))
+                    }
+                    if (needToRefresh(changelogs, tmpChangelogs)) {
+                        changelogs.clear()
+                        changelogs.addAll(tmpChangelogs)
+                    }
+                } else
+                    showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
+                delay(1000)
             }
         }
     }

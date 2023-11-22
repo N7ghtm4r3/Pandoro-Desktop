@@ -336,7 +336,9 @@ class ProfileSection : Section(), ListManager {
                                                         ) {
                                                             IconButton(
                                                                 onClick = {
-                                                                    // TODO: MAKE REQUEST THEN
+                                                                    requester!!.execDeleteChangelog(changelog.id)
+                                                                    if (!requester!!.successResponse())
+                                                                        showSnack(requester!!.errorMessage())
                                                                 }
                                                             ) {
                                                                 Icon(
@@ -496,7 +498,9 @@ class ProfileSection : Section(), ListManager {
     }
 
     private fun readChangelog(changelog: Changelog) {
-        // TODO: MAKE REQUEST THEN
+        requester!!.execReadChangelog(changelog.id)
+        if (!requester!!.successResponse())
+            showSnack(requester!!.errorMessage())
     }
 
 }

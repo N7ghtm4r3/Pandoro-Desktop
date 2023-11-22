@@ -64,13 +64,15 @@ class ProjectsSection : Section(), ListManager {
     override fun showSection() {
         projectsList = mutableStateListOf()
         refreshValues()
-        Spacer(Modifier.height(10.dp))
-        LazyColumn {
-            item {
-                populateLazyGrid("Frequent projects", populateFrequentProjects(projectsList).toMutableStateList())
-            }
-            item {
-                populateLazyGrid("Current projects", projectsList)
+        showSection {
+            Spacer(Modifier.height(10.dp))
+            LazyColumn {
+                item {
+                    populateLazyGrid("Frequent projects", populateFrequentProjects(projectsList).toMutableStateList())
+                }
+                item {
+                    populateLazyGrid("Current projects", projectsList)
+                }
             }
         }
     }
@@ -89,9 +91,9 @@ class ProjectsSection : Section(), ListManager {
                         projectsList.clear()
                         projectsList.addAll(tmpProjectsList)
                         user.setProjects(projectsList)
-                        user.setProjects(projectsList)
                     }
-                }
+                } else
+                    showSnack(requester!!.errorMessage())
                 delay(1000)
             }
         }
