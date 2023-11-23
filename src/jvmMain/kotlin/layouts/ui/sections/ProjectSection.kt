@@ -39,8 +39,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import layouts.components.DeleteUpdate
 import layouts.components.PublishUpdate
-import layouts.components.Sidebar.Companion.activeScreen
 import layouts.components.showProjectChart
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentNote
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.currentUpdate
@@ -48,6 +48,7 @@ import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.json.JSONException
 
 /**
  * This is the layout for the project section
@@ -698,9 +699,12 @@ class ProjectSection : Section(), SingleItemManager {
             while (user.id != null && activeScreen.value == Sections.Project) {
                 val response = requester!!.execGetSingleProject(currentProject.value.id)
                 if (requester!!.successResponse()) {
-                    val tmpProject = Project(response)
-                    if (needToRefresh(currentProject.value, tmpProject))
-                        currentProject.value = tmpProject
+                    try {
+                        val tmpProject = Project(response)
+                        if (needToRefresh(currentProject.value, tmpProject))
+                            currentProject.value = tmpProject
+                    } catch (_: JSONException) {
+                    }
                 } else
                     showSnack(requester!!.errorMessage())
                 delay(1000)

@@ -8,7 +8,7 @@ import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Project
 import helpers.BACKGROUND_COLOR
 import kotlinx.coroutines.CoroutineScope
-import layouts.components.Sidebar.Companion.activeScreen
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.currentProject
 

@@ -28,7 +28,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import layouts.components.Sidebar
-import layouts.components.Sidebar.Companion.activeScreen
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
@@ -40,6 +39,7 @@ import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.sectionScaffoldState
 import layouts.ui.sections.Section.Sections.*
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 /**
@@ -82,6 +82,11 @@ class Home : UIScreen(), ListManager {
     private val profile = ProfileSection()
 
     companion object {
+
+        /**
+         * **activeScreen** -> the instance of the active screen of the application to show
+         */
+        lateinit var activeScreen: MutableState<Sections>
 
         /**
          * **changelogs** -> list of [Changelog] as changelogs for the [User]
@@ -172,6 +177,7 @@ class Home : UIScreen(), ListManager {
      */
     @Composable
     override fun showScreen() {
+        activeScreen = remember { mutableStateOf(Projects) }
         currentProject = remember { mutableStateOf(com.tecknobit.pandoro.records.Project()) }
         currentGroup = remember { mutableStateOf(Group()) }
         showAddProjectPopup = remember { mutableStateOf(false) }
@@ -187,7 +193,12 @@ class Home : UIScreen(), ListManager {
         Scaffold(
             topBar = { TopAppBar(title = {}) },
             floatingActionButton = {
-                if (changelogs.isNotEmpty())
+                val notRedChangelogs = mutableListOf<Changelog>()
+                changelogs.forEach { changelog ->
+                    if (!changelog.isRed)
+                        notRedChangelogs.add(changelog)
+                }
+                if (notRedChangelogs.isNotEmpty() && activeScreen.value != Profile)
                     showNotifies()
                 else {
                     when (activeScreen.value) {
@@ -288,94 +299,109 @@ class Home : UIScreen(), ListManager {
         ) {
             items(changelogs) { changelog ->
                 val isJoinRequest = changelog.changelogEvent == INVITED_GROUP
-                Card(
-                    modifier = Modifier.padding(bottom = 10.dp)
-                        .size(
-                            width = 500.dp,
-                            height = if (!isJoinRequest) 115.dp else 155.dp
-                        ),
-                    backgroundColor = Color.White,
-                    shape = RoundedCornerShape(5.dp),
-                    elevation = 10.dp
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
+                if (!changelog.isRed) {
+                    Card(
+                        modifier = Modifier.padding(bottom = 10.dp)
+                            .size(
+                                width = 500.dp,
+                                height = if (!isJoinRequest) 115.dp else 155.dp
+                            ),
+                        backgroundColor = Color.White,
+                        shape = RoundedCornerShape(5.dp),
+                        elevation = 10.dp
                     ) {
-                        IconButton(
-                            modifier = Modifier.size(25.dp)
-                                .padding(
-                                    top = 5.dp,
-                                    end = 5.dp
-                                ).align(alignment = Alignment.End),
-                            onClick = { changelogs.remove(changelog) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = null
-                            )
-                        }
                         Column(
-                            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            Text(
-                                text = changelog.title,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier.padding(top = 10.dp),
-                                text = changelog.content,
-                                fontSize = 15.sp
-                            )
-                            if (isJoinRequest) {
-                                spaceContent()
-                                Row(
-                                    modifier = Modifier.padding(top = 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(20.dp)
-                                ) {
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = RED_COLOR,
-                                            contentColor = Color.White
-                                        ),
-                                        onClick = {
-                                            requester!!.execDeclineInvitation(changelog.group.id)
-                                            if (requester!!.successResponse())
-                                                changelogs.remove(changelog)
-                                            else {
-                                                showSnack(
-                                                    sectionCoroutineScope, sectionScaffoldState,
-                                                    requester!!.errorMessage()
-                                                )
-                                            }
-                                        }
-                                    ) {
-                                        Text(
-                                            text = "Decline"
-                                        )
+                            if (!isJoinRequest) {
+                                IconButton(
+                                    modifier = Modifier.size(25.dp)
+                                        .padding(
+                                            top = 5.dp,
+                                            end = 5.dp
+                                        ).align(alignment = Alignment.End),
+                                    onClick = {
+                                        requester!!.execReadChangelog(changelog.id)
+                                        if (requester!!.successResponse())
+                                            changelogs.remove(changelog)
+                                        else
+                                            showSnack(
+                                                sectionCoroutineScope,
+                                                sectionScaffoldState,
+                                                requester!!.errorMessage()
+                                            )
                                     }
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        colors = ButtonDefaults.buttonColors(
-                                            backgroundColor = GREEN_COLOR,
-                                            contentColor = Color.White
-                                        ),
-                                        onClick = {
-                                            requester!!.execAcceptInvitation(changelog.group.id)
-                                            if (requester!!.successResponse())
-                                                changelogs.remove(changelog)
-                                            else {
-                                                showSnack(
-                                                    sectionCoroutineScope, sectionScaffoldState,
-                                                    requester!!.errorMessage()
-                                                )
-                                            }
-                                        }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = null
+                                    )
+                                }
+                            } else
+                                Spacer(Modifier.height(25.dp))
+                            Column(
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                            ) {
+                                Text(
+                                    text = changelog.title,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    modifier = Modifier.padding(top = 10.dp),
+                                    text = changelog.content,
+                                    fontSize = 15.sp
+                                )
+                                if (isJoinRequest) {
+                                    spaceContent()
+                                    Row(
+                                        modifier = Modifier.padding(top = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(20.dp)
                                     ) {
-                                        Text(
-                                            text = "Join"
-                                        )
+                                        Button(
+                                            modifier = Modifier.weight(1f),
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = RED_COLOR,
+                                                contentColor = Color.White
+                                            ),
+                                            onClick = {
+                                                requester!!.execDeclineInvitation(changelog.group.id, changelog.id)
+                                                if (requester!!.successResponse())
+                                                    changelogs.remove(changelog)
+                                                else {
+                                                    showSnack(
+                                                        sectionCoroutineScope, sectionScaffoldState,
+                                                        requester!!.errorMessage()
+                                                    )
+                                                }
+                                            }
+                                        ) {
+                                            Text(
+                                                text = "Decline"
+                                            )
+                                        }
+                                        Button(
+                                            modifier = Modifier.weight(1f),
+                                            colors = ButtonDefaults.buttonColors(
+                                                backgroundColor = GREEN_COLOR,
+                                                contentColor = Color.White
+                                            ),
+                                            onClick = {
+                                                requester!!.execAcceptInvitation(changelog.group.id, changelog.id)
+                                                if (requester!!.successResponse())
+                                                    changelogs.remove(changelog)
+                                                else {
+                                                    showSnack(
+                                                        sectionCoroutineScope, sectionScaffoldState,
+                                                        requester!!.errorMessage()
+                                                    )
+                                                }
+                                            }
+                                        ) {
+                                            Text(
+                                                text = "Join"
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -393,17 +419,59 @@ class Home : UIScreen(), ListManager {
      */
     override fun refreshValues() {
         CoroutineScope(Dispatchers.Default).launch {
+            var response = ""
             while (user.id != null) {
+                if (activeScreen.value == Projects || activeScreen.value == Group || activeScreen.value == Overview) {
+                    val tmpProjectsList = mutableStateListOf<com.tecknobit.pandoro.records.Project>()
+                    response = requester!!.execProjectsList()
+                    if (requester!!.successResponse()) {
+                        try {
+                            val jProjects = JSONArray(response)
+                            jProjects.forEach { jProject ->
+                                tmpProjectsList.add(com.tecknobit.pandoro.records.Project(jProject as JSONObject))
+                            }
+                            if (needToRefresh(ProjectsSection.projectsList, tmpProjectsList)) {
+                                ProjectsSection.projectsList.clear()
+                                ProjectsSection.projectsList.addAll(tmpProjectsList)
+                                user.setProjects(ProjectsSection.projectsList)
+                            }
+                        } catch (_: JSONException) {
+                        }
+                    } else
+                        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
+                }
+                if (activeScreen.value == Profile || activeScreen.value == Project) {
+                    val tmpGroups = mutableStateListOf<Group>()
+                    response = requester!!.execGroupsList()
+                    if (requester!!.successResponse()) {
+                        try {
+                            val jGroups = JSONArray(response)
+                            jGroups.forEach { jGroup ->
+                                tmpGroups.add(Group(jGroup as JSONObject))
+                            }
+                            if (needToRefresh(ProfileSection.groups, tmpGroups)) {
+                                ProfileSection.groups.clear()
+                                ProfileSection.groups.addAll(tmpGroups)
+                                user.setGroups(ProfileSection.groups)
+                            }
+                        } catch (_: JSONException) {
+                        }
+                    } else
+                        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
+                }
                 val tmpChangelogs = mutableStateListOf<Changelog>()
-                val response = requester!!.execChangelogsList()
+                response = requester!!.execChangelogsList()
                 if (requester!!.successResponse()) {
-                    val jChangelogs = JSONArray(response)
-                    jChangelogs.forEach { jChangelog ->
-                        tmpChangelogs.add(Changelog(jChangelog as JSONObject))
-                    }
-                    if (needToRefresh(changelogs, tmpChangelogs)) {
-                        changelogs.clear()
-                        changelogs.addAll(tmpChangelogs)
+                    try {
+                        val jChangelogs = JSONArray(response)
+                        jChangelogs.forEach { jChangelog ->
+                            tmpChangelogs.add(Changelog(jChangelog as JSONObject))
+                        }
+                        if (needToRefresh(changelogs, tmpChangelogs)) {
+                            changelogs.clear()
+                            changelogs.addAll(tmpChangelogs)
+                        }
+                    } catch (_: JSONException) {
                     }
                 } else
                     showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())

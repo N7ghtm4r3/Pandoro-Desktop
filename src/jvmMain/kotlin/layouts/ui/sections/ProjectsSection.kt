@@ -17,24 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.pandoro.helpers.ui.ListManager
 import com.tecknobit.pandoro.helpers.ui.filterProjects
 import com.tecknobit.pandoro.helpers.ui.populateFrequentProjects
 import com.tecknobit.pandoro.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.RED_COLOR
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import layouts.components.PandoroTextField
-import layouts.components.Sidebar.Companion.activeScreen
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
-import layouts.ui.screens.SplashScreen.Companion.user
-import org.json.JSONArray
-import org.json.JSONObject
 import kotlin.math.ceil
 
 /**
@@ -42,16 +34,15 @@ import kotlin.math.ceil
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
- * @see ListManager
  */
-class ProjectsSection : Section(), ListManager {
+class ProjectsSection : Section() {
 
     companion object {
 
         /**
          * **projectsList** -> the list of the projects
          */
-        lateinit var projectsList: SnapshotStateList<Project>
+        val projectsList: SnapshotStateList<Project> = mutableStateListOf()
 
     }
 
@@ -62,8 +53,6 @@ class ProjectsSection : Section(), ListManager {
      */
     @Composable
     override fun showSection() {
-        projectsList = mutableStateListOf()
-        refreshValues()
         showSection {
             Spacer(Modifier.height(10.dp))
             LazyColumn {
@@ -73,33 +62,6 @@ class ProjectsSection : Section(), ListManager {
                 item {
                     populateLazyGrid("Current projects", projectsList)
                 }
-            }
-        }
-    }
-
-    /**
-     * Function to refresh a list of items to display in the UI
-     *
-     * No-any params required
-     */
-    override fun refreshValues() {
-        CoroutineScope(Dispatchers.Default).launch {
-            while (user.id != null && activeScreen.value == Sections.Projects) {
-                val tmpProjectsList = mutableStateListOf<Project>()
-                val response = requester!!.execProjectsList()
-                if (requester!!.successResponse()) {
-                    val jProjects = JSONArray(response)
-                    jProjects.forEach { jProject ->
-                        tmpProjectsList.add(Project(jProject as JSONObject))
-                    }
-                    if (needToRefresh(projectsList, tmpProjectsList)) {
-                        projectsList.clear()
-                        projectsList.addAll(tmpProjectsList)
-                        user.setProjects(projectsList)
-                    }
-                } else
-                    showSnack(requester!!.errorMessage())
-                delay(1000)
             }
         }
     }

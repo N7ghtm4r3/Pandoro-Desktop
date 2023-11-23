@@ -24,25 +24,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import com.tecknobit.apimanager.formatters.JsonHelper
-import com.tecknobit.pandoro.helpers.ui.ListManager
 import com.tecknobit.pandoro.records.Changelog
+import com.tecknobit.pandoro.records.Changelog.ChangelogEvent.INVITED_GROUP
 import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.users.GroupMember.Role.*
 import com.tecknobit.pandoro.services.UsersHelper.PROFILE_PIC_KEY
 import helpers.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import layouts.components.DeleteGroup
-import layouts.components.Sidebar.Companion.activeScreen
 import layouts.ui.screens.Home
+import layouts.ui.screens.Home.Companion.changelogs
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.screens.SplashScreen.Companion.userProfilePic
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 
 /**
@@ -50,9 +44,8 @@ import java.io.File
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
- * @see ListManager
  */
-class ProfileSection : Section(), ListManager {
+class ProfileSection : Section() {
 
     companion object {
 
@@ -61,9 +54,17 @@ class ProfileSection : Section(), ListManager {
          */
         private const val HIDE_PASSWORD = "********"
 
-    }
+        /**
+         * **groups** -> the list of the groups
+         */
+        val groups: SnapshotStateList<Group> = mutableStateListOf()
 
-    private lateinit var groups: SnapshotStateList<Group>
+        /**
+         * **hideLeaveGroup** -> whether show the leave group button in [GroupSection]
+         */
+        var hideLeaveGroup: Boolean = false
+
+    }
 
     /**
      * Function to show the content of the [ProfileSection]
@@ -73,11 +74,17 @@ class ProfileSection : Section(), ListManager {
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
     @Composable
     override fun showSection() {
-        groups = mutableStateListOf()
-        refreshValues()
+        hideLeaveGroup = false
         showSection {
             LazyColumn(
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp).fillMaxSize(),
+                modifier = Modifier
+                    .padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 10.dp,
+                        bottom = 20.dp
+                    )
+                    .fillMaxSize(),
             ) {
                 item {
                     Column(
@@ -109,7 +116,9 @@ class ProfileSection : Section(), ListManager {
                                         ) {
                                             var showFilePicker by remember { mutableStateOf(false) }
                                             Image(
-                                                modifier = Modifier.size(150.dp).clip(CircleShape),
+                                                modifier = Modifier
+                                                    .size(150.dp)
+                                                    .clip(CircleShape),
                                                 bitmap = userProfilePic.value!!,
                                                 contentDescription = null
                                             )
@@ -268,7 +277,6 @@ class ProfileSection : Section(), ListManager {
                                     shape = RoundedCornerShape(15.dp),
                                     elevation = 2.dp
                                 ) {
-                                    val changelogs = user.changelogs
                                     if (changelogs.isEmpty()) {
                                         Column(
                                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -287,8 +295,10 @@ class ProfileSection : Section(), ListManager {
                                                         val project = changelog.project
                                                         if (project != null)
                                                             navToProject(Sections.Profile, project)
-                                                        else
+                                                        else {
+                                                            hideLeaveGroup = true
                                                             navToGroup(Sections.Profile, changelog.group)
+                                                        }
                                                     }
                                                 ) {
                                                     Row(
@@ -336,7 +346,16 @@ class ProfileSection : Section(), ListManager {
                                                         ) {
                                                             IconButton(
                                                                 onClick = {
-                                                                    requester!!.execDeleteChangelog(changelog.id)
+                                                                    var groupId: String? = null
+                                                                    if (changelog.changelogEvent == INVITED_GROUP) {
+                                                                        val changelogGroup = changelog.group
+                                                                        if (changelogGroup != null)
+                                                                            groupId = changelogGroup.id
+                                                                    }
+                                                                    requester!!.execDeleteChangelog(
+                                                                        changelog.id,
+                                                                        groupId
+                                                                    )
                                                                     if (!requester!!.successResponse())
                                                                         showSnack(requester!!.errorMessage())
                                                                 }
@@ -462,33 +481,6 @@ class ProfileSection : Section(), ListManager {
     }
 
     /**
-     * Function to refresh a list of items to display in the UI
-     *
-     * No-any params required
-     */
-    override fun refreshValues() {
-        CoroutineScope(Dispatchers.Default).launch {
-            while (user.id != null && activeScreen.value == Sections.Profile) {
-                val tmpGroups = mutableStateListOf<Group>()
-                val response = requester!!.execGroupsList()
-                if (requester!!.successResponse()) {
-                    val jGroups = JSONArray(response)
-                    jGroups.forEach { jGroup ->
-                        tmpGroups.add(Group(jGroup as JSONObject))
-                    }
-                    if (needToRefresh(groups, tmpGroups)) {
-                        groups.clear()
-                        groups.addAll(tmpGroups)
-                        user.setGroups(groups)
-                    }
-                } else
-                    showSnack(requester!!.errorMessage())
-                delay(1000)
-            }
-        }
-    }
-
-    /**
      * Function to show or hide the [User]'s password
      *
      * @param password: the password to show or hide
@@ -502,6 +494,11 @@ class ProfileSection : Section(), ListManager {
             user.password
     }
 
+    /**
+     * Function to read a changelog
+     *
+     * @param changelog: the changelog to read
+     */
     private fun readChangelog(changelog: Changelog) {
         requester!!.execReadChangelog(changelog.id)
         if (!requester!!.successResponse())

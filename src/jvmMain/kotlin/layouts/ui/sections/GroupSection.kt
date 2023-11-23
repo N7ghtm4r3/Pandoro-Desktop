@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.ui.SingleItemManager
 import com.tecknobit.pandoro.records.Group
+import com.tecknobit.pandoro.records.users.GroupMember
 import com.tecknobit.pandoro.records.users.GroupMember.InvitationStatus.PENDING
 import com.tecknobit.pandoro.records.users.GroupMember.Role
 import com.tecknobit.pandoro.records.users.GroupMember.Role.ADMIN
@@ -36,11 +37,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import layouts.components.LeaveGroup
 import layouts.components.RemoveUser
-import layouts.components.Sidebar.Companion.activeScreen
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.ProfileSection.Companion.hideLeaveGroup
+import org.json.JSONException
 import kotlin.math.ceil
 
 /**
@@ -133,22 +136,31 @@ class GroupSection : Section(), SingleItemManager {
                             }
                         }
                         if (showMembersSection) {
+                            val members = mutableListOf<GroupMember>()
+                            members.addAll(currentGroup.value.members)
+                            if (!isCurrentUserAMaintainer) {
+                                val membersToHide = mutableListOf<GroupMember>()
+                                members.forEach { member ->
+                                    if (member.invitationStatus == PENDING)
+                                        membersToHide.add(member)
+                                }
+                                members.removeAll(membersToHide)
+                            }
+                            val totalMembers = members.size
                             Text(
                                 modifier = Modifier.padding(top = 10.dp),
-                                text = "Total members: ${currentGroup.value.totalMembers}",
+                                text = "Total members: $totalMembers",
                                 fontSize = 14.sp
                             )
-                            val members = currentGroup.value.members
                             if (members.isNotEmpty()) {
                                 spaceContent()
-                                val membersCount = members.size
                                 LazyVerticalGrid(
                                     columns = GridCells.Fixed(3),
                                     modifier = Modifier.height(
-                                        if (membersCount < 3)
+                                        if (totalMembers < 3)
                                             90.dp
-                                        else if (membersCount <= 15)
-                                            (ceil(membersCount / 3.toFloat()) * 90).dp
+                                        else if (totalMembers <= 15)
+                                            (ceil(totalMembers / 3.toFloat()) * 90).dp
                                         else
                                             400.dp
                                     ),
@@ -362,29 +374,31 @@ class GroupSection : Section(), SingleItemManager {
                         }
                     }
                 }
-                item {
-                    val showLeaveDialog = mutableStateOf(false)
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        TextButton(
+                if (!hideLeaveGroup) {
+                    item {
+                        val showLeaveDialog = mutableStateOf(false)
+                        Column(
                             modifier = Modifier.fillMaxSize(),
-                            onClick = { showLeaveDialog.value = true }
+                            verticalArrangement = Arrangement.Bottom,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(
-                                modifier = Modifier.wrapContentSize(),
-                                text = "Leave group",
-                                color = RED_COLOR,
-                                textAlign = TextAlign.Center
-                            )
+                            TextButton(
+                                modifier = Modifier.fillMaxSize(),
+                                onClick = { showLeaveDialog.value = true }
+                            ) {
+                                Text(
+                                    modifier = Modifier.wrapContentSize(),
+                                    text = "Leave group",
+                                    color = RED_COLOR,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
                         }
+                        LeaveGroup(
+                            show = showLeaveDialog,
+                            group = currentGroup.value,
+                        )
                     }
-                    LeaveGroup(
-                        show = showLeaveDialog,
-                        group = currentGroup.value,
-                    )
                 }
             }
         }
@@ -400,9 +414,12 @@ class GroupSection : Section(), SingleItemManager {
             while (user.id != null && activeScreen.value == Sections.Group) {
                 val response = requester!!.execGetSingleGroup(currentGroup.value.id)
                 if (requester!!.successResponse()) {
-                    val tmpGroup = Group(response)
-                    if (needToRefresh(currentGroup.value, tmpGroup))
-                        currentGroup.value = tmpGroup
+                    try {
+                        val tmpGroup = Group(response)
+                        if (needToRefresh(currentGroup.value, tmpGroup))
+                            currentGroup.value = tmpGroup
+                    } catch (_: JSONException) {
+                    }
                 }
                 delay(1000)
             }

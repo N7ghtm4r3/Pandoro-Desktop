@@ -20,12 +20,14 @@ import com.tecknobit.pandoro.helpers.ui.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.ui.GREEN_COLOR
 import com.tecknobit.pandoro.helpers.ui.PRIMARY_COLOR
 import com.tecknobit.pandoro.helpers.ui.YELLOW_COLOR
+import com.tecknobit.pandoro.services.UsersHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import java.awt.Desktop
 import java.net.URI
 import java.net.URL
+import javax.imageio.IIOException
 import javax.imageio.ImageIO
 
 /**
@@ -164,5 +166,9 @@ fun loadImageBitmap(url: String): ImageBitmap {
     var iUrl = url
     if (!iUrl.startsWith(localAuthHelper.host!!))
         iUrl = localAuthHelper.host + "/$url"
-    return ImageIO.read(URL(iUrl)).toComposeImageBitmap()
+    return try {
+        ImageIO.read(URL(iUrl)).toComposeImageBitmap()
+    } catch (e: IIOException) {
+        ImageIO.read(URL(localAuthHelper.host!! + "/" + UsersHelper.DEFAULT_PROFILE_PIC)).toComposeImageBitmap()
+    }
 }

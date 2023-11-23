@@ -85,11 +85,14 @@ fun showOverviewChart(
     group: Int,
     offset: Dp = 50.dp
 ) {
+    var personalPoint = personal.toDouble()
+    if (personalPoint == 0.0)
+        personalPoint = 1.0
     val data = listOf(
         PieChartData(
             name = "Personal",
             color = personalDataColor,
-            value = personal.toDouble()
+            value = personalPoint
         ),
         PieChartData(
             name = "Group",
@@ -98,7 +101,13 @@ fun showOverviewChart(
         )
     )
     PieChart(
-        modifier = Modifier.size(240.dp).padding(start = offset).shadow(elevation = 10.dp, shape = CircleShape),
+        modifier = Modifier
+            .size(240.dp)
+            .padding(start = offset)
+            .shadow(
+                elevation = 10.dp,
+                shape = CircleShape
+            ),
         data = data,
         config = PieChartConfig(
             thickness = 60.dp

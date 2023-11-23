@@ -36,7 +36,7 @@ import com.tecknobit.pandoro.services.UsersHelper.*
 import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
-import layouts.components.Sidebar.Companion.activeScreen
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
@@ -44,6 +44,7 @@ import layouts.ui.screens.SplashScreen.Companion.userProfilePic
 import layouts.ui.sections.Section.Sections
 import navigator
 import org.json.JSONObject
+import java.util.*
 import java.util.prefs.Preferences
 
 /**
@@ -482,7 +483,10 @@ class Connect : UIScreen() {
             email: String?,
             refreshUser: Boolean = false
         ) {
-            storeUserValue(EMAIL_KEY, email, refreshUser)
+            var vEmail = email
+            if (vEmail != null)
+                vEmail = vEmail.lowercase(Locale.getDefault())
+            storeUserValue(EMAIL_KEY, vEmail, refreshUser)
         }
 
         /**

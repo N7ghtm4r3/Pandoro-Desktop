@@ -9,7 +9,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.SplashScreen
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section
-import layouts.ui.sections.Section.Sections.Projects
 
 /**
  * This is the layout for the sidebar component
@@ -29,15 +28,6 @@ import layouts.ui.sections.Section.Sections.Projects
  * @author Tecknobit - N7ghtm4r3
  */
 class Sidebar {
-
-    companion object {
-
-        /**
-         * **activeScreen** -> the instance of the active screen of the application to show
-         */
-        var activeScreen = mutableStateOf(Projects)
-
-    }
 
     /**
      * Function to create the sidebar
