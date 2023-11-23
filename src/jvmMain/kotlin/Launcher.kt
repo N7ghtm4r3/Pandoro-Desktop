@@ -53,7 +53,7 @@ enum class Routes {
 
 /**
  * Method to sho the layout of **Pandoro** desktop app.
- * No any-params required
+ * No-any params required
  */
 @Composable
 @Preview
@@ -106,7 +106,7 @@ fun App() {
 
 /**
  * Method to start the of **Pandoro** desktop app.
- * No any-params required
+ * No-any params required
  */
 fun main() = application {
     PreComposeWindow(

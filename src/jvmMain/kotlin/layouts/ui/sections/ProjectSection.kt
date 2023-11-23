@@ -697,16 +697,16 @@ class ProjectSection : Section(), SingleItemManager {
     override fun refreshItem() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Project) {
-                val response = requester!!.execGetSingleProject(currentProject.value.id)
-                if (requester!!.successResponse()) {
-                    try {
+                try {
+                    val response = requester!!.execGetSingleProject(currentProject.value.id)
+                    if (requester!!.successResponse()) {
                         val tmpProject = Project(response)
                         if (needToRefresh(currentProject.value, tmpProject))
                             currentProject.value = tmpProject
-                    } catch (_: JSONException) {
-                    }
-                } else
-                    showSnack(requester!!.errorMessage())
+                    } else
+                        showSnack(requester!!.errorMessage())
+                } catch (_: JSONException) {
+                }
                 delay(1000)
             }
         }

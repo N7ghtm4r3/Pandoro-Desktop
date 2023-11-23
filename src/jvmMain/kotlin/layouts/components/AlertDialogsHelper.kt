@@ -23,9 +23,11 @@ import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.loadImageBitmap
 import helpers.showSnack
+import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.Section
 import layouts.ui.sections.Section.Companion.navBack
 import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.sectionScaffoldState
@@ -261,9 +263,10 @@ private fun leaveGroup(
         nextAdminId = nextAdmin.id
     requester!!.execLeaveGroup(group.id, nextAdminId)
     show.value = false
-    if (requester!!.successResponse())
+    if (requester!!.successResponse()) {
         navBack()
-    else
+        activeScreen.value = Section.Sections.Projects
+    } else
         showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
 }
 

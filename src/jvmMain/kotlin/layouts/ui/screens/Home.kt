@@ -471,7 +471,7 @@ class Home : UIScreen(), ListManager {
                             changelogs.clear()
                             changelogs.addAll(tmpChangelogs)
                         }
-                    } catch (_: JSONException) {
+                    } catch (_: Exception) {
                     }
                 } else
                     showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())

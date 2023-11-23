@@ -46,10 +46,14 @@ import org.json.JSONObject
  */
 class NotesSection : Section(), ListManager {
 
-    /**
-     * **notes** -> the list of the notes
-     */
-    private lateinit var notes: SnapshotStateList<Note>
+    companion object {
+
+        /**
+         * **notes** -> the list of the notes
+         */
+        val notes: SnapshotStateList<Note> = mutableStateListOf()
+
+    }
 
     /**
      * Function to show the content of the [NotesSection]
@@ -60,7 +64,6 @@ class NotesSection : Section(), ListManager {
     @Composable
     override fun showSection() {
         var markModeEnabled by remember { mutableStateOf(false) }
-        notes = remember { mutableStateListOf() }
         refreshValues()
         showSection {
             Column {

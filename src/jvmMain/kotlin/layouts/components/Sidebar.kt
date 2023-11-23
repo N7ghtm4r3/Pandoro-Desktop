@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.sp
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.screens.SplashScreen
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.screens.SplashScreen.Companion.userProfilePic
 import layouts.ui.sections.Section
 
 /**
@@ -44,18 +44,20 @@ class Sidebar {
                     modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(
-                        bitmap = SplashScreen.userProfilePic.value!!,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(100.dp)
-                            .clip(CircleShape)
-                            .border(
-                                width = 2.dp,
-                                color = BACKGROUND_COLOR,
-                                shape = CircleShape
-                            )
-                    )
+                    if (userProfilePic.value != null) {
+                        Image(
+                            bitmap = userProfilePic.value!!,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(100.dp)
+                                .clip(CircleShape)
+                                .border(
+                                    width = 2.dp,
+                                    color = BACKGROUND_COLOR,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
                     Text(
                         modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),
                         text = user.completeName,

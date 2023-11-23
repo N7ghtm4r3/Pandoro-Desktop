@@ -240,7 +240,7 @@ class ProjectsSection : Section() {
                                         fontSize = 12.sp
                                     )
                                 }
-                                if (project.groups.isNotEmpty()) {
+                                if (project.hasGroups()) {
                                     Column(
                                         modifier = Modifier.weight(1f)
                                     ) {

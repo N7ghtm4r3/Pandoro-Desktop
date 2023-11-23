@@ -37,10 +37,14 @@ import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.activeScreen
+import layouts.ui.screens.Home.Companion.changelogs
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.screens.SplashScreen.Companion.userProfilePic
+import layouts.ui.sections.NotesSection.Companion.notes
+import layouts.ui.sections.ProfileSection.Companion.groups
+import layouts.ui.sections.ProjectsSection.Companion.projectsList
 import layouts.ui.sections.Section.Sections
 import navigator
 import org.json.JSONObject
@@ -320,7 +324,6 @@ class Connect : UIScreen() {
                         email,
                         password
                     )
-                    navigator.navigate(home.name)
                 } else
                     showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
             }
@@ -390,6 +393,7 @@ class Connect : UIScreen() {
                 )
                 userProfilePic.value = loadImageBitmap(user.profilePic)
                 requester = Requester(host!!, userId, userToken)
+                navigator.navigate(home.name)
             } else {
                 requester = null
                 user = User()
@@ -528,8 +532,12 @@ class Connect : UIScreen() {
         fun logout() {
             preferences.clear()
             initUserCredentials()
-            activeScreen.value = Sections.Projects
+            projectsList.clear()
+            groups.clear()
+            changelogs.clear()
+            notes.clear()
             navigator.navigate(splashScreen.name)
+            activeScreen.value = Sections.Projects
         }
 
     }

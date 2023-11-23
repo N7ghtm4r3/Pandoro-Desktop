@@ -309,7 +309,7 @@ class GroupSection : Section(), SingleItemManager {
                                         contentDescription = null
                                     )
                                 }
-                                if (showProjectsSection && isCurrentUserAnAdmin) {
+                                if (showProjectsSection && isCurrentUserAnAdmin && user.projects.isNotEmpty()) {
                                     IconButton(
                                         onClick = { showEditProjectGroupPopup.value = true }
                                     ) {
@@ -412,14 +412,14 @@ class GroupSection : Section(), SingleItemManager {
     override fun refreshItem() {
         CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Group) {
-                val response = requester!!.execGetSingleGroup(currentGroup.value.id)
-                if (requester!!.successResponse()) {
-                    try {
+                try {
+                    val response = requester!!.execGetSingleGroup(currentGroup.value.id)
+                    if (requester!!.successResponse()) {
                         val tmpGroup = Group(response)
                         if (needToRefresh(currentGroup.value, tmpGroup))
                             currentGroup.value = tmpGroup
-                    } catch (_: JSONException) {
                     }
+                } catch (_: JSONException) {
                 }
                 delay(1000)
             }

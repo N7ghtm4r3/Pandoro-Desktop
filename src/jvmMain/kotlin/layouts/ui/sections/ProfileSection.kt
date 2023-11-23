@@ -115,13 +115,15 @@ class ProfileSection : Section() {
                                             modifier = Modifier.align(Alignment.CenterHorizontally),
                                         ) {
                                             var showFilePicker by remember { mutableStateOf(false) }
-                                            Image(
-                                                modifier = Modifier
-                                                    .size(150.dp)
-                                                    .clip(CircleShape),
-                                                bitmap = userProfilePic.value!!,
-                                                contentDescription = null
-                                            )
+                                            if (userProfilePic.value != null) {
+                                                Image(
+                                                    modifier = Modifier
+                                                        .size(150.dp)
+                                                        .clip(CircleShape),
+                                                    bitmap = userProfilePic.value!!,
+                                                    contentDescription = null
+                                                )
+                                            }
                                             IconButton(
                                                 modifier = Modifier
                                                     .clip(CircleShape)
@@ -283,7 +285,7 @@ class ProfileSection : Section() {
                                             verticalArrangement = Arrangement.Center
                                         ) {
                                             Text(
-                                                text = "No any changelogs",
+                                                text = "No-any changelogs",
                                                 fontWeight = FontWeight.Bold
                                             )
                                         }

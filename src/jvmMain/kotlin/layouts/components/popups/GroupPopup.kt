@@ -32,6 +32,8 @@ import layouts.ui.screens.Home.Companion.showAddMembersPopup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.Section.Companion.sectionCoroutineScope
+import layouts.ui.sections.Section.Companion.sectionScaffoldState
 
 /**
  * Function to show the popup to add members to a [Group]
@@ -146,10 +148,11 @@ fun showMembersSection(
 /**
  * Function to show the popup to edit a [Project] of a [Group]
  *
- * No any params required
+ * No-any params required
  */
 @Composable
 fun showEditProjectGroupPopup() {
+    val uProjects = user.projects
     createPopup(
         height = 400.dp,
         flag = showEditProjectGroupPopup,
@@ -169,7 +172,7 @@ fun showEditProjectGroupPopup() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(user.projects) { project ->
+                items(uProjects) { project ->
                     var selected by remember { mutableStateOf(groupProjects.contains(project.id)) }
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -202,7 +205,7 @@ fun showEditProjectGroupPopup() {
                     if (requester!!.successResponse())
                         showEditProjectGroupPopup.value = false
                     else
-                        showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
+                        showSnack(sectionCoroutineScope, sectionScaffoldState, requester!!.errorMessage())
                 },
                 text = "Edit projects",
                 fontSize = 14.sp
