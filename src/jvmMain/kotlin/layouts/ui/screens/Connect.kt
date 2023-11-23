@@ -31,6 +31,7 @@ import com.tecknobit.pandoro.helpers.*
 import com.tecknobit.pandoro.helpers.InputStatus.*
 import com.tecknobit.pandoro.helpers.ScreenType.SignIn
 import com.tecknobit.pandoro.helpers.ScreenType.SignUp
+import com.tecknobit.pandoro.helpers.ui.LocalUser
 import com.tecknobit.pandoro.records.users.User
 import com.tecknobit.pandoro.services.UsersHelper.*
 import helpers.*
@@ -38,6 +39,7 @@ import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.changelogs
+import layouts.ui.screens.SplashScreen.Companion.isRefreshing
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
@@ -48,7 +50,6 @@ import layouts.ui.sections.ProjectsSection.Companion.projectsList
 import layouts.ui.sections.Section.Sections
 import navigator
 import org.json.JSONObject
-import java.util.*
 import java.util.prefs.Preferences
 
 /**
@@ -353,13 +354,9 @@ class Connect : UIScreen() {
      * This **LocalAuthHelper** class is useful to manage the auth credentials in local
      *
      * @author Tecknobit - N7ghtm4r3
+     * @see LocalUser
      */
-    open inner class LocalAuthHelper {
-
-        /**
-         * **SERVER_ADDRESS_KEY** -> server address key
-         */
-        private val SERVER_ADDRESS_KEY = "server_address"
+    open inner class LocalAuthHelper : LocalUser() {
 
         /**
          * **preferences** -> the instance to manage the user preferences
@@ -367,16 +364,11 @@ class Connect : UIScreen() {
         private val preferences = Preferences.userRoot().node("/user/tecknobit/pandoro")
 
         /**
-         * **host** -> the host to used in the requests
-         */
-        var host: String? = null
-
-        /**
          * Function to init the user credentials
          *
          * No-any params required
          */
-        fun initUserCredentials() {
+        override fun initUserCredentials() {
             host = preferences.get(SERVER_ADDRESS_KEY, null)
             val userId = preferences.get(IDENTIFIER_KEY, null)
             val userToken = preferences.get(TOKEN_KEY, null)
@@ -393,51 +385,12 @@ class Connect : UIScreen() {
                 )
                 userProfilePic.value = loadImageBitmap(user.profilePic)
                 requester = Requester(host!!, userId, userToken)
+                isRefreshing.value = false
                 navigator.navigate(home.name)
             } else {
                 requester = null
                 user = User()
             }
-        }
-
-        /**
-         * Function to init the user credentials
-         *
-         * @param response: the response of the auth request
-         * @param host: the host to used in the requests
-         * @param name: the name of the user
-         * @param surname: the surname of the user
-         * @param email: the email of the user
-         * @param password: the password of the user
-         */
-        fun initUserSession(
-            response: JsonHelper,
-            host: String?,
-            name: String,
-            surname: String,
-            email: String?,
-            password: String?
-        ) {
-            storeUserValue(IDENTIFIER_KEY, response.getString(IDENTIFIER_KEY))
-            storeUserValue(TOKEN_KEY, response.getString(TOKEN_KEY))
-            storeHost(host)
-            storeProfilePic(response.getString(PROFILE_PIC_KEY))
-            storeName(name)
-            storeSurname(surname)
-            storeEmail(email)
-            storePassword(password)
-            initUserCredentials()
-        }
-
-        /**
-         * Function to store the host value
-         *
-         * @param host: the host to used in the requests
-         */
-        @Wrapper
-        fun storeHost(host: String?) {
-            storeUserValue(SERVER_ADDRESS_KEY, host, false)
-            this.host = host
         }
 
         /**
@@ -447,64 +400,12 @@ class Connect : UIScreen() {
          * @param refreshUser: whether refresh the user
          */
         @Wrapper
-        fun storeProfilePic(
+        override fun storeProfilePic(
             profilePic: String?,
-            refreshUser: Boolean = false
-        ) {
-            val profilePicValue = "$host/$profilePic"
-            userProfilePic.value = loadImageBitmap(profilePicValue)
-            storeUserValue(PROFILE_PIC_KEY, profilePicValue, refreshUser)
-        }
-
-        /**
-         * Function to store the name value
-         *
-         * @param name: the name of the user
-         */
-        @Wrapper
-        private fun storeName(name: String?) {
-            storeUserValue(NAME_KEY, name, false)
-        }
-
-        /**
-         * Function to store the surname value
-         *
-         * @param surname: the surname of the user
-         */
-        @Wrapper
-        private fun storeSurname(surname: String?) {
-            storeUserValue(SURNAME_KEY, surname, false)
-        }
-
-        /**
-         * Function to store the email value
-         *
-         * @param email: the email of the user
-         * @param refreshUser: whether refresh the user
-         */
-        @Wrapper
-        fun storeEmail(
-            email: String?,
-            refreshUser: Boolean = false
-        ) {
-            var vEmail = email
-            if (vEmail != null)
-                vEmail = vEmail.lowercase(Locale.getDefault())
-            storeUserValue(EMAIL_KEY, vEmail, refreshUser)
-        }
-
-        /**
-         * Function to store the password value
-         *
-         * @param password: the password of the user
-         * @param refreshUser: whether refresh the user
-         */
-        @Wrapper
-        fun storePassword(
-            password: String?,
-            refreshUser: Boolean = false
-        ) {
-            storeUserValue(PASSWORD_KEY, password, refreshUser)
+            refreshUser: Boolean
+        ): String {
+            userProfilePic.value = loadImageBitmap(super.storeProfilePic(profilePic, refreshUser))
+            return ""
         }
 
         /**
@@ -514,14 +415,13 @@ class Connect : UIScreen() {
          * @param value: the value to store
          * @param refreshUser: whether refresh the user
          */
-        private fun storeUserValue(
+        override fun storeUserValue(
             key: String,
             value: String?,
-            refreshUser: Boolean = false
+            refreshUser: Boolean
         ) {
             preferences.put(key, value)
-            if (refreshUser)
-                initUserCredentials()
+            super.storeUserValue(key, value, refreshUser)
         }
 
         /**
@@ -529,7 +429,7 @@ class Connect : UIScreen() {
          *
          * No-any params required
          */
-        fun logout() {
+        override fun logout() {
             preferences.clear()
             initUserCredentials()
             projectsList.clear()

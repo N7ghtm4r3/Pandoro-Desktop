@@ -33,6 +33,11 @@ class SplashScreen : UIScreen() {
     companion object {
 
         /**
+         * **isRefreshing** -> whether is current allowed refresh the lists
+         */
+        lateinit var isRefreshing: MutableState<Boolean>
+
+        /**
          * **localAuthHelper** -> the instance to manage the auth credentials in local
          */
         val localAuthHelper = Connect().LocalAuthHelper()
@@ -62,6 +67,7 @@ class SplashScreen : UIScreen() {
     @Composable
     override fun showScreen() {
         userProfilePic = rememberSaveable { mutableStateOf(null) }
+        isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
         val blink = remember { Animatable(0f) }
         LaunchedEffect(key1 = true, block = {

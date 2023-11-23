@@ -31,6 +31,7 @@ import layouts.components.Sidebar
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
+import layouts.ui.screens.SplashScreen.Companion.isRefreshing
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
@@ -92,11 +93,6 @@ class Home : UIScreen(), ListManager {
          * **changelogs** -> list of [Changelog] as changelogs for the [User]
          */
         val changelogs = mutableStateListOf<Changelog>()
-
-        /**
-         * **isRefreshing** -> whether is current allowed refresh the lists
-         */
-        var isRefreshing = false
 
         /**
          * **showAddProjectPopup** -> flag whether show the [showAddProjectPopup]
@@ -223,11 +219,11 @@ class Home : UIScreen(), ListManager {
                     ) {
                         when (activeScreen.value) {
                             Projects -> {
-                                projects.showSection()
-                                if (!isRefreshing) {
+                                if (!isRefreshing.value) {
                                     refreshValues()
-                                    isRefreshing = true
+                                    isRefreshing.value = true
                                 }
+                                projects.showSection()
                             }
                             Notes -> notes.showSection()
                             Overview -> overview.showSection()
@@ -419,7 +415,7 @@ class Home : UIScreen(), ListManager {
      */
     override fun refreshValues() {
         CoroutineScope(Dispatchers.Default).launch {
-            var response = ""
+            var response: String
             while (user.id != null) {
                 if (activeScreen.value == Projects || activeScreen.value == Group || activeScreen.value == Overview) {
                     val tmpProjectsList = mutableStateListOf<com.tecknobit.pandoro.records.Project>()
