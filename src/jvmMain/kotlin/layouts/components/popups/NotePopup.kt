@@ -116,10 +116,11 @@ fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
                 )
                 spaceContent(5.dp, end = 10.dp)
                 val showUsers = update != null && currentProject.value.hasGroups()
-                if (showUsers) {
+                val author = note.author
+                if (showUsers && author != null) {
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = "Author: ${note.author.completeName}",
+                        text = "Author: ${author.completeName}",
                         fontSize = 14.sp
                     )
                     spaceContent(5.dp, end = 10.dp)
@@ -131,10 +132,11 @@ fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
                 )
                 spaceContent(5.dp, end = 10.dp)
                 if (note.isMarkedAsDone) {
-                    if (showUsers) {
+                    val markedAsDoneBy = note.markedAsDoneBy
+                    if (showUsers && markedAsDoneBy != null) {
                         Text(
                             modifier = Modifier.padding(top = 10.dp),
-                            text = "Marked as done by: ${note.markedAsDoneBy.completeName}",
+                            text = "Marked as done by: ${markedAsDoneBy.completeName}",
                             fontSize = 14.sp
                         )
                         spaceContent(5.dp, end = 10.dp)

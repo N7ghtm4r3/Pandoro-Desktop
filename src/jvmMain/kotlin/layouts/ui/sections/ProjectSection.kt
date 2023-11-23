@@ -219,10 +219,11 @@ class ProjectSection : Section(), SingleItemManager {
                                                     fontSize = 14.sp
                                                 )
                                                 spaceContent()
-                                                if (hasGroup) {
+                                                val author = update.author
+                                                if (hasGroup && author != null) {
                                                     Text(
                                                         modifier = Modifier.padding(top = 5.dp),
-                                                        text = "Author: ${update.author.completeName}",
+                                                        text = "Author: ${author.completeName}",
                                                         fontSize = 14.sp
                                                     )
                                                 }
@@ -233,10 +234,11 @@ class ProjectSection : Section(), SingleItemManager {
                                                 )
                                                 spaceContent()
                                                 if (!isScheduled) {
-                                                    if (hasGroup) {
+                                                    val startedBy = update.startedBy
+                                                    if (hasGroup && startedBy != null) {
                                                         Text(
                                                             modifier = Modifier.padding(top = 5.dp),
-                                                            text = "Started by: ${update.startedBy.completeName}",
+                                                            text = "Started by: ${startedBy.completeName}",
                                                             fontSize = 14.sp
                                                         )
                                                     }
@@ -248,10 +250,11 @@ class ProjectSection : Section(), SingleItemManager {
                                                     spaceContent()
                                                 }
                                                 if (isPublished) {
-                                                    if (hasGroup) {
+                                                    val publishedBy = update.publishedBy
+                                                    if (hasGroup && publishedBy != null) {
                                                         Text(
                                                             modifier = Modifier.padding(top = 5.dp),
-                                                            text = "Published by: ${update.publishedBy.completeName}",
+                                                            text = "Published by: ${publishedBy.completeName}",
                                                             fontSize = 14.sp
                                                         )
                                                     }
