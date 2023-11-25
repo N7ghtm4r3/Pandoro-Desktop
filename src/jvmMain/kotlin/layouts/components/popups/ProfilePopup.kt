@@ -17,6 +17,9 @@ import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
+import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.ProfileSection.Companion.HIDE_PASSWORD
+import layouts.ui.sections.ProfileSection.Companion.passwordProperty
 
 /**
  * Function to show the popup to edit the email of the [User]
@@ -93,9 +96,11 @@ private fun showEditProfilePopup(
                                     showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                             } else {
                                 requester!!.execChangePassword(profileInfo)
-                                if (requester!!.successResponse())
+                                if (requester!!.successResponse()) {
                                     localAuthHelper.storePassword(profileInfo, true)
-                                else
+                                    if (passwordProperty.value != HIDE_PASSWORD)
+                                        passwordProperty.value = user.password
+                                } else
                                     showSnack(coroutineScope, scaffoldState, requester!!.errorMessage())
                             }
                             show.value = false

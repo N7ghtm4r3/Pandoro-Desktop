@@ -33,6 +33,7 @@ import helpers.*
 import layouts.components.DeleteGroup
 import layouts.ui.screens.Home
 import layouts.ui.screens.Home.Companion.changelogs
+import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
@@ -52,7 +53,7 @@ class ProfileSection : Section() {
         /**
          * **HIDE_PASSWORD** -> the string to show when the password has been hidden
          */
-        private const val HIDE_PASSWORD = "********"
+        const val HIDE_PASSWORD = "********"
 
         /**
          * **groups** -> the list of the groups
@@ -64,6 +65,10 @@ class ProfileSection : Section() {
          */
         var hideLeaveGroup: Boolean = false
 
+        /**
+         * **passwordProperty** -> the password displayed in the screen
+         */
+        lateinit var passwordProperty: MutableState<String>
     }
 
     /**
@@ -75,6 +80,7 @@ class ProfileSection : Section() {
     @Composable
     override fun showSection() {
         hideLeaveGroup = false
+        passwordProperty = remember { mutableStateOf(HIDE_PASSWORD) }
         showSection {
             LazyColumn(
                 modifier = Modifier
@@ -207,23 +213,20 @@ class ProfileSection : Section() {
                                                     }
                                                 }
                                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                                    var property by remember { mutableStateOf(HIDE_PASSWORD) }
                                                     Text(
                                                         text = "Password:"
                                                     )
                                                     Text(
                                                         modifier = Modifier.padding(
                                                             start = 5.dp,
-                                                            top = if (property == HIDE_PASSWORD) 5.dp else 0.dp
-                                                        ).onClick {
-                                                            property = visualizePassword(property)
-                                                        },
-                                                        text = property,
+                                                            top = if (passwordProperty.value == HIDE_PASSWORD) 5.dp else 0.dp
+                                                        ).onClick { visualizePassword() },
+                                                        text = passwordProperty.value,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     IconButton(
                                                         modifier = Modifier.size(30.dp).padding(start = 5.dp),
-                                                        onClick = { Home.showEditPasswordPopup.value = true }
+                                                        onClick = { showEditPasswordPopup.value = true }
                                                     ) {
                                                         Icon(
                                                             modifier = Modifier.size(20.dp),
@@ -485,12 +488,11 @@ class ProfileSection : Section() {
     /**
      * Function to show or hide the [User]'s password
      *
-     * @param password: the password to show or hide
-     *
+     * No-any params required
      * @return the password to visualize as [String]
      */
-    private fun visualizePassword(password: String): String {
-        return if (!password.contains(HIDE_PASSWORD))
+    private fun visualizePassword() {
+        passwordProperty.value = if (!passwordProperty.value.contains(HIDE_PASSWORD))
             HIDE_PASSWORD
         else
             user.password

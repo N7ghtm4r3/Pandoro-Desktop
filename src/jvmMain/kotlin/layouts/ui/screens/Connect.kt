@@ -191,7 +191,7 @@ class Connect : UIScreen() {
                                             modifier = Modifier.height(55.dp),
                                             label = "Name",
                                             isError = !isNameValid(name),
-                                            onValueChange = { name = it.replace(" ", "") },
+                                            onValueChange = { name = it },
                                             value = name
                                         )
                                         Spacer(Modifier.height(20.dp))
@@ -199,7 +199,7 @@ class Connect : UIScreen() {
                                             modifier = Modifier.height(55.dp),
                                             label = "Surname",
                                             isError = !isSurnameValid(surname),
-                                            onValueChange = { surname = it.replace(" ", "") },
+                                            onValueChange = { surname = it },
                                             value = surname
                                         )
                                         Spacer(Modifier.height(20.dp))
@@ -310,8 +310,7 @@ class Connect : UIScreen() {
     ) {
         when (areCredentialsValid(email, password)) {
             OK -> {
-                if (requester == null)
-                    requester = Requester(serverAddress, null, null)
+                requester = Requester(serverAddress, null, null)
                 val response = if (name.isEmpty())
                     JsonHelper(requester!!.execSignIn(email, password))
                 else
@@ -386,11 +385,32 @@ class Connect : UIScreen() {
                 userProfilePic.value = loadImageBitmap(user.profilePic)
                 requester = Requester(host!!, userId, userToken)
                 isRefreshing.value = false
-                navigator.navigate(home.name)
             } else {
                 requester = null
                 user = User()
             }
+        }
+
+        /**
+         * Function to init the user credentials
+         *
+         * @param response: the response of the auth request
+         * @param host: the host to used in the requests
+         * @param name: the name of the user
+         * @param surname: the surname of the user
+         * @param email: the email of the user
+         * @param password: the password of the user
+         */
+        override fun initUserSession(
+            response: JsonHelper,
+            host: String?,
+            name: String,
+            surname: String,
+            email: String?,
+            password: String?
+        ) {
+            super.initUserSession(response, host, name, surname, email, password)
+            navigator.navigate(home.name)
         }
 
         /**
