@@ -311,7 +311,7 @@ class Connect : UIScreen() {
         when (areCredentialsValid(email, password)) {
             OK -> {
                 if (requester == null)
-                    requester = Requester(serverAddress)
+                    requester = Requester(serverAddress, null, null)
                 val response = if (name.isEmpty())
                     JsonHelper(requester!!.execSignIn(email, password))
                 else
