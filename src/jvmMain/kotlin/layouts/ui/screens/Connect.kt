@@ -183,10 +183,19 @@ class Connect : UIScreen() {
                                         onValueChange = { serverAddress = it },
                                         value = serverAddress
                                     )
-                                    Spacer(Modifier.height(20.dp))
+                                    Spacer(Modifier.height(10.dp))
+                                    var serverSecret by remember { mutableStateOf("") }
                                     var name by remember { mutableStateOf("") }
                                     var surname by remember { mutableStateOf("") }
                                     if (screenType.value == SignUp) {
+                                        PandoroTextField(
+                                            modifier = Modifier.height(55.dp),
+                                            label = "Server secret",
+                                            isError = !isServerSecretValid(serverSecret),
+                                            onValueChange = { serverSecret = it },
+                                            value = serverSecret
+                                        )
+                                        Spacer(Modifier.height(10.dp))
                                         PandoroTextField(
                                             modifier = Modifier.height(55.dp),
                                             label = "Name",
@@ -194,7 +203,7 @@ class Connect : UIScreen() {
                                             onValueChange = { name = it },
                                             value = name
                                         )
-                                        Spacer(Modifier.height(20.dp))
+                                        Spacer(Modifier.height(10.dp))
                                         PandoroTextField(
                                             modifier = Modifier.height(55.dp),
                                             label = "Surname",
@@ -202,7 +211,7 @@ class Connect : UIScreen() {
                                             onValueChange = { surname = it },
                                             value = surname
                                         )
-                                        Spacer(Modifier.height(20.dp))
+                                        Spacer(Modifier.height(10.dp))
                                     }
                                     var email by remember { mutableStateOf("") }
                                     var password by remember { mutableStateOf("") }
@@ -214,7 +223,7 @@ class Connect : UIScreen() {
                                         onValueChange = { email = it.replace(" ", "") },
                                         value = email
                                     )
-                                    Spacer(Modifier.height(20.dp))
+                                    Spacer(Modifier.height(10.dp))
                                     PandoroTextField(
                                         modifier = Modifier.height(55.dp),
                                         visualTransformation = if (isVisible) None else PasswordVisualTransformation(),
@@ -241,24 +250,37 @@ class Connect : UIScreen() {
                                             when (screenType.value) {
                                                 SignUp -> {
                                                     if (isServerAddressValid(serverAddress)) {
-                                                        if (isNameValid(name)) {
-                                                            if (isSurnameValid(surname)) {
-                                                                checkCredentials(
-                                                                    serverAddress, email, password, name,
-                                                                    surname
-                                                                )
+                                                        if (isServerSecretValid(serverSecret)) {
+                                                            if (isNameValid(name)) {
+                                                                if (isSurnameValid(surname)) {
+                                                                    checkCredentials(
+                                                                        serverAddress = serverAddress,
+                                                                        serverSecret = serverSecret,
+                                                                        email = email,
+                                                                        password = password,
+                                                                        name = name,
+                                                                        surname = surname
+                                                                    )
+                                                                } else
+                                                                    showAuthError("You must insert a correct surname")
                                                             } else
-                                                                showAuthError("You must insert a correct surname")
+                                                                showAuthError("You must insert a correct name")
                                                         } else
-                                                            showAuthError("You must insert a correct name")
+                                                            showAuthError("You must insert a correct server secret")
                                                     } else
                                                         showAuthError("You must insert a correct server address")
                                                 }
 
                                                 SignIn -> {
-                                                    if (isServerAddressValid(serverAddress))
-                                                        checkCredentials(serverAddress, email, password, name, surname)
-                                                    else
+                                                    if (isServerAddressValid(serverAddress)) {
+                                                        checkCredentials(
+                                                            serverAddress = serverAddress,
+                                                            email = email,
+                                                            password = password,
+                                                            name = name,
+                                                            surname = surname
+                                                        )
+                                                    } else
                                                         showAuthError("You must insert a correct server address")
                                                 }
                                             }
@@ -297,12 +319,15 @@ class Connect : UIScreen() {
      * Function to check the validity of the credentials
      *
      * @param serverAddress: the address of the Pandoro's backend
+     * @param serverSecret: the secret of the Pandoro's backend
+     * @param name: the name of the user
+     * @param surname: the surname of the user
      * @param email: email to check
      * @param password: password to check
-     * @return whether the credentials are valid as [Boolean]
      */
     private fun checkCredentials(
         serverAddress: String,
+        serverSecret: String? = null,
         email: String,
         password: String,
         name: String,
@@ -311,10 +336,10 @@ class Connect : UIScreen() {
         when (areCredentialsValid(email, password)) {
             OK -> {
                 requester = Requester(serverAddress, null, null)
-                val response = if (name.isEmpty())
+                val response = if (serverSecret.isNullOrBlank())
                     JsonHelper(requester!!.execSignIn(email, password))
                 else
-                    JsonHelper(requester!!.execSignUp(name, surname, email, password))
+                    JsonHelper(requester!!.execSignUp(serverSecret, name, surname, email, password))
                 if (requester!!.successResponse()) {
                     localAuthHelper.initUserSession(
                         response,
