@@ -59,14 +59,14 @@ compose.desktop {
             licenseFile.set(project.file("LICENSE"))
             macOS {
                 bundleID = "com.tecknobit.pandoro"
-                //iconFile.set(project.file("icons/logo.icns"))
+                iconFile.set(project.file("src/jvmMain/resources/icons/logo.icns"))
             }
             windows {
-                //iconFile.set(project.file("icons/logo.ico"))
+                iconFile.set(project.file("src/jvmMain/resources/icons/logo.ico"))
                 upgradeUuid = UUID.randomUUID().toString()
             }
             linux {
-                //iconFile.set(project.file("icons/logo.png"))
+                iconFile.set(project.file("src/jvmMain/resources/icons/logo.png"))
                 packageName = "com-tecknobit-pandoro"
                 debMaintainer = "infotecknobitcompany@gmail.com"
                 appRelease = "1.0.0"

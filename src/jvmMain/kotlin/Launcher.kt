@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.window.WindowPlacement
@@ -111,7 +112,7 @@ fun App() {
 fun main() = application {
     PreComposeWindow(
         title = appName,
-        //icon = painterResource("logo.png"),
+        icon = painterResource("icons/logo.png"),
         state = WindowState(placement = WindowPlacement.Maximized),
         onCloseRequest = ::exitApplication
     ) {
