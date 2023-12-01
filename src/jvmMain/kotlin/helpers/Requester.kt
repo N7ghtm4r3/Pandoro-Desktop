@@ -30,7 +30,7 @@ class Requester(
     private val apiRequest: APIRequest = APIRequest()
 
     /**
-     * **headers** -> the headers of the request
+     * **headers** -> the headers of the requests
      */
     private val headers: APIRequest.Headers = APIRequest.Headers()
 

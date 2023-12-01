@@ -12,7 +12,6 @@ version = "1.0.0"
 repositories {
     google()
     mavenCentral()
-    // TODO: REMOVE FOR TESTING PURPOSES ONLY
     mavenLocal()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://jitpack.io")
@@ -21,7 +20,7 @@ repositories {
 kotlin {
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = "19"
+            kotlinOptions.jvmTarget = "18"
         }
         withJava()
     }
@@ -33,7 +32,7 @@ kotlin {
                 api(compose.animation)
                 api(compose.materialIconsExtended)
                 implementation("com.github.N7ghtm4r3:APIManager:2.1.7")
-                implementation("com.tecknobit.pandoro:Pandoro:0.0.0.1")
+                implementation("com.tecknobit.pandoro:Pandoro:1.0.0")
                 implementation("com.netguru.multiplatform-charts:multiplatform-charts-desktop:1.0.0")
                 implementation("org.json:json:20230227")
                 implementation("com.darkrockstudios:mpfilepicker:2.0.2")
