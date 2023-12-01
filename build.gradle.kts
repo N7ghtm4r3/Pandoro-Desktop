@@ -49,6 +49,10 @@ compose.desktop {
         mainClass = "LauncherKt"
         nativeDistributions {
             targetFormats(Deb, Rpm, Pkg, Exe)
+            modules(
+                "java.compiler", "java.instrument", "java.management", "java.net.http", "java.prefs", "java.rmi",
+                "java.scripting", "java.security.jgss", "java.sql.rowset", "jdk.jfr", "jdk.unsupported"
+            )
             packageName = "Pandoro"
             packageVersion = "${rootProject.version}"
             version = "${rootProject.version}"
