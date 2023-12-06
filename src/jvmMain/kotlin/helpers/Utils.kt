@@ -27,8 +27,11 @@ import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import java.awt.Desktop
 import java.net.URI
 import java.net.URL
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import javax.imageio.IIOException
 import javax.imageio.ImageIO
+import javax.net.ssl.*
 
 /**
  * app name constant
@@ -166,6 +169,23 @@ fun loadImageBitmap(url: String): ImageBitmap {
     var iUrl = url
     if (!iUrl.startsWith(localAuthHelper.host!!))
         iUrl = localAuthHelper.host + "/$url"
+    if (iUrl.startsWith("https")) {
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            override fun getAcceptedIssuers(): Array<X509Certificate> {
+                return arrayOf()
+            }
+
+            override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) {}
+            override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) {}
+        })
+        try {
+            val sslContext = SSLContext.getInstance("TLS")
+            sslContext.init(null, trustAllCerts, SecureRandom())
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
+            HttpsURLConnection.setDefaultHostnameVerifier { _: String?, _: SSLSession? -> true }
+        } catch (ignored: Exception) {
+        }
+    }
     return try {
         ImageIO.read(URL(iUrl)).toComposeImageBitmap()
     } catch (e: IIOException) {

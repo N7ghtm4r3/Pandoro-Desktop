@@ -1,7 +1,6 @@
 package helpers
 
 import com.tecknobit.apimanager.apis.APIRequest
-import com.tecknobit.apimanager.apis.APIRequest.Params
 import com.tecknobit.apimanager.apis.APIRequest.RequestMethod
 import com.tecknobit.apimanager.formatters.JsonHelper
 import com.tecknobit.pandoro.controllers.PandoroController
@@ -67,18 +66,15 @@ class Requester(
         jsonPayload: Boolean
     ): String {
         headers.addHeader("Content-Type", contentType)
+        if (host.startsWith("https"))
+            apiRequest.validateSelfSignedCertificate()
         return try {
             val requestUrl = host + BASE_ENDPOINT + endpoint
             if (payload != null) {
-                val rPayload = CustomParams()
-                val paramsMap = payload.getPayload()
-                paramsMap.keys.forEach { key ->
-                    rPayload.addParam(key, paramsMap[key])
-                }
                 if (jsonPayload)
-                    apiRequest.sendJSONPayloadedAPIRequest(requestUrl, requestMethod, headers, rPayload)
+                    apiRequest.sendJSONPayloadedAPIRequest(requestUrl, requestMethod, headers, payload)
                 else
-                    apiRequest.sendPayloadedAPIRequest(requestUrl, requestMethod, headers, rPayload)
+                    apiRequest.sendPayloadedAPIRequest(requestUrl, requestMethod, headers, payload)
             } else
                 apiRequest.sendAPIRequest(requestUrl, requestMethod, headers)
             val response = apiRequest.response
@@ -88,29 +84,6 @@ class Requester(
             lastResponse = JsonHelper(errorResponse)
             errorResponse
         }
-    }
-
-    /**
-     * The **CustomParams** class is useful to create the custom payload for the requests to the Pandoro's backend
-     *
-     * @author N7ghtm4r3 - Tecknobit
-     * @see Params
-     */
-    private class CustomParams : Params() {
-
-        /**
-         * Method to assemble a body params of an **HTTP** request
-         *
-         * No-any params required
-         *
-         * @return body params as [String] assembled es. param=mandatory1&param2=mandatory2
-         *
-         * @throws IllegalArgumentException when extra params in list is empty or is null
-         */
-        override fun createPayload(): String {
-            return super.createPayload().replace("=", "")
-        }
-
     }
 
 }
