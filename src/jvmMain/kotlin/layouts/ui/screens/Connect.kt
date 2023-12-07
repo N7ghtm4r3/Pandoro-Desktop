@@ -131,7 +131,7 @@ class Connect : UIScreen() {
                                     )
                                 }
                                 Text(
-                                    text = "v. 1.0.0",
+                                    text = "v. 1.0.1",
                                     fontSize = 12.sp,
                                     color = Color.White
                                 )

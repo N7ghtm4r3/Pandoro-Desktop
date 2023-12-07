@@ -1,6 +1,6 @@
 # Pandoro-Desktop
 
-**v1.0.0**
+**v1.0.1**
 
 This project, based on Java and the Spring Boot framework, is an open source management software useful in managing your
 personal projects and group projects.
@@ -24,9 +24,9 @@ steps:
 - Mobile
   - <a href="https://github.com/N7ghtm4r3/Pandoro-Android#readme">Android</a>
   - iOS -> planned
-- <a href="https://github.com/N7ghtm4r3/Pandoro-Desktop/releases/tag/1.0.0">Pandoro desktop version</a>
+- <a href="https://github.com/N7ghtm4r3/Pandoro-Desktop/releases/tag/1.0.1">Pandoro desktop version</a>
 - <a href="https://github.com/Rhythmss/pandoro-webapp">Pandoro webapp version</a>
-- <a href="https://github.com/N7ghtm4r3/Pandoro/releases/tag/1.0.0">Backend service "out-of-the-box"</a>
+- <a href="https://github.com/N7ghtm4r3/Pandoro/releases/tag/1.0.1">Backend service "out-of-the-box"</a>
 
 ## Usages
 
@@ -59,7 +59,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.tecknobit.pandoro:Pandoro:1.0.0'
+  implementation 'com.tecknobit.pandoro:Pandoro:1.0.1'
 }
 ```
 
@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {
-  implementation("com.tecknobit.pandoro:Pandoro:1.0.0")
+  implementation("com.tecknobit.pandoro:Pandoro:1.0.1")
 }
 ```
 

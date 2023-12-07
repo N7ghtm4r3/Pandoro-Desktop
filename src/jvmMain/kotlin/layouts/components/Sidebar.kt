@@ -94,7 +94,7 @@ class Sidebar {
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "v. 1.0.0",
+                        text = "v. 1.0.1",
                         fontSize = 10.sp
                     )
                 }
