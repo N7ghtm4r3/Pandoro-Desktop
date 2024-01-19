@@ -143,8 +143,6 @@ fun showMembersSection(
     }
 }
 
-
-
 /**
  * Function to show the popup to edit a [Project] of a [Group]
  *

@@ -64,6 +64,7 @@ class GroupSection : Section(), SingleItemManager {
     @Composable
     override fun showSection() {
         val isCurrentUserAnAdmin = currentGroup.value.isUserAdmin(user)
+        val authorId = currentGroup.value.author.id
         val isCurrentUserAMaintainer = currentGroup.value.isUserMaintainer(user)
         refreshItem()
         showSection {
@@ -209,7 +210,7 @@ class GroupSection : Section(), SingleItemManager {
                                                     )
                                                     var modifier = Modifier.padding(start = 20.dp)
                                                     if (!member.isLoggedUser(user) && isCurrentUserAMaintainer &&
-                                                        !isMemberPending
+                                                        !isMemberPending && member.id != authorId
                                                     ) {
                                                         var showRoleMenu by remember { mutableStateOf(false) }
                                                         if (isCurrentUserAnAdmin || !member.isAdmin) {
@@ -255,7 +256,9 @@ class GroupSection : Section(), SingleItemManager {
                                                                 PRIMARY_COLOR
                                                         }
                                                     )
-                                                    if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
+                                                    if (!member.isLoggedUser(user) && isCurrentUserAMaintainer &&
+                                                        member.id != authorId
+                                                    ) {
                                                         val showRemoveDialog = mutableStateOf(false)
                                                         if (isCurrentUserAnAdmin || !member.isAdmin) {
                                                             Column(
