@@ -173,7 +173,12 @@ class GroupSection : Section(), SingleItemManager {
                                         end = 10.dp
                                     )
                                 ) {
-                                    items(members) { member ->
+                                    items(
+                                        items = members,
+                                        key = { member ->
+                                            member.id
+                                        }
+                                    ) { member ->
                                         val isMemberPending = member.invitationStatus == PENDING
                                         if ((isCurrentUserAMaintainer && isMemberPending) || !isMemberPending) {
                                             Card(
@@ -337,7 +342,12 @@ class GroupSection : Section(), SingleItemManager {
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
                                     ) {
-                                        items(projects) { project ->
+                                        items(
+                                            items = projects,
+                                            key = { project ->
+                                                project.id
+                                            }
+                                        ) { project ->
                                             Card(
                                                 modifier = Modifier.fillMaxWidth().height(40.dp),
                                                 shape = RoundedCornerShape(15),

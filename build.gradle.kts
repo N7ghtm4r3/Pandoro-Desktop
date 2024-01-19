@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.tecknobit"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     google()
@@ -31,8 +31,8 @@ kotlin {
                 api(compose.foundation)
                 api(compose.animation)
                 api(compose.materialIconsExtended)
-                implementation("com.github.N7ghtm4r3:APIManager:2.2.1")
-                implementation("com.tecknobit.pandoro:Pandoro:1.0.1")
+                implementation("com.github.N7ghtm4r3:APIManager:2.2.2")
+                implementation("com.tecknobit.pandoro:Pandoro:1.0.2")
                 implementation("com.netguru.multiplatform-charts:multiplatform-charts-desktop:1.0.0")
                 implementation("org.json:json:20230227")
                 implementation("com.darkrockstudios:mpfilepicker:2.0.2")
@@ -57,7 +57,7 @@ compose.desktop {
             packageVersion = "${rootProject.version}"
             version = "${rootProject.version}"
             description = "Pandoro, open source management software"
-            copyright = "© 2023 Tecknobit"
+            copyright = "© 2024 Tecknobit"
             vendor = "Tecknobit"
             licenseFile.set(project.file("LICENSE"))
             macOS {
@@ -72,7 +72,7 @@ compose.desktop {
                 iconFile.set(project.file("src/jvmMain/resources/icons/logo.png"))
                 packageName = "com-tecknobit-pandoro"
                 debMaintainer = "infotecknobitcompany@gmail.com"
-                appRelease = "1.0.1"
+                appRelease = "1.0.2"
                 appCategory = "PERSONALIZATION"
                 rpmLicenseType = "MIT"
             }

@@ -146,7 +146,7 @@ class ProfileSection : Section() {
                                             }
                                             FilePicker(
                                                 showFilePicker,
-                                                fileExtensions = listOf("jpeg", "png")
+                                                fileExtensions = listOf("jpeg", "jpg", "png")
                                             ) { path ->
                                                 if (path != null) {
                                                     showFilePicker = false
@@ -294,7 +294,12 @@ class ProfileSection : Section() {
                                         }
                                     } else {
                                         LazyColumn {
-                                            items(changelogs) { changelog ->
+                                            items(
+                                                items = changelogs,
+                                                key = { changelog ->
+                                                    changelog.id
+                                                }
+                                            ) { changelog ->
                                                 Column(
                                                     modifier = Modifier.clickable {
                                                         val project = changelog.project
@@ -408,7 +413,12 @@ class ProfileSection : Section() {
                                     columns = GridCells.Fixed(5),
                                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                                 ) {
-                                    items(groups) { group ->
+                                    items(
+                                        items = groups,
+                                        key = { group ->
+                                            group.id
+                                        }
+                                    ) { group ->
                                         val isAdmin = group.isUserAdmin(user)
                                         Card(
                                             modifier = Modifier

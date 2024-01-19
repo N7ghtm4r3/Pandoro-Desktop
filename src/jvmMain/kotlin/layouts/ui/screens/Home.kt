@@ -293,7 +293,12 @@ class Home : UIScreen(), ListManager {
         LazyColumn(
             contentPadding = PaddingValues(20.dp)
         ) {
-            items(changelogs) { changelog ->
+            items(
+                items = changelogs,
+                key = { changelog ->
+                    changelog.id
+                }
+            ) { changelog ->
                 val isJoinRequest = changelog.changelogEvent == INVITED_GROUP
                 if (!changelog.isRed) {
                     Card(

@@ -118,7 +118,12 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(user.adminGroups) { group ->
+                    items(
+                        items = user.adminGroups,
+                        key = { group ->
+                            group.id
+                        }
+                    ) { group ->
                         val groupId = group.id
                         var selected by remember { mutableStateOf(groups.contains(groupId)) }
                         Row(

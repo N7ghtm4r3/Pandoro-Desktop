@@ -122,7 +122,12 @@ class ProjectsSection : Section() {
                 columns = GridCells.Adaptive(150.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(projects) { project ->
+                items(
+                    items = projects,
+                    key = { project ->
+                        project.id
+                    }
+                ) { project ->
                     var actionsSelected by remember { mutableStateOf(false) }
                     var showDeleteAlertDialog by remember { mutableStateOf(false) }
                     Card(
