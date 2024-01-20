@@ -73,17 +73,20 @@ class SplashScreen : UIScreen() {
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
         val blink = remember { Animatable(0f) }
-        LaunchedEffect(key1 = true, block = {
-            blink.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000)
-            )
-            delay(500)
-            if (requester != null)
-                navigator.navigate(home.name)
-            else
-                navigator.navigate(connect.name)
-        })
+        LaunchedEffect(
+            key1 = true,
+            block = {
+                blink.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 1000)
+                )
+                delay(500)
+                if (requester != null)
+                    navigator.navigate(home.name)
+                else
+                    navigator.navigate(connect.name)
+            }
+        )
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.background(PRIMARY_COLOR).fillMaxSize()

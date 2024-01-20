@@ -15,6 +15,7 @@ repositories {
     mavenLocal()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven("https://jitpack.io")
+    maven("https://repo.clojars.org")
 }
 
 kotlin {
@@ -33,6 +34,7 @@ kotlin {
                 api(compose.materialIconsExtended)
                 implementation("com.github.N7ghtm4r3:APIManager:2.2.2")
                 implementation("com.tecknobit.pandoro:Pandoro:1.0.2")
+                implementation("com.github.N7ghtm4r3:OctocatKDU:1.0.1")
                 implementation("com.netguru.multiplatform-charts:multiplatform-charts-desktop:1.0.0")
                 implementation("org.json:json:20230227")
                 implementation("com.darkrockstudios:mpfilepicker:2.0.2")

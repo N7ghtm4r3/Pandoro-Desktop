@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
+import helpers.appVersion
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.screens.SplashScreen.Companion.userProfilePic
@@ -103,7 +104,7 @@ class Sidebar {
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "v. 1.0.1",
+                        text = "v. $appVersion",
                         fontSize = 10.sp
                     )
                 }

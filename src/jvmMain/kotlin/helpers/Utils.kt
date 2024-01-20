@@ -39,6 +39,11 @@ import javax.net.ssl.*
 const val appName: String = "Pandoro"
 
 /**
+ * current app version constant
+ */
+const val appVersion: String = "1.0.2"
+
+/**
  * the primary color value
  */
 val PRIMARY_COLOR: Color = fromHexToColor(PRIMARY_COLOR)
