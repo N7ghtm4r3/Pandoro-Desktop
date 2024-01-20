@@ -25,7 +25,7 @@ import layouts.ui.screens.SplashScreen.Companion.requester
 /**
  * Function to show the popup to create a new [Note]
  *
- * @param update: the update where add the new [Note], if **null** will be create for the [User]
+ * @param update: the update where add the new [Note], if **null** will be created for the [User]
  */
 @Composable
 fun showCreateNotePopup(update: ProjectUpdate?) {

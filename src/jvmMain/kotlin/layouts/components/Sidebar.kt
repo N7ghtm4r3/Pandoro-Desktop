@@ -29,6 +29,15 @@ import layouts.ui.sections.Section
  */
 class Sidebar {
 
+    companion object {
+
+        /**
+         * **SIDEBAR_WIDTH** -> the width of the sidebar
+         */
+        val SIDEBAR_WIDTH = 250.dp
+
+    }
+
     /**
      * Function to create the sidebar
      *

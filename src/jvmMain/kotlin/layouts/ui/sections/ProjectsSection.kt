@@ -27,7 +27,6 @@ import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
-import kotlin.math.ceil
 
 /**
  * This is the layout for the projects section
@@ -47,6 +46,11 @@ class ProjectsSection : Section() {
     }
 
     /**
+     * **maxHeight** -> the max height of the [BoxWithConstraints] where are nested the [LazyVerticalGrid]
+     */
+    private var maxHeight = 0.dp
+
+    /**
      * Function to show the content of the [ProjectsSection]
      *
      * No-any params required
@@ -54,13 +58,19 @@ class ProjectsSection : Section() {
     @Composable
     override fun showSection() {
         showSection {
-            Spacer(Modifier.height(10.dp))
-            LazyColumn {
-                item {
-                    populateLazyGrid("Frequent projects", populateFrequentProjects(projectsList).toMutableStateList())
-                }
-                item {
-                    populateLazyGrid("Current projects", projectsList)
+            BoxWithConstraints {
+                this@ProjectsSection.maxHeight = maxHeight
+                Spacer(Modifier.height(10.dp))
+                LazyColumn {
+                    item {
+                        populateLazyGrid(
+                            "Frequent projects",
+                            populateFrequentProjects(projectsList).toMutableStateList()
+                        )
+                    }
+                    item {
+                        populateLazyGrid("Current projects", projectsList)
+                    }
                 }
             }
         }
@@ -84,7 +94,15 @@ class ProjectsSection : Section() {
             fontSize = 25.sp
         )
         PandoroTextField(
-            modifier = Modifier.padding(top = 20.dp, start = 20.dp, bottom = 0.dp).size(width = 250.dp, height = 55.dp),
+            modifier = Modifier
+                .padding(
+                    top = 20.dp,
+                    start = 20.dp,
+                    bottom = 0.dp
+                ).size(
+                    width = 250.dp,
+                    height = 55.dp
+                ),
             label = "Search",
             onValueChange = {
                 query = it
@@ -111,15 +129,11 @@ class ProjectsSection : Section() {
                 )
             }
         } else {
-            val times = projects.size / 9f
-            val height =
-                if (times <= 1)
-                    150.dp
-                else
-                    (ceil(times.toDouble()) * 150 + 60).dp
             LazyVerticalGrid(
-                modifier = Modifier.height(height).padding(20.dp),
-                columns = GridCells.Adaptive(150.dp),
+                modifier = Modifier
+                    .heightIn(max = maxHeight)
+                    .padding(20.dp),
+                columns = GridCells.Adaptive(175.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(
@@ -143,7 +157,7 @@ class ProjectsSection : Section() {
                     ) {
                         Column(Modifier.size(100.dp).padding(15.dp)) {
                             Row {
-                                Column(Modifier.weight(1f).fillMaxWidth()) {
+                                Column(Modifier.weight(8f).fillMaxWidth()) {
                                     if (!actionsSelected) {
                                         Text(
                                             text = project.name,
@@ -151,7 +165,7 @@ class ProjectsSection : Section() {
                                         )
                                     } else {
                                         Row {
-                                            Column(modifier = Modifier.weight(1f)) {
+                                            Column {
                                                 IconButton(
                                                     modifier = Modifier.size(18.dp),
                                                     onClick = {
@@ -166,7 +180,11 @@ class ProjectsSection : Section() {
                                                     )
                                                 }
                                             }
-                                            Column(modifier = Modifier.weight(1f)) {
+                                            Column(
+                                                modifier = Modifier.padding(
+                                                    start = 20.dp
+                                                )
+                                            ) {
                                                 IconButton(
                                                     modifier = Modifier.size(18.dp),
                                                     onClick = { showDeleteAlertDialog = true }

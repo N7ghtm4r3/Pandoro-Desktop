@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import layouts.components.Sidebar
+import layouts.components.Sidebar.Companion.SIDEBAR_WIDTH
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
@@ -173,7 +174,6 @@ class Home : UIScreen(), ListManager {
      */
     @Composable
     override fun showScreen() {
-        activeScreen = remember { mutableStateOf(Projects) }
         currentProject = remember { mutableStateOf(com.tecknobit.pandoro.records.Project()) }
         currentGroup = remember { mutableStateOf(Group()) }
         showAddProjectPopup = remember { mutableStateOf(false) }
@@ -211,11 +211,17 @@ class Home : UIScreen(), ListManager {
         ) {
             Box {
                 Row {
-                    Column(modifier = Modifier.width(250.dp).fillMaxHeight()) {
+                    Column(
+                        modifier = Modifier
+                            .width(SIDEBAR_WIDTH)
+                            .fillMaxHeight()
+                    ) {
                         Sidebar().createSidebar()
                     }
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(20.dp).background(BACKGROUND_COLOR)
+                        modifier = Modifier.fillMaxSize()
+                            .padding(20.dp)
+                            .background(BACKGROUND_COLOR)
                     ) {
                         when (activeScreen.value) {
                             Projects -> {

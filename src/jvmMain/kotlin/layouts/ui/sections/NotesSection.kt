@@ -105,7 +105,9 @@ class NotesSection : Section(), ListManager {
                             }
                         ) { note ->
                             Card(
-                                modifier = Modifier.fillMaxWidth().height(65.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(65.dp),
                                 backgroundColor = Color.White,
                                 shape = RoundedCornerShape(10.dp),
                                 elevation = 2.dp,

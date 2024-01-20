@@ -20,6 +20,8 @@ import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.appName
 import kotlinx.coroutines.delay
+import layouts.ui.screens.Home.Companion.activeScreen
+import layouts.ui.sections.Section
 import navigator
 
 /**
@@ -66,6 +68,7 @@ class SplashScreen : UIScreen() {
      */
     @Composable
     override fun showScreen() {
+        activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         userProfilePic = rememberSaveable { mutableStateOf(null) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
