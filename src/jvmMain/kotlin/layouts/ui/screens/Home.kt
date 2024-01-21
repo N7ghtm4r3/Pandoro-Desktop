@@ -1,5 +1,6 @@
 package layouts.ui.screens
 
+import UpdaterDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.apimanager.formatters.TimeFormatter
 import com.tecknobit.pandoro.helpers.ui.ListManager
 import com.tecknobit.pandoro.records.Changelog
 import com.tecknobit.pandoro.records.Changelog.ChangelogEvent.INVITED_GROUP
@@ -23,11 +25,9 @@ import com.tecknobit.pandoro.records.Group
 import com.tecknobit.pandoro.records.Note
 import com.tecknobit.pandoro.records.ProjectUpdate
 import helpers.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import layouts.components.Sidebar
+import layouts.components.Sidebar.Companion.SIDEBAR_WIDTH
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
@@ -42,6 +42,7 @@ import layouts.ui.sections.Section.Sections.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
 
 /**
  * This is the layout for the home screen
@@ -167,13 +168,17 @@ class Home : UIScreen(), ListManager {
     }
 
     /**
+     * **currentGroup.value** -> active [Group] instance
+     */
+    private var checkForUpdates: Boolean = true
+
+    /**
      * Function to show the content of the [Home]
      *
      * No-any params required
      */
     @Composable
     override fun showScreen() {
-        activeScreen = remember { mutableStateOf(Projects) }
         currentProject = remember { mutableStateOf(com.tecknobit.pandoro.records.Project()) }
         currentGroup = remember { mutableStateOf(Group()) }
         showAddProjectPopup = remember { mutableStateOf(false) }
@@ -211,11 +216,17 @@ class Home : UIScreen(), ListManager {
         ) {
             Box {
                 Row {
-                    Column(modifier = Modifier.width(250.dp).fillMaxHeight()) {
+                    Column(
+                        modifier = Modifier
+                            .width(SIDEBAR_WIDTH)
+                            .fillMaxHeight()
+                    ) {
                         Sidebar().createSidebar()
                     }
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(20.dp).background(BACKGROUND_COLOR)
+                        modifier = Modifier.fillMaxSize()
+                            .padding(20.dp)
+                            .background(BACKGROUND_COLOR)
                     ) {
                         when (activeScreen.value) {
                             Projects -> {
@@ -255,6 +266,33 @@ class Home : UIScreen(), ListManager {
             if (showAddGroupPopup.value)
                 showAddGroupPopup()
         }
+        if (checkForUpdates) {
+            checkForUpdates = false
+            MaterialTheme(
+                colors = Colors(
+                    primary = PRIMARY_COLOR,
+                    primaryVariant = PRIMARY_COLOR,
+                    secondary = BACKGROUND_COLOR,
+                    secondaryVariant = PRIMARY_COLOR,
+                    background = BACKGROUND_COLOR,
+                    surface = BACKGROUND_COLOR,
+                    error = RED_COLOR,
+                    onPrimary = BACKGROUND_COLOR,
+                    onSecondary = PRIMARY_COLOR,
+                    onBackground = BACKGROUND_COLOR,
+                    onSurface = PRIMARY_COLOR,
+                    onError = RED_COLOR,
+                    isLight = true
+                )
+            ) {
+                UpdaterDialog(
+                    locale = Locale.UK,
+                    appName = appName,
+                    currentVersion = appVersion
+                )
+                TimeFormatter.changeDefaultPattern("dd/MM/yyyy HH:mm:ss")
+            }
+        }
     }
 
     /**
@@ -293,7 +331,12 @@ class Home : UIScreen(), ListManager {
         LazyColumn(
             contentPadding = PaddingValues(20.dp)
         ) {
-            items(changelogs) { changelog ->
+            items(
+                items = changelogs,
+                key = { changelog ->
+                    changelog.id
+                }
+            ) { changelog ->
                 val isJoinRequest = changelog.changelogEvent == INVITED_GROUP
                 if (!changelog.isRed) {
                     Card(

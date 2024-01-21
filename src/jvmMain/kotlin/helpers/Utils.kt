@@ -39,6 +39,11 @@ import javax.net.ssl.*
 const val appName: String = "Pandoro"
 
 /**
+ * current app version constant
+ */
+const val appVersion: String = "1.0.2"
+
+/**
  * the primary color value
  */
 val PRIMARY_COLOR: Color = fromHexToColor(PRIMARY_COLOR)
@@ -186,9 +191,16 @@ fun loadImageBitmap(url: String): ImageBitmap {
         } catch (ignored: Exception) {
         }
     }
-    return try {
-        ImageIO.read(URL(iUrl)).toComposeImageBitmap()
+    var bitmap: ImageBitmap? = null
+    try {
+        bitmap = ImageIO.read(URL(iUrl)).toComposeImageBitmap()
     } catch (e: IIOException) {
-        ImageIO.read(URL(localAuthHelper.host!! + "/" + UsersHelper.DEFAULT_PROFILE_PIC)).toComposeImageBitmap()
+        try {
+            bitmap =
+                ImageIO.read(URL(localAuthHelper.host!! + "/" + UsersHelper.DEFAULT_PROFILE_PIC)).toComposeImageBitmap()
+        } catch (e: IIOException) {
+            localAuthHelper.logout()
+        }
     }
+    return bitmap!!
 }

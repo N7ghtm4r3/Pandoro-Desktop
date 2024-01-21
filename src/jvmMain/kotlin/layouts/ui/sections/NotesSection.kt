@@ -98,9 +98,16 @@ class NotesSection : Section(), ListManager {
                         modifier = Modifier.fillMaxSize().padding(top = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        items(notes) { note ->
+                        items(
+                            items = notes,
+                            key = { note ->
+                                note.id
+                            }
+                        ) { note ->
                             Card(
-                                modifier = Modifier.fillMaxWidth().height(65.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(65.dp),
                                 backgroundColor = Color.White,
                                 shape = RoundedCornerShape(10.dp),
                                 elevation = 2.dp,

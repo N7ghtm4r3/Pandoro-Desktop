@@ -20,6 +20,8 @@ import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.appName
 import kotlinx.coroutines.delay
+import layouts.ui.screens.Home.Companion.activeScreen
+import layouts.ui.sections.Section
 import navigator
 
 /**
@@ -66,21 +68,25 @@ class SplashScreen : UIScreen() {
      */
     @Composable
     override fun showScreen() {
+        activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         userProfilePic = rememberSaveable { mutableStateOf(null) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
         val blink = remember { Animatable(0f) }
-        LaunchedEffect(key1 = true, block = {
-            blink.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000)
-            )
-            delay(500)
-            if (requester != null)
-                navigator.navigate(home.name)
-            else
-                navigator.navigate(connect.name)
-        })
+        LaunchedEffect(
+            key1 = true,
+            block = {
+                blink.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 1000)
+                )
+                delay(500)
+                if (requester != null)
+                    navigator.navigate(home.name)
+                else
+                    navigator.navigate(connect.name)
+            }
+        )
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.background(PRIMARY_COLOR).fillMaxSize()

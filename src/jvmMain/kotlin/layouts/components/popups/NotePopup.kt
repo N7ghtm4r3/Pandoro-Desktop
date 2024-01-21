@@ -1,11 +1,12 @@
 package layouts.components.popups
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +22,19 @@ import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+
+/**
+ * **clipboard** -> the clipboard where save the content of note copied
+ */
+val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
 
 /**
  * Function to show the popup to create a new [Note]
  *
- * @param update: the update where add the new [Note], if **null** will be create for the [User]
+ * @param update: the update where add the new [Note], if **null** will be created for the [User]
  */
 @Composable
 fun showCreateNotePopup(update: ProjectUpdate?) {
@@ -109,11 +118,40 @@ fun showNoteInfoPopup(note: Note, update: ProjectUpdate?) {
                     )
                 }
                 spaceContent(5.dp, end = 10.dp)
-                Text(
-                    modifier = Modifier.padding(top = 10.dp),
-                    text = "Note: ${note.content}",
-                    fontSize = 14.sp
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .weight(10f)
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        text = "Note: ${note.content}",
+                        fontSize = 14.sp
+                    )
+                    IconButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                            .padding(
+                                top = 5.dp
+                            )
+                            .size(16.dp),
+                        onClick = {
+                            clipboard.setContents(StringSelection(note.content), null)
+                            showSnack(coroutineScope, scaffoldState, "Content copied successfully")
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = null
+                        )
+                    }
+                }
                 spaceContent(5.dp, end = 10.dp)
                 val showUsers = update != null && currentProject.value.hasGroups()
                 val author = note.author

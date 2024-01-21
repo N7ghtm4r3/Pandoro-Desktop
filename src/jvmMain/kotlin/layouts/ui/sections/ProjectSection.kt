@@ -187,7 +187,12 @@ class ProjectSection : Section(), SingleItemManager {
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                items(updates) { update ->
+                                items(
+                                    items = updates,
+                                    key = { update ->
+                                        update.id
+                                    }
+                                ) { update ->
                                     val isPublished = update.status == PUBLISHED
                                     val isScheduled = update.status == SCHEDULED
                                     var showMenu by remember { mutableStateOf(false) }
@@ -306,7 +311,12 @@ class ProjectSection : Section(), SingleItemManager {
                                                 LazyColumn(
                                                     modifier = Modifier.padding(top = 5.dp)
                                                 ) {
-                                                    items(changeNotes) { note ->
+                                                    items(
+                                                        items = changeNotes,
+                                                        key = { changeNote ->
+                                                            changeNote.id
+                                                        }
+                                                    ) { note ->
                                                         if (!isPublished) {
                                                             if (isScheduled) {
                                                                 Row(
@@ -598,7 +608,12 @@ class ProjectSection : Section(), SingleItemManager {
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                items(groups) { group ->
+                                items(
+                                    items = groups,
+                                    key = { group ->
+                                        group.id
+                                    }
+                                ) { group ->
                                     Card(
                                         modifier = Modifier.fillMaxWidth().height(40.dp),
                                         shape = RoundedCornerShape(15),

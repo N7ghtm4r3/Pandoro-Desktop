@@ -64,6 +64,7 @@ class GroupSection : Section(), SingleItemManager {
     @Composable
     override fun showSection() {
         val isCurrentUserAnAdmin = currentGroup.value.isUserAdmin(user)
+        val authorId = currentGroup.value.author.id
         val isCurrentUserAMaintainer = currentGroup.value.isUserMaintainer(user)
         refreshItem()
         showSection {
@@ -173,7 +174,12 @@ class GroupSection : Section(), SingleItemManager {
                                         end = 10.dp
                                     )
                                 ) {
-                                    items(members) { member ->
+                                    items(
+                                        items = members,
+                                        key = { member ->
+                                            member.id
+                                        }
+                                    ) { member ->
                                         val isMemberPending = member.invitationStatus == PENDING
                                         if ((isCurrentUserAMaintainer && isMemberPending) || !isMemberPending) {
                                             Card(
@@ -204,7 +210,7 @@ class GroupSection : Section(), SingleItemManager {
                                                     )
                                                     var modifier = Modifier.padding(start = 20.dp)
                                                     if (!member.isLoggedUser(user) && isCurrentUserAMaintainer &&
-                                                        !isMemberPending
+                                                        !isMemberPending && member.id != authorId
                                                     ) {
                                                         var showRoleMenu by remember { mutableStateOf(false) }
                                                         if (isCurrentUserAnAdmin || !member.isAdmin) {
@@ -250,7 +256,9 @@ class GroupSection : Section(), SingleItemManager {
                                                                 PRIMARY_COLOR
                                                         }
                                                     )
-                                                    if (!member.isLoggedUser(user) && isCurrentUserAMaintainer) {
+                                                    if (!member.isLoggedUser(user) && isCurrentUserAMaintainer &&
+                                                        member.id != authorId
+                                                    ) {
                                                         val showRemoveDialog = mutableStateOf(false)
                                                         if (isCurrentUserAnAdmin || !member.isAdmin) {
                                                             Column(
@@ -337,7 +345,12 @@ class GroupSection : Section(), SingleItemManager {
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         contentPadding = PaddingValues(start = 10.dp, end = 10.dp)
                                     ) {
-                                        items(projects) { project ->
+                                        items(
+                                            items = projects,
+                                            key = { project ->
+                                                project.id
+                                            }
+                                        ) { project ->
                                             Card(
                                                 modifier = Modifier.fillMaxWidth().height(40.dp),
                                                 shape = RoundedCornerShape(15),

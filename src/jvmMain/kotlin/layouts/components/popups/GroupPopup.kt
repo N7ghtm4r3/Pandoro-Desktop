@@ -143,8 +143,6 @@ fun showMembersSection(
     }
 }
 
-
-
 /**
  * Function to show the popup to edit a [Project] of a [Group]
  *
@@ -172,7 +170,12 @@ fun showEditProjectGroupPopup() {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(uProjects) { project ->
+                items(
+                    items = uProjects,
+                    key = { project ->
+                        project.id
+                    }
+                ) { project ->
                     var selected by remember { mutableStateOf(groupProjects.contains(project.id)) }
                     Row(
                         verticalAlignment = Alignment.CenterVertically
