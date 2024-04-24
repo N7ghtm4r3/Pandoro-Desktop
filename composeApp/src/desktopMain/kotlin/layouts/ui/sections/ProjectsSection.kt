@@ -83,13 +83,18 @@ class ProjectsSection : Section() {
      * @param list: the list of the [Project] to populate the [LazyVerticalGrid]
      *
      */
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun populateLazyGrid(title: String, list: SnapshotStateList<Project>) {
+    private fun populateLazyGrid(
+        title: String,
+        list: SnapshotStateList<Project>
+    ) {
         var query by remember { mutableStateOf("") }
         val projects = filterProjects(query = query, list).toMutableStateList()
         Text(
-            modifier = Modifier.padding(start = 20.dp),
+            modifier = Modifier
+                .padding(
+                    start = 20.dp
+                ),
             text = title,
             fontSize = 25.sp
         )
@@ -111,7 +116,10 @@ class ProjectsSection : Section() {
             trailingIcon = {
                 Icon(
                     modifier = if (query.isNotEmpty()) {
-                        Modifier.clickable { query = "" }
+                        Modifier
+                            .clickable {
+                                query = ""
+                            }
                     } else Modifier,
                     imageVector = if (query.isEmpty()) Icons.Default.Search else Icons.Default.Clear,
                     contentDescription = null,
@@ -120,7 +128,12 @@ class ProjectsSection : Section() {
         )
         if (projects.isEmpty()) {
             Column(
-                modifier = Modifier.fillMaxWidth().height(50.dp).padding(start = 25.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(
+                        start = 25.dp
+                    ),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -148,7 +161,8 @@ class ProjectsSection : Section() {
                         modifier = Modifier
                             .padding(
                                 bottom = 8.dp
-                            ),
+                            )
+                            .height(115.dp),
                         shape = RoundedCornerShape(15.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
@@ -164,7 +178,7 @@ class ProjectsSection : Section() {
                     ) {
                         Column(
                             modifier = Modifier
-                                .size(100.dp)
+                                .fillMaxSize()
                                 .padding(15.dp)
                         ) {
                             Row {
@@ -212,7 +226,11 @@ class ProjectsSection : Section() {
                                                 }
                                                 if (showDeleteAlertDialog) {
                                                     AlertDialog(
-                                                        modifier = Modifier.size(width = 400.dp, height = 200.dp),
+                                                        modifier = Modifier
+                                                            .size(
+                                                                width = 400.dp,
+                                                                height = 200.dp
+                                                            ),
                                                         shape = RoundedCornerShape(25.dp),
                                                         containerColor = BACKGROUND_COLOR,
                                                         onDismissRequest = { showDeleteAlertDialog = false },
@@ -250,9 +268,15 @@ class ProjectsSection : Section() {
                                         }
                                     }
                                 }
-                                Column(Modifier.weight(1f).fillMaxWidth()) {
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxWidth()
+                                ) {
                                     IconButton(
-                                        modifier = Modifier.size(18.dp).align(alignment = Alignment.End),
+                                        modifier = Modifier
+                                            .size(18.dp)
+                                            .align(Alignment.End),
                                         onClick = { actionsSelected = !actionsSelected }
                                     ) {
                                         Icon(
@@ -263,15 +287,23 @@ class ProjectsSection : Section() {
                                 }
                             }
                             Text(
-                                modifier = Modifier.padding(top = 7.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        top = 7.dp
+                                    ),
                                 text = project.shortDescription,
                                 fontSize = 14.sp
                             )
                             Row(
-                                modifier = Modifier.fillMaxSize().padding(top = 7.dp),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(
+                                        top = 7.dp
+                                    ),
                             ) {
                                 Column(
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier
+                                        .weight(1f)
                                 ) {
                                     Text(
                                         text = "v. " + project.version,
@@ -280,10 +312,13 @@ class ProjectsSection : Section() {
                                 }
                                 if (project.hasGroups()) {
                                     Column(
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier
+                                            .weight(1f)
                                     ) {
                                         Icon(
-                                            modifier = Modifier.size(18.dp).align(alignment = Alignment.End),
+                                            modifier = Modifier
+                                                .size(18.dp)
+                                                .align(Alignment.End),
                                             imageVector = Icons.Default.Group,
                                             contentDescription = null
                                         )

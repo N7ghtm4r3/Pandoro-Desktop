@@ -32,6 +32,8 @@ kotlin {
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             api("commons-validator:commons-validator:1.7")
             api("moe.tlaster:precompose:1.5.11")
+            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
+            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-alpha06")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

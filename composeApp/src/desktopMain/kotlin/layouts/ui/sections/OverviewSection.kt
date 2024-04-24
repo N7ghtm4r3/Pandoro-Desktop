@@ -4,9 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +49,14 @@ class OverviewSection : Section() {
     override fun showSection() {
         overviewUIHelper = OverviewUIHelper(user.projects)
         LazyColumn(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 20.dp).fillMaxSize()
+            modifier = Modifier
+                .padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    top = 10.dp,
+                    bottom = 20.dp
+                )
+                .fillMaxSize()
         ) {
             item {
                 Text(
@@ -59,11 +66,17 @@ class OverviewSection : Section() {
             }
             item {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 20.dp
+                        ),
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxWidth()
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     ) {
                         createChartCard(
                             title = "Projects",
@@ -79,7 +92,9 @@ class OverviewSection : Section() {
                         )
                     }
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxWidth()
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     ) {
                         createChartCard(
                             title = "Updates",
@@ -104,7 +119,11 @@ class OverviewSection : Section() {
             }
             item {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 20.dp
+                        )
                 ) {
                     Text(
                         text = "Updates status",
@@ -112,7 +131,10 @@ class OverviewSection : Section() {
                     )
                     spaceContent(space = 10.dp)
                     Row(
-                        modifier = Modifier.padding(top = 20.dp),
+                        modifier = Modifier
+                            .padding(
+                                top = 20.dp
+                            ),
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         Column(
@@ -153,7 +175,12 @@ class OverviewSection : Section() {
             }
             item {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 20.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 20.dp,
+                            bottom = 20.dp
+                        )
                 ) {
                     Text(
                         text = "Updates performance",
@@ -161,7 +188,11 @@ class OverviewSection : Section() {
                     )
                     spaceContent()
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 20.dp
+                            ),
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         Column(
@@ -185,7 +216,9 @@ class OverviewSection : Section() {
                             )
                         }
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth()
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
                         ) {
                             createChartCard(
                                 title = "Average development time (days)",
@@ -218,16 +251,24 @@ class OverviewSection : Section() {
                 }
                 item {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 20.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 20.dp,
+                                bottom = 20.dp
+                            )
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             if (overviewUIHelper.bestPersonalVProject != null) {
                                 Column(
-                                    modifier = Modifier.weight(1f).fillMaxWidth()
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxWidth()
                                 ) {
                                     Text(
                                         text = "Personal",
@@ -235,11 +276,17 @@ class OverviewSection : Section() {
                                     )
                                     spaceContent(space = 10.dp)
                                     Row(
-                                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                top = 20.dp
+                                            ),
                                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                                     ) {
                                         Column(
-                                            modifier = Modifier.weight(1f).fillMaxWidth()
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxWidth()
                                         ) {
                                             createPerformanceCard(
                                                 title = "Best",
@@ -247,7 +294,9 @@ class OverviewSection : Section() {
                                             )
                                         }
                                         Column(
-                                            modifier = Modifier.weight(1f).fillMaxWidth()
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxWidth()
                                         ) {
                                             val worstProject = overviewUIHelper.getWorstPersonalProject()
                                             if (worstProject != null) {
@@ -262,7 +311,9 @@ class OverviewSection : Section() {
                             }
                             if (overviewUIHelper.bestGroupVProject != null) {
                                 Column(
-                                    modifier = Modifier.weight(1f).fillMaxWidth()
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxWidth()
                                 ) {
                                     Text(
                                         text = "Group",
@@ -270,11 +321,17 @@ class OverviewSection : Section() {
                                     )
                                     spaceContent(space = 10.dp)
                                     Row(
-                                        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                top = 20.dp
+                                            ),
                                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                                     ) {
                                         Column(
-                                            modifier = Modifier.weight(1f).fillMaxWidth()
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxWidth()
                                         ) {
                                             createPerformanceCard(
                                                 title = "Best",
@@ -282,7 +339,9 @@ class OverviewSection : Section() {
                                             )
                                         }
                                         Column(
-                                            modifier = Modifier.weight(1f).fillMaxWidth()
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .fillMaxWidth()
                                         ) {
                                             val worstProject = overviewUIHelper.getWorstGroupProject()
                                             if (worstProject != null) {
@@ -323,25 +382,37 @@ class OverviewSection : Section() {
         val personalValue = personal.invoke()
         val group = totalValue - personalValue
         Card(
-            modifier = Modifier.fillMaxWidth().height(350.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp),
             shape = RoundedCornerShape(15.dp),
-            backgroundColor = Color.White,
-            elevation = 2.dp
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 2.dp
+            )
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(20.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
             ) {
                 Text(
                     text = title,
                     fontSize = 18.sp
                 )
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(20.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxWidth()
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
                     ) {
                         showOverviewChart(
                             offset = offset,
@@ -350,15 +421,24 @@ class OverviewSection : Section() {
                         )
                     }
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxSize().padding(start = offset),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize()
+                            .padding(
+                                start = offset
+                            ),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Row(
-                            modifier = Modifier.height(50.dp),
+                            modifier = Modifier
+                                .height(50.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                modifier = Modifier.padding(end = 5.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        end = 5.dp
+                                    ),
                                 text = "Total -",
                                 fontSize = 14.sp
                             )
@@ -368,16 +448,23 @@ class OverviewSection : Section() {
                             )
                         }
                         Row(
-                            modifier = Modifier.height(50.dp),
+                            modifier = Modifier
+                                .height(50.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                modifier = Modifier.padding(end = 5.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        end = 5.dp
+                                    ),
                                 text = "Personal -",
                                 fontSize = 14.sp
                             )
                             Text(
-                                modifier = Modifier.padding(end = 5.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        end = 5.dp
+                                    ),
                                 text = "$personalValue",
                                 fontWeight = FontWeight.Bold
                             )
@@ -388,16 +475,23 @@ class OverviewSection : Section() {
                             )
                         }
                         Row(
-                            modifier = Modifier.height(50.dp),
+                            modifier = Modifier
+                                .height(50.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                modifier = Modifier.padding(end = 5.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        end = 5.dp
+                                    ),
                                 text = "Group -",
                                 fontSize = 14.sp
                             )
                             Text(
-                                modifier = Modifier.padding(end = 5.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        end = 5.dp
+                                    ),
                                 text = "$group",
                                 fontWeight = FontWeight.Bold
                             )
@@ -410,16 +504,23 @@ class OverviewSection : Section() {
                         val userAuthorValue = userAuthorFun.invoke()
                         if (userAuthorValue > 0) {
                             Row(
-                                modifier = Modifier.height(50.dp),
+                                modifier = Modifier
+                                    .height(50.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    modifier = Modifier.padding(end = 5.dp),
+                                    modifier = Modifier
+                                        .padding(
+                                            end = 5.dp
+                                        ),
                                     text = "From me -",
                                     fontSize = 14.sp
                                 )
                                 Text(
-                                    modifier = Modifier.padding(end = 5.dp),
+                                    modifier = Modifier
+                                        .padding(
+                                            end = 5.dp
+                                        ),
                                     text = "$userAuthorValue",
                                     fontWeight = FontWeight.Bold
                                 )
@@ -448,63 +549,100 @@ class OverviewSection : Section() {
      * @param title: the title of the card
      * @param project: the project to show
      */
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
-    private fun createPerformanceCard(title: String, project: Project) {
+    private fun createPerformanceCard(
+        title: String,
+        project: Project
+    ) {
         Card(
-            modifier = Modifier.fillMaxWidth().height(180.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(185.dp),
             shape = RoundedCornerShape(15.dp),
-            backgroundColor = Color.White,
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 2.dp
+            ),
             onClick = { navToProject(Sections.Overview, project) },
-            elevation = 2.dp
         ) {
             Row(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
             ) {
                 Column(
-                    modifier = Modifier.weight(14f).fillMaxWidth().padding(20.dp)
+                    modifier = Modifier
+                        .weight(14f)
+                        .fillMaxWidth()
+                        .padding(20.dp)
                 ) {
                     Text(
                         text = "$title performance",
                         fontSize = 18.sp
                     )
                     Column(
-                        modifier = Modifier.padding(start = 5.dp, top = 10.dp)
+                        modifier = Modifier
+                            .padding(
+                                start = 5.dp,
+                                top = 10.dp
+                            )
                     ) {
                         Text(
                             text = "Name: ${project.name}",
                             fontSize = 14.sp
                         )
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
                             text = "Description: ${project.shortDescription}",
                             fontSize = 14.sp
                         )
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
                             text = "Updates number: ${project.updatesNumber}",
                             fontSize = 14.sp
                         )
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
                             text = "Development days: ${project.totalDevelopmentDays}",
                             fontSize = 14.sp
                         )
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
                             text = "Average development time: ${project.averageDevelopmentTime} days",
                             fontSize = 14.sp
                         )
                     }
                 }
                 Column(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f),
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Box(
-                        modifier = Modifier.background(if (title == "Best") GREEN_COLOR else RED_COLOR)
-                            .fillMaxHeight().width(10.dp)
+                        modifier = Modifier
+                            .background(
+                                if (title == "Best")
+                                    GREEN_COLOR
+                                else
+                                    RED_COLOR
+                            )
+                            .fillMaxHeight()
+                            .width(10.dp)
                     ) {
                         Text(text = "")
                     }

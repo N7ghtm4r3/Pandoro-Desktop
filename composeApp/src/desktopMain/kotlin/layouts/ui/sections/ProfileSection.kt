@@ -37,7 +37,6 @@ import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.screens.SplashScreen.Companion.userProfilePic
 import java.io.File
 
 /**
@@ -94,7 +93,8 @@ class ProfileSection : Section() {
             ) {
                 item {
                     Column(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
@@ -107,7 +107,9 @@ class ProfileSection : Section() {
                             horizontalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
                             Column(
-                                modifier = Modifier.weight(1f).fillMaxSize()
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxSize()
                             ) {
                                 Card(
                                     modifier = Modifier
@@ -132,15 +134,10 @@ class ProfileSection : Section() {
                                                 .align(Alignment.CenterHorizontally),
                                         ) {
                                             var showFilePicker by remember { mutableStateOf(false) }
-                                            if (userProfilePic.value != null) {
-                                                Image(
-                                                    modifier = Modifier
-                                                        .size(150.dp)
-                                                        .clip(CircleShape),
-                                                    bitmap = userProfilePic.value!!,
-                                                    contentDescription = null
-                                                )
-                                            }
+                                            Logo(
+                                                url = user.profilePic,
+                                                size = 130.dp
+                                            )
                                             IconButton(
                                                 modifier = Modifier
                                                     .clip(CircleShape)
@@ -163,9 +160,9 @@ class ProfileSection : Section() {
                                                     showFilePicker = false
                                                     val response = requester!!.execChangeProfilePic(File(path.path))
                                                     if (requester!!.successResponse()) {
+                                                        //TODO: REFRESH THE PROFILE PIC WHEN CHANGED
                                                         localAuthHelper.storeProfilePic(
-                                                            JsonHelper(response)
-                                                                .getString(PROFILE_PIC_KEY)
+                                                            JsonHelper(response).getString(PROFILE_PIC_KEY)
                                                         )
                                                     } else
                                                         showSnack(requester!!.errorMessage())
@@ -173,31 +170,46 @@ class ProfileSection : Section() {
                                             }
                                         }
                                         Column(
-                                            modifier = Modifier.padding(top = 20.dp)
+                                            modifier = Modifier
+                                                .padding(
+                                                    top = 20.dp
+                                                )
                                         ) {
                                             if (user.name != null) {
                                                 Row(
-                                                    modifier = Modifier.padding(bottom = 10.dp),
+                                                    modifier = Modifier
+                                                        .padding(
+                                                            bottom = 10.dp
+                                                        ),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
                                                     Text(
                                                         text = "Name:"
                                                     )
                                                     Text(
-                                                        modifier = Modifier.padding(start = 5.dp),
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
                                                         text = user.name,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                 }
                                                 Row(
-                                                    modifier = Modifier.padding(bottom = 10.dp),
+                                                    modifier = Modifier
+                                                        .padding(
+                                                            bottom = 10.dp
+                                                        ),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
                                                     Text(
                                                         text = "Surname:"
                                                     )
                                                     Text(
-                                                        modifier = Modifier.padding(start = 5.dp),
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
                                                         text = user.surname,
                                                         fontWeight = FontWeight.Bold
                                                     )
@@ -207,16 +219,24 @@ class ProfileSection : Section() {
                                                         text = "Email:"
                                                     )
                                                     Text(
-                                                        modifier = Modifier.padding(start = 5.dp),
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
                                                         text = user.email,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     IconButton(
-                                                        modifier = Modifier.size(30.dp).padding(start = 5.dp),
+                                                        modifier = Modifier
+                                                            .size(30.dp)
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
                                                         onClick = { Home.showEditEmailPopup.value = true }
                                                     ) {
                                                         Icon(
-                                                            modifier = Modifier.size(20.dp),
+                                                            modifier = Modifier
+                                                                .size(20.dp),
                                                             imageVector = Icons.Default.Edit,
                                                             tint = RED_COLOR,
                                                             contentDescription = null
@@ -230,17 +250,25 @@ class ProfileSection : Section() {
                                                     Text(
                                                         modifier = Modifier.padding(
                                                             start = 5.dp,
-                                                            top = if (passwordProperty.value == HIDE_PASSWORD) 5.dp else 0.dp
+                                                            top = if (passwordProperty.value == HIDE_PASSWORD)
+                                                                5.dp
+                                                            else
+                                                                0.dp
                                                         ).onClick { visualizePassword() },
                                                         text = passwordProperty.value,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     IconButton(
-                                                        modifier = Modifier.size(30.dp).padding(start = 5.dp),
+                                                        modifier = Modifier
+                                                            .size(30.dp)
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
                                                         onClick = { showEditPasswordPopup.value = true }
                                                     ) {
                                                         Icon(
-                                                            modifier = Modifier.size(20.dp),
+                                                            modifier = Modifier
+                                                                .size(20.dp),
                                                             imageVector = Icons.Default.Edit,
                                                             tint = RED_COLOR,
                                                             contentDescription = null
@@ -252,13 +280,14 @@ class ProfileSection : Section() {
                                             Row(
                                                 modifier = Modifier
                                                     .padding(
-                                                        top = 20.dp
+                                                        top = 10.dp
                                                     ),
                                                 horizontalArrangement = Arrangement.spacedBy(20.dp)
                                             ) {
                                                 Button(
                                                     modifier = Modifier
                                                         .weight(1f),
+                                                    shape = RoundedCornerShape(10.dp),
                                                     onClick = { localAuthHelper.logout() }
                                                 ) {
                                                     Text(
@@ -268,6 +297,7 @@ class ProfileSection : Section() {
                                                 Button(
                                                     modifier = Modifier
                                                         .weight(1f),
+                                                    shape = RoundedCornerShape(10.dp),
                                                     colors = ButtonDefaults.buttonColors(
                                                         containerColor = RED_COLOR,
                                                         contentColor = Color.White
@@ -434,10 +464,13 @@ class ProfileSection : Section() {
                                 if (units < 4)
                                     units = 4
                                 LazyVerticalGrid(
-                                    modifier = Modifier.padding(top = 20.dp)
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 20.dp
+                                        )
                                         .fillMaxWidth()
                                         .height(((units / 4) * (itemHeight.value) * 1).dp),
-                                    columns = GridCells.Fixed(5),
+                                    columns = GridCells.Fixed(4),
                                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                                 ) {
                                     items(
@@ -447,11 +480,14 @@ class ProfileSection : Section() {
                                         }
                                     ) { group ->
                                         val isAdmin = group.isUserAdmin(user)
+                                        //TODO: FIX UI ISSUES
                                         Card(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .height(itemHeight)
-                                                .padding(bottom = 20.dp),
+                                                .padding(
+                                                    bottom = 20.dp
+                                                ),
                                             shape = RoundedCornerShape(10.dp),
                                             colors = CardDefaults.cardColors(
                                                 containerColor = Color.White
@@ -463,43 +499,36 @@ class ProfileSection : Section() {
                                         ) {
                                             Row(
                                                 modifier = Modifier
-                                                    .fillMaxSize()
                                                     .padding(15.dp),
+                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
                                                 Text(
-                                                    modifier = Modifier
-                                                        .weight(
-                                                            if (isAdmin)
-                                                                2f
-                                                            else
-                                                                1f
-                                                        ),
                                                     text = group.name,
-                                                    fontSize = 18.sp
+                                                    fontSize = 16.sp
                                                 )
                                                 Text(
-                                                    modifier = Modifier
-                                                        .weight(1f),
-                                                    text =
-                                                    if (group.isUserMaintainer(user)) {
+                                                    text = if (group.isUserMaintainer(user)) {
                                                         if (isAdmin)
                                                             ADMIN.toString()
                                                         else
                                                             MAINTAINER.toString()
                                                     } else
                                                         DEVELOPER.toString(),
-                                                    color = if (isAdmin) RED_COLOR else PRIMARY_COLOR,
-                                                    fontSize = 15.sp
+                                                    color = if (isAdmin)
+                                                        RED_COLOR
+                                                    else
+                                                        PRIMARY_COLOR,
+                                                    fontSize = 14.sp
                                                 )
                                                 if (isAdmin) {
                                                     val showDeleteDialog = mutableStateOf(false)
                                                     IconButton(
-                                                        modifier = Modifier.weight(1f),
                                                         onClick = { showDeleteDialog.value = true }
                                                     ) {
                                                         Icon(
-                                                            modifier = Modifier.size(20.dp),
+                                                            modifier = Modifier
+                                                                .size(20.dp),
                                                             imageVector = Icons.Default.Delete,
                                                             tint = RED_COLOR,
                                                             contentDescription = null
@@ -513,12 +542,15 @@ class ProfileSection : Section() {
                                             }
                                             if (group.author.id == user.id) {
                                                 Column(
-                                                    modifier = Modifier.fillMaxHeight(),
+                                                    modifier = Modifier
+                                                        .fillMaxHeight(),
                                                     horizontalAlignment = Alignment.End,
                                                     verticalArrangement = Arrangement.Center
                                                 ) {
                                                     Box(
-                                                        modifier = Modifier.background(PRIMARY_COLOR).fillMaxHeight()
+                                                        modifier = Modifier
+                                                            .background(PRIMARY_COLOR)
+                                                            .fillMaxHeight()
                                                             .width(8.dp),
                                                         content = { Text("") }
                                                     )

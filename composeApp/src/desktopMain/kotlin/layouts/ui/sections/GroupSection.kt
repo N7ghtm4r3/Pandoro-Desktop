@@ -201,12 +201,16 @@ class GroupSection : Section(), SingleItemManager {
                                                     ),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
+                                                    Logo(
+                                                        url = member.profilePic
+                                                    )
+                                                    /*
                                                     Image(
                                                         modifier = Modifier.size(45.dp).clip(CircleShape),
                                                         bitmap = loadImageBitmap(member.profilePic),
                                                         contentDescription = null,
                                                         contentScale = ContentScale.Crop
-                                                    )
+                                                    )*/
                                                     Text(
                                                         modifier = Modifier.padding(start = 20.dp),
                                                         text = member.completeName,

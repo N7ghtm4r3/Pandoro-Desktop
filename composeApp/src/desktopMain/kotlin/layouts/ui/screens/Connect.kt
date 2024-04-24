@@ -45,7 +45,6 @@ import layouts.ui.screens.SplashScreen.Companion.isRefreshing
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.screens.SplashScreen.Companion.userProfilePic
 import layouts.ui.sections.NotesSection.Companion.notes
 import layouts.ui.sections.ProfileSection.Companion.groups
 import layouts.ui.sections.ProjectsSection.Companion.projectsList
@@ -81,7 +80,7 @@ class Connect : UIScreen() {
      */
     @Composable
     override fun showScreen() {
-        layouts.components.popups.snackbarHostState = remember { SnackbarHostState() }
+        snackbarHostState = remember { SnackbarHostState() }
         coroutineScope = rememberCoroutineScope()
         Box(
             modifier = Modifier
@@ -435,7 +434,6 @@ class Connect : UIScreen() {
                         .put(PASSWORD_KEY, preferences.get(PASSWORD_KEY, null))
                         .put(LANGUAGE_KEY, preferences.get(LANGUAGE_KEY, DEFAULT_USER_LANGUAGE))
                 )
-                userProfilePic.value = loadImageBitmap(user.profilePic)
                 requester = Requester(host!!, userId, userToken)
                 isRefreshing.value = false
             } else {
@@ -480,8 +478,7 @@ class Connect : UIScreen() {
             profilePic: String?,
             refreshUser: Boolean
         ): String {
-            userProfilePic.value = loadImageBitmap(super.storeProfilePic(profilePic, refreshUser))
-            return ""
+            return super.storeProfilePic(profilePic, refreshUser)
         }
 
         /**

@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -167,11 +167,6 @@ class Home : UIScreen(), ListManager {
     }
 
     /**
-     * **currentGroup.value** -> active [Group] instance
-     */
-    private var checkForUpdates: Boolean = true
-
-    /**
      * Function to show the content of the [Home]
      *
      * No-any params required
@@ -278,33 +273,6 @@ class Home : UIScreen(), ListManager {
             if (showAddGroupPopup.value)
                 showAddGroupPopup()
         }
-        if (checkForUpdates) {
-            checkForUpdates = false
-            /*MaterialTheme(
-                colors = Colors(
-                    primary = PRIMARY_COLOR,
-                    primaryVariant = PRIMARY_COLOR,
-                    secondary = BACKGROUND_COLOR,
-                    secondaryVariant = PRIMARY_COLOR,
-                    background = BACKGROUND_COLOR,
-                    surface = BACKGROUND_COLOR,
-                    error = RED_COLOR,
-                    onPrimary = BACKGROUND_COLOR,
-                    onSecondary = PRIMARY_COLOR,
-                    onBackground = BACKGROUND_COLOR,
-                    onSurface = PRIMARY_COLOR,
-                    onError = RED_COLOR,
-                    isLight = true
-                )
-            ) {
-                UpdaterDialog(
-                    locale = Locale.UK,
-                    appName = appName,
-                    currentVersion = appVersion
-                )
-                TimeFormatter.changeDefaultPattern("dd/MM/yyyy HH:mm:ss")
-            }*/
-        }
     }
 
     /**
@@ -352,7 +320,10 @@ class Home : UIScreen(), ListManager {
                 val isJoinRequest = changelog.changelogEvent == INVITED_GROUP
                 if (!changelog.isRed) {
                     Card(
-                        modifier = Modifier.padding(bottom = 10.dp)
+                        modifier = Modifier
+                            .padding(
+                                bottom = 10.dp
+                            )
                             .size(
                                 width = 500.dp,
                                 height = if (!isJoinRequest) 115.dp else 155.dp
@@ -395,26 +366,38 @@ class Home : UIScreen(), ListManager {
                             } else
                                 Spacer(Modifier.height(25.dp))
                             Column(
-                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                                modifier = Modifier
+                                    .padding(
+                                        start = 20.dp,
+                                        end = 20.dp,
+                                        bottom = 20.dp
+                                    )
                             ) {
                                 Text(
                                     text = changelog.title,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    modifier = Modifier.padding(top = 10.dp),
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 10.dp
+                                        ),
                                     text = changelog.content,
                                     fontSize = 15.sp
                                 )
                                 if (isJoinRequest) {
                                     spaceContent()
                                     Row(
-                                        modifier = Modifier.padding(top = 10.dp),
+                                        modifier = Modifier
+                                            .padding(
+                                                top = 10.dp
+                                            ),
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                                     ) {
                                         Button(
-                                            modifier = Modifier.weight(1f),
+                                            modifier = Modifier
+                                                .weight(1f),
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = RED_COLOR,
                                                 contentColor = Color.White
@@ -436,7 +419,8 @@ class Home : UIScreen(), ListManager {
                                             )
                                         }
                                         Button(
-                                            modifier = Modifier.weight(1f),
+                                            modifier = Modifier
+                                                .weight(1f),
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = GREEN_COLOR,
                                                 contentColor = Color.White

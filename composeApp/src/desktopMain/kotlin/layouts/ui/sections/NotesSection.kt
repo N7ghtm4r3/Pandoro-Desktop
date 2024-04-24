@@ -114,7 +114,10 @@ class NotesSection : Section(), ListManager {
                             .padding(
                                 top = 10.dp
                             ),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = PaddingValues(
+                            bottom = 10.dp
+                        )
                     ) {
                         items(
                             items = notes,
@@ -125,7 +128,9 @@ class NotesSection : Section(), ListManager {
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(65.dp),
+                                    .heightIn(
+                                        min = 65.dp
+                                    ),
                                 shape = RoundedCornerShape(10.dp),
                                 colors = CardDefaults.cardColors(
                                     containerColor = Color.White
@@ -140,13 +145,19 @@ class NotesSection : Section(), ListManager {
                                 }
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(start = 20.dp, end = 10.dp),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(
+                                            start = 20.dp,
+                                            end = 10.dp
+                                        ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     var markAsDone = note.isMarkedAsDone
                                     if (markModeEnabled) {
                                         Checkbox(
-                                            modifier = Modifier.size(20.dp),
+                                            modifier = Modifier
+                                                .size(20.dp),
                                             colors = CheckboxDefaults.colors(
                                                 checkedColor = PRIMARY_COLOR,
                                                 checkmarkColor = BACKGROUND_COLOR
@@ -168,12 +179,17 @@ class NotesSection : Section(), ListManager {
                                                 }
                                             }
                                         )
-                                        Spacer(Modifier.width(10.dp))
+                                        Spacer(
+                                            modifier = Modifier
+                                                .width(10.dp)
+                                        )
                                     }
                                     val content = note.content
                                     if (content != null) {
                                         Text(
-                                            modifier = Modifier.weight(15f).fillMaxWidth(),
+                                            modifier = Modifier
+                                                .weight(15f)
+                                                .fillMaxWidth(),
                                             text = content,
                                             textAlign = TextAlign.Justify,
                                             fontSize = 14.sp,
@@ -181,7 +197,9 @@ class NotesSection : Section(), ListManager {
                                         )
                                     }
                                     Column(
-                                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxWidth(),
                                         horizontalAlignment = Alignment.End
                                     ) {
                                         IconButton(
@@ -192,7 +210,8 @@ class NotesSection : Section(), ListManager {
                                             }
                                         ) {
                                             Icon(
-                                                modifier = Modifier.size(20.dp),
+                                                modifier = Modifier
+                                                    .size(20.dp),
                                                 imageVector = Icons.Default.Delete,
                                                 tint = RED_COLOR,
                                                 contentDescription = null

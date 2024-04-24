@@ -1,16 +1,12 @@
 package layouts.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
@@ -20,8 +16,8 @@ import com.tecknobit.pandorocore.records.users.GroupMember
 import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.JOINED
 import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.PENDING
 import helpers.BACKGROUND_COLOR
+import helpers.Logo
 import helpers.PRIMARY_COLOR
-import helpers.loadImageBitmap
 import helpers.showSnack
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
@@ -157,13 +153,8 @@ fun LeaveGroup(
                                 if (member.invitationStatus == JOINED && !member.isLoggedUser(user)) {
                                     ListItem(
                                         leadingContent = {
-                                            Image(
-                                                modifier = Modifier
-                                                    .size(45.dp)
-                                                    .clip(CircleShape),
-                                                bitmap = loadImageBitmap(member.profilePic),
-                                                contentDescription = null,
-                                                contentScale = ContentScale.Crop
+                                            Logo(
+                                                url = member.profilePic
                                             )
                                         },
                                         headlineContent = {

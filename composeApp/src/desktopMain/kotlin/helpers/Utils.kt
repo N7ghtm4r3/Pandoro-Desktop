@@ -1,31 +1,29 @@
 package helpers
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.tecknobit.pandorocore.records.users.User.DEFAULT_PROFILE_PIC
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import java.awt.Desktop
 import java.net.URI
-import java.net.URL
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.imageio.IIOException
-import javax.imageio.ImageIO
-import javax.net.ssl.*
 
 /**
  * app name constant
@@ -141,9 +139,9 @@ fun createDivider(
     bottom: Dp = 0.dp,
     color: Color = Color.LightGray
 ) {
-    Divider(
+    HorizontalDivider(
         color = color,
-        modifier = Modifier.fillMaxWidth().height(1.dp).padding(
+        modifier = Modifier.padding(
             start = start,
             top = top,
             end = end,
@@ -159,42 +157,24 @@ fun createDivider(
  */
 fun openUrl(url: String) = Desktop.getDesktop().browse(URI(url))
 
-/**
- * Function to load an image from an ul
- *
- * @param url: the url from load the image
- */
-fun loadImageBitmap(url: String): ImageBitmap {
+@Composable
+fun Logo(
+    modifier: Modifier = Modifier,
+    size: Dp = 45.dp,
+    url: String
+) {
     var iUrl = url
     if (!iUrl.startsWith(localAuthHelper.host!!))
         iUrl = localAuthHelper.host + "/$url"
-    if (iUrl.startsWith("https")) {
-        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                return arrayOf()
-            }
-
-            override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) {}
-            override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) {}
-        })
-        try {
-            val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(null, trustAllCerts, SecureRandom())
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
-            HttpsURLConnection.setDefaultHostnameVerifier { _: String?, _: SSLSession? -> true }
-        } catch (ignored: Exception) {
-        }
-    }
-    var bitmap: ImageBitmap? = null
-    try {
-        bitmap = ImageIO.read(URL(iUrl)).toComposeImageBitmap()
-    } catch (e: IIOException) {
-        try {
-            bitmap =
-                ImageIO.read(URL(localAuthHelper.host!! + "/" + DEFAULT_PROFILE_PIC)).toComposeImageBitmap()
-        } catch (e: IIOException) {
-            localAuthHelper.logout()
-        }
-    }
-    return bitmap!!
+    AsyncImage(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape),
+        model = ImageRequest.Builder(LocalPlatformContext.current)
+            .data(iUrl)
+            .crossfade(true)
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }
