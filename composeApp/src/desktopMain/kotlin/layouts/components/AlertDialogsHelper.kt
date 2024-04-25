@@ -2,16 +2,21 @@
 
 package layouts.components
 
+import Routes.splashScreen
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
+import com.tecknobit.pandorocore.helpers.LANGUAGES_SUPPORTED
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.ProjectUpdate
 import com.tecknobit.pandorocore.records.users.GroupMember
@@ -23,12 +28,14 @@ import helpers.PRIMARY_COLOR
 import helpers.showSnack
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section
 import layouts.ui.sections.Section.Companion.navBack
 import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.snackbarHostState
+import navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -342,6 +349,81 @@ fun PublishUpdate(
 }
 
 /**
+ * Function to show the dialog to change the language of the user
+ *
+ * @param show: whether show the dialog or not
+ */
+@Composable
+fun ChangeLanguage(
+    show: MutableState<Boolean>
+) {
+    var selectedLanguage by remember { mutableStateOf(user.language) }
+    if(show.value) {
+        AlertDialog(
+            onDismissRequest = { show.value = false },
+            title = {
+                Text(
+                    text = stringResource(Res.string.change_language)
+                )
+            },
+            text = {
+                LazyColumn {
+                    items(LANGUAGES_SUPPORTED.keys.toList()) { language ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = selectedLanguage == language,
+                                onClick = { selectedLanguage = language }
+                            )
+                            Text(
+                                text = LANGUAGES_SUPPORTED[language]!!
+                            )
+                        }
+                        HorizontalDivider()
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        show.value = false
+                    }
+                ) {
+                    Text(
+                        text = stringResource(Res.string.dismiss)
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        requester!!.execChangeLanguage(
+                            newLanguage = selectedLanguage
+                        )
+                        if(requester!!.successResponse()) {
+                            localAuthHelper.storeLanguage(
+                                language = selectedLanguage,
+                                refreshUser = true
+                            )
+                            navigator.navigate(splashScreen.name)
+                        }
+                        show.value = false
+                    }
+                ) {
+                    Text(
+                        text = stringResource(Res.string.confirm)
+                    )
+                }
+            }
+        )
+    } else
+        selectedLanguage = user.language
+}
+
+/**
  * Function to create an [AlertDialog]
  *
  * @param show: the flag whether show the [AlertDialog]
@@ -350,7 +432,6 @@ fun PublishUpdate(
  * @param dismissButton: the dismiss button and its action of the [AlertDialog]
  * @param confirmButton: the confirm button and its action of the [AlertDialog]
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AlertDialogContainer(
     show: MutableState<Boolean>,

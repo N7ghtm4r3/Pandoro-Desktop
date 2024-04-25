@@ -168,6 +168,13 @@ fun createDivider(
  */
 fun openUrl(url: String) = Desktop.getDesktop().browse(URI(url))
 
+/**
+ * Function to display an image loaded from an url
+ *
+ * @param modifier: the modifier for the [AsyncImage]
+ * @param size: the size of the image
+ * @param url: the url from load the image
+ */
 @Composable
 fun Logo(
     modifier: Modifier = Modifier,

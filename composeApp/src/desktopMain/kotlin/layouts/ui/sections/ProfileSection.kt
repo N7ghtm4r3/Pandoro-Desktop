@@ -24,12 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import com.tecknobit.apimanager.formatters.JsonHelper
+import com.tecknobit.pandorocore.helpers.LANGUAGES_SUPPORTED
 import com.tecknobit.pandorocore.records.Changelog
 import com.tecknobit.pandorocore.records.Changelog.ChangelogEvent.INVITED_GROUP
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.*
 import com.tecknobit.pandorocore.records.users.PublicUser.PROFILE_PIC_KEY
 import helpers.*
+import layouts.components.ChangeLanguage
 import layouts.components.DeleteGroup
 import layouts.ui.screens.Home
 import layouts.ui.screens.Home.Companion.changelogs
@@ -85,6 +87,7 @@ class ProfileSection : Section() {
     override fun showSection() {
         hideLeaveGroup = false
         passwordProperty = remember { mutableStateOf(HIDE_PASSWORD) }
+        var showChangeLanguage = remember { mutableStateOf(false) }
         showSection {
             LazyColumn(
                 modifier = Modifier
@@ -184,7 +187,7 @@ class ProfileSection : Section() {
                                                 Row(
                                                     modifier = Modifier
                                                         .padding(
-                                                            bottom = 10.dp
+                                                            bottom = 5.dp
                                                         ),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
@@ -203,7 +206,7 @@ class ProfileSection : Section() {
                                                 Row(
                                                     modifier = Modifier
                                                         .padding(
-                                                            bottom = 10.dp
+                                                            bottom = 5.dp
                                                         ),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
@@ -280,12 +283,44 @@ class ProfileSection : Section() {
                                                         )
                                                     }
                                                 }
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Text(
+                                                        text = stringResource(string.language) + ":"
+                                                    )
+                                                    Text(
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
+                                                        text = LANGUAGES_SUPPORTED[user.language]!!,
+                                                        fontWeight = FontWeight.Bold
+                                                    )
+                                                    IconButton(
+                                                        modifier = Modifier
+                                                            .size(30.dp)
+                                                            .padding(
+                                                                start = 5.dp
+                                                            ),
+                                                        onClick = { showChangeLanguage.value = true }
+                                                    ) {
+                                                        Icon(
+                                                            modifier = Modifier
+                                                                .size(20.dp),
+                                                            imageVector = Icons.Default.Edit,
+                                                            tint = RED_COLOR,
+                                                            contentDescription = null
+                                                        )
+                                                    }
+                                                }
+                                                ChangeLanguage(
+                                                    show = showChangeLanguage
+                                                )
                                             }
                                             spaceContent(space = 0.dp)
                                             Row(
                                                 modifier = Modifier
                                                     .padding(
-                                                        top = 10.dp
+                                                        top = 5.dp
                                                     ),
                                                 horizontalArrangement = Arrangement.spacedBy(20.dp)
                                             ) {

@@ -3,8 +3,6 @@ package layouts.ui.screens
 import Routes.connect
 import Routes.home
 import UpdaterDialog
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -20,7 +18,6 @@ import com.tecknobit.pandorocore.records.users.User
 import fontFamily
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
-import kotlinx.coroutines.delay
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.sections.Section
 import navigator
@@ -77,37 +74,9 @@ class SplashScreen : UIScreen() {
         activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
-        val blink = remember { Animatable(0f) }
+        Locale.setDefault(Locale.forLanguageTag(user.language))
         var launch by remember { mutableStateOf(true) }
         var checkForUpdates by remember { mutableStateOf(true) }
-        LaunchedEffect(true) {
-            blink.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000)
-            )
-            delay(500)
-        }
-        if(checkForUpdates) {
-            checkForUpdates = false
-            UpdaterDialog(
-                locale = Locale.UK,
-                appName = stringResource(Res.string.app_name),
-                currentVersion = stringResource(Res.string.app_version),
-                onUpdateAvailable = {
-                    launch = false
-                },
-                dismissAction = {
-                    launch = true
-                }
-            )
-        }
-        TimeFormatter.changeDefaultPattern("dd/MM/yyyy HH:mm:ss")
-        if(launch) {
-            if (requester != null)
-                navigator.navigate(home.name)
-            else
-                navigator.navigate(connect.name)
-        }
         Box(
             modifier = Modifier
                 .background(PRIMARY_COLOR)
@@ -116,7 +85,7 @@ class SplashScreen : UIScreen() {
         ) {
             Text(
                 text = stringResource(Res.string.app_name),
-                color = BACKGROUND_COLOR.copy(blink.value),
+                color = BACKGROUND_COLOR,
                 fontSize = 75.sp,
                 fontFamily = fontFamily
             )
@@ -134,6 +103,27 @@ class SplashScreen : UIScreen() {
                     fontFamily = fontFamily
                 )
             }
+        }
+        if(checkForUpdates) {
+            checkForUpdates = false
+            UpdaterDialog(
+                locale = Locale.getDefault(),
+                appName = stringResource(Res.string.app_name),
+                currentVersion = stringResource(Res.string.app_version),
+                onUpdateAvailable = {
+                    launch = false
+                },
+                dismissAction = {
+                    launch = true
+                }
+            )
+        }
+        TimeFormatter.changeDefaultPattern("dd/MM/yyyy HH:mm:ss")
+        if(launch) {
+            if (requester != null)
+                navigator.navigate(home.name)
+            else
+                navigator.navigate(connect.name)
         }
     }
 
