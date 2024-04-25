@@ -1,13 +1,16 @@
 <resources>
     <string name="app_name" translatable="false">Pandoro</string>
+    <string name="app_version" translatable="false">1.0.3</string>
+    <string name="description_subtext">Pandoro es un software de gestión de código abierto útil para gestionar fácilmente sus proyectos y sus actualizaciones</string>
     <string name="frequent_projects">Proyectos frecuentes</string>
     <string name="current_projects">Proyectos en curso</string>
     <string name="delete_project">Suprimir proyecto</string>
     <string name="projects">Proyectos</string>
     <string name="notes">Notas</string>
+    <string name="notes_number">Número de notas:</string>
     <string name="overview">Visión general</string>
     <string name="profile">Perfil</string>
-    <string name="delete_text_dialog">Si confirmas este evento el proyecto y toda su información será borrada y no se podrá recuperar, ¿confirmas\?</string>
+    <string name="delete_text_dialog">Si confirmas este evento el proyecto y toda su información será borrada y no se podrá recuperar, ¿confirmas?</string>
     <string name="dismiss">Despedir</string>
     <string name="confirm">Confirmar</string>
     <string name="no_projects_found">No se han encontrado proyectos</string>
@@ -39,6 +42,7 @@
     <string name="published">Publicado en</string>
     <string name="by_me">Por mí</string>
     <string name="projects_performance">Rendimiento de los proyectos</string>
+    <string name="updates_performance">Actualiza el rendimiento</string>
     <string name="development_days">Días de desarrollo</string>
     <string name="best_performance">Mejor rendimiento</string>
     <string name="worst_performance">Peor rendimiento</string>
@@ -78,15 +82,18 @@
     <string name="start_update">Iniciar actualización</string>
     <string name="publish">Publique</string>
     <string name="delete_update">Borrar actualización</string>
-    <string name="delete_update_text">Si confirmas este evento la actualización y toda su información será borrada y ya no se podrá recuperar, ¿confirmas\?</string>
+    <string name="delete_update_text">Si confirmas este evento la actualización y toda su información será borrada y ya no se podrá recuperar, ¿confirmas?</string>
     <string name="marked_as_done_by">Marcado como hecho por:</string>
     <string name="schedule_update">Actualización del calendario</string>
     <string name="schedule">Horario</string>
     <string name="target_version">Versión objetivo</string>
     <string name="groups">Grupos</string>
+    <string name="groups_number">Grupos número:</string>
     <string name="stats">Estadísticas</string>
     <string name="total_development_days">Total de días de desarrollo:</string>
     <string name="members">Miembros</string>
+    <string name="total_members">Total de miembros:</string>
+    <string name="projects_number">Número de proyectos:</string>
     <string name="remove_the_user_from">Eliminar al usuario de</string>
     <string name="remove_user_text">Si confirma este evento, el usuario será eliminado del grupo y ya no tendrá acceso a los contenidos de ese grupo</string>
     <string name="leave_group">Dejar grupo</string>
@@ -95,8 +102,8 @@
     <string name="delete_group">Borrar grupo</string>
     <string name="add_new_members">Añadir nuevos miembros</string>
     <string name="server_address">Dirección del servidor</string>
-    <string name="have_an_account">¿Tiene una cuenta\?</string>
-    <string name="are_you_new_to_pandoro">¿Eres nuevo en Pandoro\?</string>
+    <string name="have_an_account">¿Tiene una cuenta?</string>
+    <string name="are_you_new_to_pandoro">¿Eres nuevo en Pandoro?</string>
     <string name="sign_up">Inscríbete</string>
     <string name="sign_in">Iniciar sesión</string>
     <string name="welcome_back">Bienvenido de nuevo</string>
@@ -124,7 +131,7 @@
     <string name="join">Únete a</string>
     <string name="accept_invite">Aceptar invitación</string>
     <string name="not_all_the_change_notes_are_done">No todas las notas de cambio están hechas</string>
-    <string name="check_change_notes_message">Está publicando una actualización en la que no todas las notas de cambio están marcadas como realizadas, ¿quiere publicar la actualización de todos modos\?</string>
+    <string name="check_change_notes_message">Está publicando una actualización en la que no todas las notas de cambio están marcadas como realizadas, ¿quiere publicar la actualización de todos modos?</string>
     <string name="choose_the_next_admin">Elegir al siguiente administrador</string>
     <string name="no_any_groups">Ningún grupo</string>
     <string name="no_any_personal_notes">Ninguna nota personal</string>

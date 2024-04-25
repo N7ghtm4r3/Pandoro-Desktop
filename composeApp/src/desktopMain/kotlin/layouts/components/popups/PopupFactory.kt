@@ -46,14 +46,20 @@ fun createPopup(
     flag: MutableState<Boolean>,
     title: String,
     titleSize: TextUnit = 16.sp,
-    columnModifier: Modifier = Modifier.fillMaxSize().padding(top = 10.dp).width(250.dp),
+    columnModifier: Modifier = Modifier
+        .fillMaxSize()
+        .padding(
+            top = 10.dp
+        )
+        .width(250.dp),
     content: @Composable ColumnScope.() -> Unit,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
 ) {
     snackbarHostState = remember { SnackbarHostState() }
     coroutineScope = rememberCoroutineScope()
     Row(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         Popup(
             alignment = Alignment.BottomStart,
@@ -109,10 +115,17 @@ fun createPopup(
                                 )
                             }
                             Column(
-                                modifier = Modifier.weight(1f).fillMaxWidth()
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
                             ) {
                                 IconButton(
-                                    modifier = Modifier.size(25.dp).padding(top = 5.dp, end = 5.dp)
+                                    modifier = Modifier
+                                        .size(25.dp)
+                                        .padding(
+                                            top = 5.dp,
+                                            end = 5.dp
+                                        )
                                         .align(alignment = Alignment.End),
                                     onClick = { flag.value = false }
                                 ) {

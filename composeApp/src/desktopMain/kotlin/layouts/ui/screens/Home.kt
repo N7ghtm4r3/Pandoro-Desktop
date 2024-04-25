@@ -38,9 +38,14 @@ import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.snackbarHostState
 import layouts.ui.sections.Section.Sections.*
 import layouts.ui.theme.PrimaryLight
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import pandoro.composeapp.generated.resources.Res
+import pandoro.composeapp.generated.resources.decline
+import pandoro.composeapp.generated.resources.join
 import java.util.*
 
 /**
@@ -50,6 +55,7 @@ import java.util.*
  * @see UIScreen
  * @see ListManager
  */
+@OptIn(ExperimentalResourceApi::class)
 class Home : UIScreen(), ListManager {
 
     /**
@@ -326,7 +332,10 @@ class Home : UIScreen(), ListManager {
                             )
                             .size(
                                 width = 500.dp,
-                                height = if (!isJoinRequest) 115.dp else 155.dp
+                                height = if (!isJoinRequest)
+                                    115.dp
+                                else
+                                    155.dp
                             ),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
@@ -337,7 +346,8 @@ class Home : UIScreen(), ListManager {
                         shape = RoundedCornerShape(5.dp),
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                         ) {
                             if (!isJoinRequest) {
                                 IconButton(
@@ -363,8 +373,12 @@ class Home : UIScreen(), ListManager {
                                         contentDescription = null
                                     )
                                 }
-                            } else
-                                Spacer(Modifier.height(25.dp))
+                            } else {
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(25.dp)
+                                )
+                            }
                             Column(
                                 modifier = Modifier
                                     .padding(
@@ -415,7 +429,7 @@ class Home : UIScreen(), ListManager {
                                             }
                                         ) {
                                             Text(
-                                                text = "Decline"
+                                                text = stringResource(Res.string.decline)
                                             )
                                         }
                                         Button(
@@ -438,7 +452,7 @@ class Home : UIScreen(), ListManager {
                                             }
                                         ) {
                                             Text(
-                                                text = "Join"
+                                                text = stringResource(Res.string.join)
                                             )
                                         }
                                     }

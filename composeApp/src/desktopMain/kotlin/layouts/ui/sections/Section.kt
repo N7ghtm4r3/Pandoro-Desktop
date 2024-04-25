@@ -15,13 +15,16 @@ import com.tecknobit.pandorocore.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.currentProject
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
+import pandoro.composeapp.generated.resources.*
 
 /**
  * The [Section] class is useful to give the base structure that a Pandoro's section must have
@@ -91,12 +94,17 @@ abstract class Section {
          *
          * No-any params required
          */
-        fun sidebarMenu(): List<Sections> {
-            val sections = mutableListOf<Sections>()
-            sections.add(Sections.Projects)
-            sections.add(Sections.Notes)
-            sections.add(Sections.Overview)
-            sections.add(Sections.Profile)
+        @OptIn(ExperimentalResourceApi::class)
+        fun sidebarMenu(): MutableList<Pair<Sections, String>> {
+            val sections = mutableListOf<Pair<Sections, String>>()
+            runBlocking {
+                async {
+                    sections.add(Pair(Sections.Projects, getString(Res.string.projects)))
+                    sections.add(Pair(Sections.Notes, getString(Res.string.notes)))
+                    sections.add(Pair(Sections.Overview, getString(Res.string.overview)))
+                    sections.add(Pair(Sections.Profile, getString(Res.string.profile)))
+                }.await()
+            }
             return sections
         }
 

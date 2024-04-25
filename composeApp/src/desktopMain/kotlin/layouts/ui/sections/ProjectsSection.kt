@@ -27,6 +27,9 @@ import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * This is the layout for the projects section
@@ -34,6 +37,7 @@ import layouts.ui.screens.SplashScreen.Companion.requester
  * @author Tecknobit - N7ghtm4r3
  * @see Section
  */
+@OptIn(ExperimentalResourceApi::class)
 class ProjectsSection : Section() {
 
     companion object {
@@ -64,12 +68,15 @@ class ProjectsSection : Section() {
                 LazyColumn {
                     item {
                         populateLazyGrid(
-                            "Frequent projects",
+                            stringResource(Res.string.frequent_projects),
                             populateFrequentProjects(projectsList).toMutableStateList()
                         )
                     }
                     item {
-                        populateLazyGrid("Current projects", projectsList)
+                        populateLazyGrid(
+                            stringResource(Res.string.current_projects),
+                            projectsList
+                        )
                     }
                 }
             }
@@ -108,7 +115,7 @@ class ProjectsSection : Section() {
                     width = 250.dp,
                     height = 55.dp
                 ),
-            label = "Search",
+            label = stringResource(Res.string.search),
             onValueChange = {
                 query = it
             },
@@ -137,7 +144,7 @@ class ProjectsSection : Section() {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "No projects found",
+                    text = stringResource(Res.string.no_projects_found),
                     fontSize = 15.sp
                 )
             }
@@ -235,19 +242,23 @@ class ProjectsSection : Section() {
                                                         containerColor = BACKGROUND_COLOR,
                                                         onDismissRequest = { showDeleteAlertDialog = false },
                                                         title = {
-                                                            Text(text = "Delete project")
+                                                            Text(
+                                                                text = stringResource(Res.string.delete_project)
+                                                            )
                                                         },
                                                         text = {
                                                             Text(
-                                                                text = "If you confirm this action the project and its all "
-                                                                        + "information will be deleted and no more recoverable, "
-                                                                        + "confirm?"
+                                                                text = stringResource(Res.string.delete_text_dialog)
                                                             )
                                                         },
                                                         dismissButton = {
                                                             TextButton(
                                                                 onClick = { showDeleteAlertDialog = false },
-                                                                content = { Text(text = "Dismiss") }
+                                                                content = {
+                                                                    Text(
+                                                                        text = stringResource(Res.string.dismiss)
+                                                                    )
+                                                                }
                                                             )
                                                         },
                                                         confirmButton = {
@@ -259,7 +270,11 @@ class ProjectsSection : Section() {
                                                                     if (!requester!!.successResponse())
                                                                         showSnack(requester!!.errorMessage())
                                                                 },
-                                                                content = { Text(text = "Confirm") }
+                                                                content = {
+                                                                    Text(
+                                                                        text = stringResource(Res.string.confirm)
+                                                                    )
+                                                                }
                                                             )
                                                         },
                                                     )

@@ -34,8 +34,13 @@ import layouts.ui.screens.Home.Companion.currentUpdate
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.json.JSONArray
 import org.json.JSONObject
+import pandoro.composeapp.generated.resources.Res
+import pandoro.composeapp.generated.resources.notes
+import pandoro.composeapp.generated.resources.notes_number
 
 /**
  * This is the layout for the notes section
@@ -60,7 +65,7 @@ class NotesSection : Section(), ListManager {
      *
      * No-any params required
      */
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun showSection() {
         var markModeEnabled by remember { mutableStateOf(false) }
@@ -76,7 +81,7 @@ class NotesSection : Section(), ListManager {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Notes",
+                        text = stringResource(Res.string.notes),
                         fontSize = 25.sp
                     )
                     IconButton(
@@ -104,7 +109,7 @@ class NotesSection : Section(), ListManager {
                             .padding(
                                 top = 5.dp
                             ),
-                        text = "Notes number: ${notes.size}",
+                        text = stringResource(Res.string.notes_number) + " ${notes.size}",
                         fontSize = 14.sp
                     )
                     spaceContent()

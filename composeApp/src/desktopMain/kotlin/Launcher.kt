@@ -8,7 +8,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import helpers.appName
 import layouts.ui.screens.Connect
 import layouts.ui.screens.Home
 import layouts.ui.screens.SplashScreen
@@ -20,7 +19,9 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res
+import pandoro.composeapp.generated.resources.app_name
 import pandoro.composeapp.generated.resources.rem
 
 /**
@@ -100,9 +101,10 @@ fun App() {
  * Method to start the of **Pandoro** desktop app.
  * No-any params required
  */
+@OptIn(ExperimentalResourceApi::class)
 fun main() = application {
     Window(
-        title = appName,
+        title = stringResource(Res.string.app_name),
         icon = painterResource("icons/logo.png"),
         state = WindowState(placement = WindowPlacement.Maximized),
         onCloseRequest = ::exitApplication

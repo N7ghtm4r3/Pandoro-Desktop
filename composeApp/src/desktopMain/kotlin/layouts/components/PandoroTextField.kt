@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fontFamily
 
 /**
  * Function to create a custom [TextField]
@@ -60,7 +61,7 @@ fun PandoroTextField(
             singleLine = true,
             textStyle = TextStyle(
                 fontSize = 14.sp,
-                fontFamily = FontFamily(Font(resource = "font/rem.ttf"))
+                fontFamily = fontFamily
             ),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,

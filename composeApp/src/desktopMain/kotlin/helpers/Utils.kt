@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,18 +19,10 @@ import coil3.request.crossfade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.StringResource
 import java.awt.Desktop
 import java.net.URI
-
-/**
- * app name constant
- */
-const val appName: String = "Pandoro"
-
-/**
- * current app version constant
- */
-const val appVersion: String = "1.0.3"
 
 /**
  * the primary color value
@@ -79,11 +68,33 @@ fun fromHexToColor(hex: String): Color {
  * @param snackbarHostState: state of the [Scaffold]
  * @param message: message to show
  */
+@OptIn(ExperimentalResourceApi::class)
+fun showSnack(
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState,
+    message: StringResource,
+    duration: SnackbarDuration = SnackbarDuration.Short
+) {
+    scope.launch {
+        snackbarHostState.showSnackbar(
+            message = org.jetbrains.compose.resources.getString(message),
+            duration = duration,
+        )
+    }
+}
+
+/**
+ * Function to show a snackbar from a view
+ *
+ * @param scope: scope manager
+ * @param snackbarHostState: state of the [Scaffold]
+ * @param message: message to show
+ */
 fun showSnack(
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState,
     message: String,
-    duration: androidx.compose.material3.SnackbarDuration = androidx.compose.material3.SnackbarDuration.Short
+    duration: SnackbarDuration = SnackbarDuration.Short
 ) {
     scope.launch {
         snackbarHostState.showSnackbar(

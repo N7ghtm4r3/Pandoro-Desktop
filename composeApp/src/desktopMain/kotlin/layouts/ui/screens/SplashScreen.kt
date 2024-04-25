@@ -20,12 +20,15 @@ import com.tecknobit.pandorocore.records.users.User
 import fontFamily
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
-import helpers.appName
-import helpers.appVersion
 import kotlinx.coroutines.delay
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.sections.Section
 import navigator
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.Res
+import pandoro.composeapp.generated.resources.app_name
+import pandoro.composeapp.generated.resources.app_version
 import java.security.cert.X509Certificate
 import java.util.*
 import javax.net.ssl.TrustManager
@@ -68,6 +71,7 @@ class SplashScreen : UIScreen() {
      *
      * No-any params required
      */
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun showScreen() {
         activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
@@ -75,6 +79,7 @@ class SplashScreen : UIScreen() {
         localAuthHelper.initUserCredentials()
         val blink = remember { Animatable(0f) }
         var launch by remember { mutableStateOf(true) }
+        var checkForUpdates by remember { mutableStateOf(true) }
         LaunchedEffect(true) {
             blink.animateTo(
                 targetValue = 1f,
@@ -82,17 +87,20 @@ class SplashScreen : UIScreen() {
             )
             delay(500)
         }
-        UpdaterDialog(
-            locale = Locale.UK,
-            appName = appName,
-            currentVersion = appVersion,
-            onUpdateAvailable = {
-                launch = false
-            },
-            dismissAction = {
-                launch = true
-            }
-        )
+        if(checkForUpdates) {
+            checkForUpdates = false
+            UpdaterDialog(
+                locale = Locale.UK,
+                appName = stringResource(Res.string.app_name),
+                currentVersion = stringResource(Res.string.app_version),
+                onUpdateAvailable = {
+                    launch = false
+                },
+                dismissAction = {
+                    launch = true
+                }
+            )
+        }
         TimeFormatter.changeDefaultPattern("dd/MM/yyyy HH:mm:ss")
         if(launch) {
             if (requester != null)
@@ -107,7 +115,7 @@ class SplashScreen : UIScreen() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = appName,
+                text = stringResource(Res.string.app_name),
                 color = BACKGROUND_COLOR.copy(blink.value),
                 fontSize = 75.sp,
                 fontFamily = fontFamily

@@ -53,10 +53,7 @@ import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import org.json.JSONException
-import pandoro.composeapp.generated.resources.Res
-import pandoro.composeapp.generated.resources.change_notes
-import pandoro.composeapp.generated.resources.export_notes
-import pandoro.composeapp.generated.resources.notes_formatted_in_markdown_copied
+import pandoro.composeapp.generated.resources.*
 import java.awt.datatransfer.StringSelection
 
 /**
@@ -92,38 +89,57 @@ class ProjectSection : Section(), SingleItemManager {
                             onClick = { navBack() }
                         ) {
                             Icon(
-                                modifier = Modifier.size(22.dp),
+                                modifier = Modifier
+                                    .size(22.dp),
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = null
                             )
                         }
                         Row(
-                            modifier = Modifier.wrapContentHeight()
+                            modifier = Modifier
+                                .wrapContentHeight()
                         ) {
                             Text(
                                 text = currentProject.value.name,
                                 fontSize = 25.sp
                             )
                             Text(
-                                modifier = Modifier.padding(start = 10.dp, bottom = 5.dp).align(Alignment.Bottom),
+                                modifier = Modifier
+                                    .padding(
+                                        start = 10.dp,
+                                        bottom = 5.dp
+                                    )
+                                    .align(Alignment.Bottom),
                                 text = "v. " + currentProject.value.version,
                                 fontSize = 12.sp
                             )
                         }
                         var logoPath = ""
                         when (currentProject.value.repositoryPlatform) {
-                            Github -> logoPath = "github-mark.svg"
-                            GitLab -> logoPath = "gitlab-logo-500.svg"
+                            Github -> logoPath = "github.svg"
+                            GitLab -> logoPath = "gitlab.svg"
                             else -> {}
                         }
                         isGitHub = logoPath.contains("github")
                         if (logoPath.isNotEmpty()) {
                             IconButton(
-                                modifier = if (isGitHub) Modifier.padding(start = 5.dp) else Modifier,
+                                modifier = if (isGitHub) {
+                                    Modifier
+                                        .padding(
+                                            start = 5.dp
+                                        )
+                                } else
+                                    Modifier,
                                 onClick = { openUrl(currentProject.value.projectRepo) }
                             ) {
                                 Icon(
-                                    modifier = Modifier.size(if (isGitHub) 35.dp else 60.dp),
+                                    modifier = Modifier
+                                        .size(
+                                            if (isGitHub)
+                                                35.dp
+                                            else
+                                                60.dp
+                                        ),
                                     painter = painterResource(logoPath),
                                     contentDescription = null
                                 )
@@ -133,18 +149,31 @@ class ProjectSection : Section(), SingleItemManager {
                 }
                 item {
                     Column(
-                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                        modifier = Modifier
+                            .padding(
+                                start = 20.dp,
+                                end = 20.dp
+                            )
                     ) {
                         if (currentProject.value.hasGroups()) {
                             Text(
-                                modifier = Modifier.padding(top = if (isGitHub) 5.dp else 0.dp),
-                                text = "Author: ${currentProject.value.author.completeName}",
+                                modifier = Modifier
+                                    .padding(
+                                        top = if (isGitHub)
+                                            5.dp
+                                        else
+                                            0.dp
+                                    ),
+                                text = stringResource(Res.string.author) + "${currentProject.value.author.completeName}",
                                 textAlign = TextAlign.Justify,
                                 fontSize = 20.sp
                             )
                         }
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
                             text = currentProject.value.description,
                             textAlign = TextAlign.Justify,
                             fontSize = 14.sp
@@ -153,11 +182,15 @@ class ProjectSection : Section(), SingleItemManager {
                         var showUpdatesSection by remember { mutableStateOf(true) }
                         var showUpdatesIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = 10.dp
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Updates",
+                                text = stringResource(Res.string.updates),
                                 fontSize = 20.sp
                             )
                             IconButton(
@@ -178,8 +211,11 @@ class ProjectSection : Section(), SingleItemManager {
                         }
                         if (showUpdatesSection) {
                             Text(
-                                modifier = Modifier.padding(top = 10.dp),
-                                text = "Updates number: ${currentProject.value.updatesNumber}",
+                                modifier = Modifier
+                                    .padding(
+                                        top = 10.dp
+                                    ),
+                                text = stringResource(Res.string.updates_number) + ": ${currentProject.value.updatesNumber}",
                                 fontSize = 14.sp
                             )
                             Text(
@@ -187,7 +223,7 @@ class ProjectSection : Section(), SingleItemManager {
                                     .padding(
                                         top = 5.dp
                                     ),
-                                text = "Last update: ${currentProject.value.lastUpdateDate}",
+                                text = stringResource(Res.string.last_update) + " ${currentProject.value.lastUpdateDate}",
                                 fontSize = 14.sp
                             )
                             val updates = currentProject.value.updates
@@ -255,7 +291,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                             .padding(
                                                                 top = 5.dp
                                                             ),
-                                                        text = "Update ID: ${update.id}",
+                                                        text = stringResource(Res.string.update_id) + " ${update.id}",
                                                         fontSize = 14.sp
                                                     )
                                                     spaceContent()
@@ -266,7 +302,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 .padding(
                                                                     top = 5.dp
                                                                 ),
-                                                            text = "Author: ${author.completeName}",
+                                                            text = stringResource(Res.string.author) + " ${author.completeName}",
                                                             fontSize = 14.sp
                                                         )
                                                     }
@@ -275,7 +311,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                             .padding(
                                                                 top = 5.dp
                                                             ),
-                                                        text = "Creation date: ${update.createDate}",
+                                                        text = stringResource(Res.string.creation_date) + " ${update.createDate}",
                                                         fontSize = 14.sp
                                                     )
                                                     spaceContent()
@@ -287,7 +323,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                     .padding(
                                                                         top = 5.dp
                                                                     ),
-                                                                text = "Started by: ${startedBy.completeName}",
+                                                                text = stringResource(Res.string.started_by) + " ${startedBy.completeName}",
                                                                 fontSize = 14.sp
                                                             )
                                                         }
@@ -296,7 +332,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 .padding(
                                                                     top = 5.dp
                                                                 ),
-                                                            text = "Start date: ${update.startDate}",
+                                                            text = stringResource(Res.string.start_date) + " ${update.startDate}",
                                                             fontSize = 14.sp
                                                         )
                                                         spaceContent()
@@ -309,7 +345,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                     .padding(
                                                                         top = 5.dp
                                                                     ),
-                                                                text = "Published by: ${publishedBy.completeName}",
+                                                                text = stringResource(Res.string.published_by) + " ${publishedBy.completeName}",
                                                                 fontSize = 14.sp
                                                             )
                                                         }
@@ -318,19 +354,20 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 .padding(
                                                                     top = 5.dp
                                                                 ),
-                                                            text = "Publish date: ${update.publishDate}",
+                                                            text = stringResource(Res.string.publish_date) + " ${update.publishDate}",
                                                             fontSize = 14.sp
                                                         )
                                                         spaceContent()
-                                                        var timeGap = "days"
+                                                        var timeGap = stringResource(Res.string.days)
                                                         if (update.developmentDuration == 1)
-                                                            timeGap = "day"
+                                                            timeGap = stringResource(Res.string.day)
                                                         Text(
                                                             modifier = Modifier
                                                                 .padding(
                                                                     top = 5.dp
                                                                 ),
-                                                            text = "Development duration: ${update.developmentDuration} $timeGap",
+                                                            text = stringResource(Res.string.development_duration) +
+                                                                    " ${update.developmentDuration} $timeGap",
                                                             fontSize = 14.sp
                                                         )
                                                     }
@@ -421,7 +458,9 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 } else {
                                                                     var isMarkedAsDone by remember { mutableStateOf(note.isMarkedAsDone) }
                                                                     Row(
-                                                                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                                                                        modifier = Modifier
+                                                                            .fillMaxWidth()
+                                                                            .height(50.dp),
                                                                         verticalAlignment = Alignment.CenterVertically
                                                                     ) {
                                                                         Checkbox(
@@ -455,7 +494,9 @@ class ProjectSection : Section(), SingleItemManager {
                                                                             }
                                                                         )
                                                                         Text(
-                                                                            modifier = Modifier.weight(4f).fillMaxWidth()
+                                                                            modifier = Modifier
+                                                                                .weight(4f)
+                                                                                .fillMaxWidth()
                                                                                 .clickable {
                                                                                     currentNote = note
                                                                                     currentUpdate = update
@@ -478,21 +519,28 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 }
                                                             } else {
                                                                 Row(
-                                                                    modifier = Modifier.padding(bottom = 5.dp)
+                                                                    modifier = Modifier
+                                                                        .padding(
+                                                                            bottom = 5.dp
+                                                                        )
                                                                         .wrapContentHeight(),
                                                                     verticalAlignment = Alignment.CenterVertically
                                                                 ) {
                                                                     Text(
-                                                                        modifier = Modifier.padding(end = 5.dp),
+                                                                        modifier = Modifier
+                                                                            .padding(
+                                                                                end = 5.dp
+                                                                            ),
                                                                         text = "-",
                                                                         fontSize = 14.sp
                                                                     )
                                                                     Text(
-                                                                        modifier = Modifier.clickable {
-                                                                            currentNote = note
-                                                                            currentUpdate = update
-                                                                            showNoteInfoPopup.value = true
-                                                                        },
+                                                                        modifier = Modifier
+                                                                            .clickable {
+                                                                                currentNote = note
+                                                                                currentUpdate = update
+                                                                                showNoteInfoPopup.value = true
+                                                                            },
                                                                         text = note.content,
                                                                         fontSize = 14.sp,
                                                                         textAlign = TextAlign.Justify
@@ -522,7 +570,11 @@ class ProjectSection : Section(), SingleItemManager {
                                                                                 update
                                                                             )
                                                                         },
-                                                                        content = { Text(text = "Confirm") }
+                                                                        content = {
+                                                                            Text(
+                                                                                text = stringResource(Res.string.confirm)
+                                                                            )
+                                                                        }
                                                                     )
                                                                 }
                                                             }
@@ -566,7 +618,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                             showMenu = false
                                                                             if (isScheduled)
                                                                                 startUpdate(update)
-                                                                            else if (!isPublished) {
+                                                                            else {
                                                                                 if (!areAllChangeNotesDone(changeNotes)) {
                                                                                     showPublishUpdate.value = true
                                                                                     showNotes.value = true
@@ -580,12 +632,12 @@ class ProjectSection : Section(), SingleItemManager {
                                                                         },
                                                                         text = {
                                                                             Text(
-                                                                                text =
-                                                                                if (isScheduled)
-                                                                                    "Start update"
-                                                                                else if (!isPublished)
-                                                                                    "Publish update"
-                                                                                else "",
+                                                                                text = stringResource(
+                                                                                    if (isScheduled)
+                                                                                        Res.string.start_update
+                                                                                    else
+                                                                                        Res.string.publish
+                                                                                ),
                                                                                 fontSize = 14.sp
                                                                             )
                                                                             Column(
@@ -599,18 +651,14 @@ class ProjectSection : Section(), SingleItemManager {
                                                                                     imageVector =
                                                                                     if (isScheduled)
                                                                                         Icons.Default.PlayArrow
-                                                                                    else if (!isPublished)
-                                                                                        Icons.Default.Publish
                                                                                     else
-                                                                                        Icons.Default.Edit,
+                                                                                        Icons.Default.Publish,
                                                                                     contentDescription = null,
                                                                                     tint =
                                                                                     if (isScheduled)
                                                                                         YELLOW_COLOR
-                                                                                    else if (!isPublished)
-                                                                                        GREEN_COLOR
                                                                                     else
-                                                                                        PRIMARY_COLOR
+                                                                                        GREEN_COLOR
                                                                                 )
                                                                             }
                                                                         }
@@ -623,15 +671,17 @@ class ProjectSection : Section(), SingleItemManager {
                                                                     },
                                                                     text = {
                                                                         Text(
-                                                                            text = "Delete",
+                                                                            text = stringResource(Res.string.delete),
                                                                             fontSize = 14.sp
                                                                         )
                                                                         Column(
-                                                                            modifier = Modifier.fillMaxWidth(),
+                                                                            modifier = Modifier
+                                                                                .fillMaxWidth(),
                                                                             horizontalAlignment = Alignment.End
                                                                         ) {
                                                                             Icon(
-                                                                                modifier = Modifier.size(18.dp),
+                                                                                modifier = Modifier
+                                                                                    .size(18.dp),
                                                                                 imageVector = Icons.Default.Delete,
                                                                                 contentDescription = null,
                                                                                 tint = RED_COLOR
@@ -681,7 +731,7 @@ class ProjectSection : Section(), SingleItemManager {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Groups",
+                                    text = stringResource(Res.string.groups),
                                     fontSize = 20.sp
                                 )
                                 IconButton(
@@ -706,7 +756,7 @@ class ProjectSection : Section(), SingleItemManager {
                                         .padding(
                                             top = 10.dp
                                         ),
-                                    text = "Groups number: ${groups.size}",
+                                    text = stringResource(Res.string.groups_number) + " ${groups.size}",
                                     fontSize = 14.sp
                                 )
                                 spaceContent()
@@ -782,7 +832,7 @@ class ProjectSection : Section(), SingleItemManager {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Stats",
+                                    text = stringResource(Res.string.stats),
                                     fontSize = 20.sp
                                 )
                                 IconButton(
@@ -805,12 +855,13 @@ class ProjectSection : Section(), SingleItemManager {
                             if (showStatsSection) {
                                 Text(
                                     modifier = Modifier.padding(top = 10.dp),
-                                    text = "Total development days: ${currentProject.value.totalDevelopmentDays}",
+                                    text = stringResource(Res.string.total_development_days) + " ${currentProject.value.totalDevelopmentDays}",
                                     fontSize = 14.sp
                                 )
                                 Text(
                                     modifier = Modifier.padding(top = 5.dp),
-                                    text = "Average development time: ${currentProject.value.averageDevelopmentTime} days",
+                                    text = stringResource(Res.string.average_development_time) + " ${currentProject.value.averageDevelopmentTime} "
+                                            + stringResource(Res.string.days),
                                     fontSize = 14.sp
                                 )
                                 if (publishedUpdates.isNotEmpty()) {

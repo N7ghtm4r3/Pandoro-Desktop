@@ -50,7 +50,12 @@ import layouts.ui.sections.ProfileSection.Companion.groups
 import layouts.ui.sections.ProjectsSection.Companion.projectsList
 import layouts.ui.sections.Section.Sections
 import navigator
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.json.JSONObject
+import pandoro.composeapp.generated.resources.*
+import pandoro.composeapp.generated.resources.Res.string
 import java.util.prefs.Preferences
 
 /**
@@ -78,6 +83,7 @@ class Connect : UIScreen() {
      *
      * No-any params required
      */
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun showScreen() {
         snackbarHostState = remember { SnackbarHostState() }
@@ -116,7 +122,7 @@ class Connect : UIScreen() {
                                 .fillMaxSize()
                         ) {
                             Text(
-                                text = appName,
+                                text = stringResource(string.app_name),
                                 fontSize = 40.sp,
                                 color = Color.White
                             )
@@ -125,8 +131,7 @@ class Connect : UIScreen() {
                                     .padding(
                                         top = 10.dp
                                     ),
-                                text = "Pandoro is an open source management software useful for easily managing your " +
-                                        "projects and their updates",
+                                text = stringResource(Res.string.description_subtext),
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Justify,
                                 color = Color.White
@@ -145,14 +150,15 @@ class Connect : UIScreen() {
                                     onClick = { openUrl("https://github.com/N7ghtm4r3/Pandoro-Desktop") }
                                 ) {
                                     Icon(
-                                        modifier = Modifier.size(35.dp),
-                                        painter = painterResource("github-mark.svg"),
+                                        modifier = Modifier
+                                            .size(35.dp),
+                                        painter = painterResource("github.svg"),
                                         tint = Color.White,
                                         contentDescription = null
                                     )
                                 }
                                 Text(
-                                    text = "v. $appVersion",
+                                    text = "v. ${stringResource(string.app_version)}",
                                     fontSize = 12.sp,
                                     color = Color.White
                                 )
@@ -160,7 +166,10 @@ class Connect : UIScreen() {
                         }
                     }
                     Column(
-                        modifier = Modifier.weight(1f).fillMaxHeight().background(BACKGROUND_COLOR)
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .background(BACKGROUND_COLOR)
                     ) {
                         Scaffold(
                             snackbarHost = {
@@ -174,15 +183,18 @@ class Connect : UIScreen() {
                             }
                         ) {
                             Column(
-                                modifier = Modifier.fillMaxSize().padding(20.dp)
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(20.dp)
                             ) {
                                 Column {
                                     Text(
-                                        text =
-                                        if (screenType.value == SignIn)
-                                            "Welcome back,"
-                                        else
-                                            "Hello,",
+                                        text = stringResource(
+                                            if (screenType.value == SignIn)
+                                                string.welcome_back
+                                            else
+                                                string.hello,
+                                        ),
                                         fontSize = 14.sp
                                     )
                                     Text(
@@ -192,63 +204,88 @@ class Connect : UIScreen() {
                                     )
                                 }
                                 Column(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier
+                                        .fillMaxSize(),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     var serverAddress by remember { mutableStateOf("") }
                                     PandoroTextField(
-                                        modifier = Modifier.height(55.dp),
-                                        label = "Server address",
+                                        modifier = Modifier
+                                            .height(55.dp),
+                                        label = stringResource(string.server_address),
                                         isError = !isServerAddressValid(serverAddress),
                                         onValueChange = { serverAddress = it },
                                         value = serverAddress
                                     )
-                                    Spacer(Modifier.height(10.dp))
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(10.dp)
+                                    )
                                     var serverSecret by remember { mutableStateOf("") }
                                     var name by remember { mutableStateOf("") }
                                     var surname by remember { mutableStateOf("") }
                                     if (screenType.value == SignUp) {
                                         PandoroTextField(
-                                            modifier = Modifier.height(55.dp),
-                                            label = "Server secret",
+                                            modifier = Modifier
+                                                .height(55.dp),
+                                            label = stringResource(string.server_secret),
                                             isError = !isServerSecretValid(serverSecret),
                                             onValueChange = { serverSecret = it },
                                             value = serverSecret
                                         )
-                                        Spacer(Modifier.height(10.dp))
+                                        Spacer(
+                                            modifier = Modifier
+                                                .height(10.dp)
+                                        )
                                         PandoroTextField(
-                                            modifier = Modifier.height(55.dp),
-                                            label = "Name",
+                                            modifier = Modifier
+                                                .height(55.dp),
+                                            label = stringResource(string.name),
                                             isError = !isNameValid(name),
                                             onValueChange = { name = it },
                                             value = name
                                         )
-                                        Spacer(Modifier.height(10.dp))
+                                        Spacer(
+                                            modifier = Modifier
+                                                .height(10.dp)
+                                        )
                                         PandoroTextField(
-                                            modifier = Modifier.height(55.dp),
-                                            label = "Surname",
+                                            modifier = Modifier
+                                                .height(55.dp),
+                                            label = stringResource(string.surname),
                                             isError = !isSurnameValid(surname),
                                             onValueChange = { surname = it },
                                             value = surname
                                         )
-                                        Spacer(Modifier.height(10.dp))
+                                        Spacer(
+                                            modifier = Modifier
+                                                .height(10.dp)
+                                        )
                                     }
                                     var email by remember { mutableStateOf("") }
                                     var password by remember { mutableStateOf("") }
                                     var isVisible by remember { mutableStateOf(false) }
                                     PandoroTextField(
-                                        modifier = Modifier.height(55.dp),
-                                        label = "Email",
+                                        modifier = Modifier
+                                            .height(55.dp),
+                                        label = stringResource(string.email),
                                         isError = !isEmailValid(email),
                                         onValueChange = { email = it.replace(" ", "") },
                                         value = email
                                     )
-                                    Spacer(Modifier.height(10.dp))
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(10.dp)
+                                    )
                                     PandoroTextField(
-                                        modifier = Modifier.height(55.dp),
-                                        visualTransformation = if (isVisible) None else PasswordVisualTransformation(),
-                                        label = "Password",
+                                        modifier = Modifier
+                                            .height(55.dp),
+                                        visualTransformation = if (isVisible)
+                                            None
+                                        else
+                                            PasswordVisualTransformation(),
+                                        label = stringResource(string.password),
                                         isError = !isPasswordValid(password),
                                         onValueChange = { password = it.replace(" ", "") },
                                         value = password,
@@ -263,9 +300,14 @@ class Connect : UIScreen() {
                                             }
                                         }
                                     )
-                                    Spacer(Modifier.height(25.dp))
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(25.dp)
+                                    )
                                     Button(
-                                        modifier = Modifier.width(250.dp).height(50.dp),
+                                        modifier = Modifier
+                                            .width(250.dp)
+                                            .height(50.dp),
                                         shape = RoundedCornerShape(10.dp),
                                         onClick = {
                                             when (screenType.value) {
@@ -283,13 +325,13 @@ class Connect : UIScreen() {
                                                                         surname = surname
                                                                     )
                                                                 } else
-                                                                    showAuthError("You must insert a correct surname")
+                                                                    showAuthError(string.you_must_insert_a_correct_surname)
                                                             } else
-                                                                showAuthError("You must insert a correct name")
+                                                                showAuthError(string.you_must_insert_a_correct_name)
                                                         } else
-                                                            showAuthError("You must insert a correct server secret")
+                                                            showAuthError(string.you_must_insert_a_correct_server_secret)
                                                     } else
-                                                        showAuthError("You must insert a correct server address")
+                                                        showAuthError(string.you_must_insert_a_correct_server_address)
                                                 }
 
                                                 SignIn -> {
@@ -302,27 +344,51 @@ class Connect : UIScreen() {
                                                             surname = surname
                                                         )
                                                     } else
-                                                        showAuthError("You must insert a correct server address")
+                                                        showAuthError(string.you_must_insert_a_correct_server_address)
                                                 }
                                             }
                                         }
                                     ) {
-                                        Text(text = screenType.value.createTitle(screenType.value))
+                                        Text(
+                                            text = stringResource(
+                                                if(screenType.value == SignIn)
+                                                    string.sign_in
+                                                else
+                                                    string.sign_up
+                                            )
+                                        )
                                     }
                                     Text(
-                                        modifier = Modifier.padding(top = 25.dp)
-                                            .clickable(true, onClick = {
+                                        modifier = Modifier
+                                            .padding(
+                                                top = 25.dp
+                                            )
+                                            .clickable {
                                                 name = ""
                                                 surname = ""
                                                 if (screenType.value == SignUp)
                                                     screenType.value = SignIn
                                                 else
                                                     screenType.value = SignUp
-                                            }),
+                                            },
                                         text = buildAnnotatedString {
-                                            append(screenType.value.createMessage(screenType.value))
+                                            append(
+                                                stringResource(
+                                                    if(screenType.value == SignIn)
+                                                        string.are_you_new_to_pandoro
+                                                    else
+                                                        string.have_an_account
+                                                )
+                                            )
                                             withStyle(style = SpanStyle(color = RED_COLOR)) {
-                                                append(" " + screenType.value.createTitleLink(screenType.value))
+                                                append(" " +
+                                                    stringResource(
+                                                        if(screenType.value == SignIn)
+                                                            string.sign_up
+                                                        else
+                                                            string.sign_in
+                                                    )
+                                                )
                                             }
                                         },
                                         fontSize = 14.sp
@@ -346,6 +412,7 @@ class Connect : UIScreen() {
      * @param email: email to check
      * @param password: password to check
      */
+    @OptIn(ExperimentalResourceApi::class)
     private fun checkCredentials(
         serverAddress: String,
         serverSecret: String? = null,
@@ -379,10 +446,10 @@ class Connect : UIScreen() {
                     showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
             }
             WRONG_PASSWORD -> {
-                showAuthError("You must insert a correct password")
+                showAuthError(string.you_must_insert_a_correct_password)
             }
             WRONG_EMAIL -> {
-                showAuthError("You must insert a correct email")
+                showAuthError(string.you_must_insert_a_correct_email)
             }
         }
     }
@@ -392,7 +459,10 @@ class Connect : UIScreen() {
      *
      * @param errorMessage: error message to show
      */
-    private fun showAuthError(errorMessage: String) {
+    @OptIn(ExperimentalResourceApi::class)
+    private fun showAuthError(
+        errorMessage: StringResource
+    ) {
         showSnack(
             scope = coroutineScope,
             snackbarHostState = snackbarHostState,

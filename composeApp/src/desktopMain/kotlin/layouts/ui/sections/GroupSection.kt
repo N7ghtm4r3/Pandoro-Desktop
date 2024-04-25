@@ -1,7 +1,6 @@
 package layouts.ui.sections
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,17 +8,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.GroupRemove
+import androidx.compose.material.icons.filled.ModeEditOutline
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -43,7 +43,10 @@ import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.ProfileSection.Companion.hideLeaveGroup
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.json.JSONException
+import pandoro.composeapp.generated.resources.*
 import kotlin.math.ceil
 
 /**
@@ -60,7 +63,7 @@ class GroupSection : Section(), SingleItemManager {
      *
      * No-any params required
      */
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
     @Composable
     override fun showSection() {
         val isCurrentUserAnAdmin = currentGroup.value.isUserAdmin(user)
@@ -69,7 +72,8 @@ class GroupSection : Section(), SingleItemManager {
         refreshItem()
         showSection {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentPadding = PaddingValues(10.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -86,7 +90,7 @@ class GroupSection : Section(), SingleItemManager {
                             Icon(
                                 modifier = Modifier
                                     .size(22.dp),
-                                imageVector = Icons.Default.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = null
                             )
                         }
@@ -98,16 +102,26 @@ class GroupSection : Section(), SingleItemManager {
                 }
                 item {
                     Column(
-                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                        modifier = Modifier
+                            .padding(
+                                start = 20.dp,
+                                end = 20.dp
+                            )
                     ) {
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
-                            text = "Author: ${currentGroup.value.author.completeName}",
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
+                            text = stringResource(Res.string.author) + " ${currentGroup.value.author.completeName}",
                             textAlign = TextAlign.Justify,
                             fontSize = 20.sp
                         )
                         Text(
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 5.dp
+                                ),
                             text = currentGroup.value.description,
                             textAlign = TextAlign.Justify,
                             fontSize = 14.sp
@@ -116,11 +130,15 @@ class GroupSection : Section(), SingleItemManager {
                         var showMembersSection by remember { mutableStateOf(true) }
                         var showMembersIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = 10.dp
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Members",
+                                text = stringResource(Res.string.members),
                                 fontSize = 20.sp
                             )
                             IconButton(
@@ -153,21 +171,22 @@ class GroupSection : Section(), SingleItemManager {
                             val totalMembers = members.size
                             Text(
                                 modifier = Modifier.padding(top = 10.dp),
-                                text = "Total members: $totalMembers",
+                                text = stringResource(Res.string.total_members) + " $totalMembers",
                                 fontSize = 14.sp
                             )
                             if (members.isNotEmpty()) {
                                 spaceContent()
                                 LazyVerticalGrid(
                                     columns = GridCells.Fixed(3),
-                                    modifier = Modifier.height(
-                                        if (totalMembers < 3)
-                                            90.dp
-                                        else if (totalMembers <= 15)
-                                            (ceil(totalMembers / 3.toFloat()) * 90).dp
-                                        else
-                                            400.dp
-                                    ),
+                                    modifier = Modifier
+                                        .height(
+                                            if (totalMembers < 3)
+                                                90.dp
+                                            else if (totalMembers <= 15)
+                                                (ceil(totalMembers / 3.toFloat()) * 90).dp
+                                            else
+                                                400.dp
+                                        ),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     contentPadding = PaddingValues(
@@ -186,7 +205,9 @@ class GroupSection : Section(), SingleItemManager {
                                         val isMemberPending = member.invitationStatus == PENDING
                                         if ((isCurrentUserAMaintainer && isMemberPending) || !isMemberPending) {
                                             Card(
-                                                modifier = Modifier.fillMaxWidth().height(65.dp),
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(65.dp),
                                                 shape = RoundedCornerShape(10.dp),
                                                 colors = CardDefaults.cardColors(
                                                     containerColor = Color.White
@@ -196,12 +217,13 @@ class GroupSection : Section(), SingleItemManager {
                                                 )
                                             ) {
                                                 Row(
-                                                    modifier = Modifier.padding(
-                                                        start = 20.dp,
-                                                        top = 10.dp,
-                                                        end = 20.dp,
-                                                        bottom = 10.dp
-                                                    ),
+                                                    modifier = Modifier
+                                                        .padding(
+                                                            start = 20.dp,
+                                                            top = 10.dp,
+                                                            end = 20.dp,
+                                                            bottom = 10.dp
+                                                        ),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
                                                     Logo(
@@ -215,11 +237,17 @@ class GroupSection : Section(), SingleItemManager {
                                                         contentScale = ContentScale.Crop
                                                     )*/
                                                     Text(
-                                                        modifier = Modifier.padding(start = 20.dp),
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                start = 20.dp
+                                                            ),
                                                         text = member.completeName,
                                                         fontSize = 18.sp
                                                     )
-                                                    var modifier = Modifier.padding(start = 20.dp)
+                                                    var modifier = Modifier
+                                                        .padding(
+                                                            start = 20.dp
+                                                        )
                                                     if (!member.isLoggedUser(user) && isCurrentUserAMaintainer &&
                                                         !isMemberPending && member.id != authorId
                                                     ) {
@@ -228,12 +256,13 @@ class GroupSection : Section(), SingleItemManager {
                                                             modifier = modifier.clickable { showRoleMenu = true }
                                                         }
                                                         DropdownMenu(
-                                                            modifier = Modifier.background(BACKGROUND_COLOR),
+                                                            modifier = Modifier
+                                                                .background(BACKGROUND_COLOR),
                                                             expanded = showRoleMenu,
                                                             onDismissRequest = { showRoleMenu = false },
                                                             offset = DpOffset(150.dp, 0.dp)
                                                         ) {
-                                                            Role.values().forEach { role ->
+                                                            Role.entries.forEach { role ->
                                                                 DropdownMenuItem(
                                                                     onClick = {
                                                                         requester!!.execChangeMemberRole(
@@ -249,7 +278,10 @@ class GroupSection : Section(), SingleItemManager {
                                                                     text = {
                                                                         Text(
                                                                             text = role.toString(),
-                                                                            color = if (role == ADMIN) RED_COLOR else PRIMARY_COLOR
+                                                                            color = if (role == ADMIN)
+                                                                                RED_COLOR
+                                                                            else
+                                                                                PRIMARY_COLOR
                                                                         )
                                                                     }
                                                                 )
@@ -258,9 +290,13 @@ class GroupSection : Section(), SingleItemManager {
                                                     }
                                                     Text(
                                                         modifier = modifier,
-                                                        text = if (isMemberPending) PENDING.toString() else member.role.toString(),
+                                                        text = if (isMemberPending)
+                                                            PENDING.toString()
+                                                        else
+                                                            member.role.toString(),
                                                         textAlign = TextAlign.Center,
-                                                        color = if (member.role == ADMIN) RED_COLOR
+                                                        color = if (member.role == ADMIN)
+                                                            RED_COLOR
                                                         else {
                                                             if (isMemberPending)
                                                                 YELLOW_COLOR
@@ -274,7 +310,8 @@ class GroupSection : Section(), SingleItemManager {
                                                         val showRemoveDialog = mutableStateOf(false)
                                                         if (isCurrentUserAnAdmin || !member.isAdmin) {
                                                             Column(
-                                                                modifier = Modifier.fillMaxWidth(),
+                                                                modifier = Modifier
+                                                                    .fillMaxWidth(),
                                                                 horizontalAlignment = Alignment.End
                                                             ) {
                                                                 IconButton(
@@ -307,11 +344,15 @@ class GroupSection : Section(), SingleItemManager {
                             var showProjectsSection by remember { mutableStateOf(true) }
                             var showProjectsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        top = 10.dp
+                                    ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Projects",
+                                    text = stringResource(Res.string.projects),
                                     fontSize = 20.sp
                                 )
                                 IconButton(
@@ -342,15 +383,20 @@ class GroupSection : Section(), SingleItemManager {
                             }
                             if (showProjectsSection) {
                                 Text(
-                                    modifier = Modifier.padding(top = 10.dp),
-                                    text = "Projects number: ${projects.size}",
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 10.dp
+                                        ),
+                                    text = stringResource(Res.string.projects_number) + " ${projects.size}",
                                     fontSize = 14.sp
                                 )
                                 spaceContent()
                                 if (!areProjectsEmpty) {
                                     LazyVerticalGrid(
                                         modifier = Modifier
-                                            .padding(top = 20.dp)
+                                            .padding(
+                                                top = 20.dp
+                                            )
                                             .height(50.dp),
                                         columns = GridCells.Adaptive(100.dp),
                                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -380,7 +426,8 @@ class GroupSection : Section(), SingleItemManager {
                                                 onClick = { navToProject(Sections.Group, project) },
                                             ) {
                                                 Column(
-                                                    modifier = Modifier.fillMaxSize(),
+                                                    modifier = Modifier
+                                                        .fillMaxSize(),
                                                     horizontalAlignment = Alignment.CenterHorizontally,
                                                     verticalArrangement = Arrangement.Center
                                                 ) {
@@ -390,12 +437,16 @@ class GroupSection : Section(), SingleItemManager {
                                                     )
                                                 }
                                                 Column(
-                                                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .fillMaxHeight(),
                                                     horizontalAlignment = Alignment.End,
                                                     verticalArrangement = Arrangement.Center
                                                 ) {
                                                     Box(
-                                                        modifier = Modifier.background(PRIMARY_COLOR).fillMaxHeight()
+                                                        modifier = Modifier
+                                                            .background(PRIMARY_COLOR)
+                                                            .fillMaxHeight()
                                                             .width(3.dp)
                                                     )
                                                 }
@@ -412,17 +463,20 @@ class GroupSection : Section(), SingleItemManager {
                     item {
                         val showLeaveDialog = mutableStateOf(false)
                         Column(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize(),
                             verticalArrangement = Arrangement.Bottom,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             TextButton(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize(),
                                 onClick = { showLeaveDialog.value = true }
                             ) {
                                 Text(
-                                    modifier = Modifier.wrapContentSize(),
-                                    text = "Leave group",
+                                    modifier = Modifier
+                                        .wrapContentSize(),
+                                    text = stringResource(Res.string.leave_group),
                                     color = RED_COLOR,
                                     textAlign = TextAlign.Center
                                 )

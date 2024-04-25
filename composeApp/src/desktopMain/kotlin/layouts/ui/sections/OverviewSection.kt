@@ -26,6 +26,9 @@ import com.tecknobit.pandorocore.ui.OverviewUIHelper
 import helpers.*
 import layouts.components.showOverviewChart
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * This is the layout for the overview section
@@ -33,6 +36,7 @@ import layouts.ui.screens.SplashScreen.Companion.user
  * @author Tecknobit - N7ghtm4r3
  * @see Section
  */
+@OptIn(ExperimentalResourceApi::class)
 class OverviewSection : Section() {
 
     /**
@@ -45,6 +49,7 @@ class OverviewSection : Section() {
      *
      * No-any params required
      */
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun showSection() {
         overviewUIHelper = OverviewUIHelper(user.projects)
@@ -60,7 +65,7 @@ class OverviewSection : Section() {
         ) {
             item {
                 Text(
-                    text = "Overview",
+                    text = stringResource(Res.string.overview),
                     fontSize = 25.sp
                 )
             }
@@ -79,7 +84,7 @@ class OverviewSection : Section() {
                             .fillMaxWidth()
                     ) {
                         createChartCard(
-                            title = "Projects",
+                            title = stringResource(Res.string.projects),
                             total = { user.projects.size },
                             personal = {
                                 var personal = 0
@@ -97,7 +102,7 @@ class OverviewSection : Section() {
                             .fillMaxWidth()
                     ) {
                         createChartCard(
-                            title = "Updates",
+                            title = stringResource(Res.string.updates),
                             total = {
                                 var updates = 0
                                 user.projects.forEach { project ->
@@ -126,7 +131,7 @@ class OverviewSection : Section() {
                         )
                 ) {
                     Text(
-                        text = "Updates status",
+                        text = stringResource(Res.string.updates_status),
                         fontSize = 20.sp
                     )
                     spaceContent(space = 10.dp)
@@ -138,10 +143,12 @@ class OverviewSection : Section() {
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth()
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
                         ) {
                             createChartCard(
-                                title = "Scheduled",
+                                title = stringResource(Res.string.scheduled),
                                 offset = 20.dp,
                                 total = { return@createChartCard fetchUpdates(SCHEDULED) },
                                 personal = { return@createChartCard fetchPersonalUpdates(SCHEDULED) },
@@ -149,10 +156,12 @@ class OverviewSection : Section() {
                             )
                         }
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth()
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
                         ) {
                             createChartCard(
-                                title = "In development",
+                                title = stringResource(Res.string.in_development),
                                 offset = 20.dp,
                                 total = { return@createChartCard fetchUpdates(IN_DEVELOPMENT) },
                                 personal = { return@createChartCard fetchPersonalUpdates(IN_DEVELOPMENT) },
@@ -160,10 +169,12 @@ class OverviewSection : Section() {
                             )
                         }
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth()
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
                         ) {
                             createChartCard(
-                                title = "Published",
+                                title = stringResource(Res.string.published),
                                 offset = 20.dp,
                                 total = { return@createChartCard fetchUpdates(PUBLISHED) },
                                 personal = { return@createChartCard fetchPersonalUpdates(PUBLISHED) },
@@ -183,7 +194,7 @@ class OverviewSection : Section() {
                         )
                 ) {
                     Text(
-                        text = "Updates performance",
+                        text = stringResource(Res.string.updates_performance),
                         fontSize = 20.sp
                     )
                     spaceContent()
@@ -196,10 +207,12 @@ class OverviewSection : Section() {
                         horizontalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
                         Column(
-                            modifier = Modifier.weight(1f).fillMaxWidth()
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
                         ) {
                             createChartCard(
-                                title = "Development days",
+                                title = stringResource(Res.string.development_days),
                                 total = {
                                     var total = 0
                                     user.projects.forEach { project -> total += project.totalDevelopmentDays }
@@ -221,7 +234,7 @@ class OverviewSection : Section() {
                                 .fillMaxWidth()
                         ) {
                             createChartCard(
-                                title = "Average development time (days)",
+                                title = stringResource(Res.string.average_development_days),
                                 total = {
                                     var total = 0
                                     user.projects.forEach { project -> total += project.averageDevelopmentTime }
@@ -245,7 +258,7 @@ class OverviewSection : Section() {
             if (overviewUIHelper.bestPersonalVProject != null || overviewUIHelper.bestGroupVProject != null) {
                 item {
                     Text(
-                        text = "Projects performance",
+                        text = stringResource(Res.string.projects_performance),
                         fontSize = 20.sp
                     )
                 }
@@ -271,7 +284,7 @@ class OverviewSection : Section() {
                                         .fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = "Personal",
+                                        text = stringResource(Res.string.personal),
                                         fontSize = 18.sp
                                     )
                                     spaceContent(space = 10.dp)
@@ -289,7 +302,7 @@ class OverviewSection : Section() {
                                                 .fillMaxWidth()
                                         ) {
                                             createPerformanceCard(
-                                                title = "Best",
+                                                title = stringResource(Res.string.best_performance),
                                                 project = overviewUIHelper.bestPersonalVProject!!
                                             )
                                         }
@@ -301,7 +314,7 @@ class OverviewSection : Section() {
                                             val worstProject = overviewUIHelper.getWorstPersonalProject()
                                             if (worstProject != null) {
                                                 createPerformanceCard(
-                                                    title = "Worst",
+                                                    title = stringResource(Res.string.worst_performance),
                                                     project = worstProject
                                                 )
                                             }
@@ -316,7 +329,7 @@ class OverviewSection : Section() {
                                         .fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = "Group",
+                                        text = stringResource(Res.string.group),
                                         fontSize = 18.sp
                                     )
                                     spaceContent(space = 10.dp)
@@ -334,7 +347,7 @@ class OverviewSection : Section() {
                                                 .fillMaxWidth()
                                         ) {
                                             createPerformanceCard(
-                                                title = "Best",
+                                                title = stringResource(Res.string.best_performance),
                                                 project = overviewUIHelper.bestGroupVProject!!
                                             )
                                         }
@@ -346,7 +359,7 @@ class OverviewSection : Section() {
                                             val worstProject = overviewUIHelper.getWorstGroupProject()
                                             if (worstProject != null) {
                                                 createPerformanceCard(
-                                                    title = "Worst",
+                                                    title = stringResource(Res.string.worst_performance),
                                                     project = worstProject
                                                 )
                                             }
@@ -439,7 +452,7 @@ class OverviewSection : Section() {
                                     .padding(
                                         end = 5.dp
                                     ),
-                                text = "Total -",
+                                text = stringResource(Res.string.total) + " -",
                                 fontSize = 14.sp
                             )
                             Text(
@@ -457,7 +470,7 @@ class OverviewSection : Section() {
                                     .padding(
                                         end = 5.dp
                                     ),
-                                text = "Personal -",
+                                text = stringResource(Res.string.personal) + " -",
                                 fontSize = 14.sp
                             )
                             Text(
@@ -484,7 +497,7 @@ class OverviewSection : Section() {
                                     .padding(
                                         end = 5.dp
                                     ),
-                                text = "Group -",
+                                text = stringResource(Res.string.group) + " -",
                                 fontSize = 14.sp
                             )
                             Text(
@@ -513,7 +526,7 @@ class OverviewSection : Section() {
                                         .padding(
                                             end = 5.dp
                                         ),
-                                    text = "From me -",
+                                    text = stringResource(Res.string.by_me) + " -",
                                     fontSize = 14.sp
                                 )
                                 Text(
@@ -579,7 +592,7 @@ class OverviewSection : Section() {
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "$title performance",
+                        text = title,
                         fontSize = 18.sp
                     )
                     Column(
@@ -590,7 +603,7 @@ class OverviewSection : Section() {
                             )
                     ) {
                         Text(
-                            text = "Name: ${project.name}",
+                            text = stringResource(Res.string.name) + ": ${project.name}",
                             fontSize = 14.sp
                         )
                         Text(
@@ -598,7 +611,7 @@ class OverviewSection : Section() {
                                 .padding(
                                     top = 5.dp
                                 ),
-                            text = "Description: ${project.shortDescription}",
+                            text = stringResource(Res.string.description) + ": ${project.shortDescription}",
                             fontSize = 14.sp
                         )
                         Text(
@@ -606,7 +619,7 @@ class OverviewSection : Section() {
                                 .padding(
                                     top = 5.dp
                                 ),
-                            text = "Updates number: ${project.updatesNumber}",
+                            text = stringResource(Res.string.updates_number) + ": ${project.updatesNumber}",
                             fontSize = 14.sp
                         )
                         Text(
@@ -614,7 +627,7 @@ class OverviewSection : Section() {
                                 .padding(
                                     top = 5.dp
                                 ),
-                            text = "Development days: ${project.totalDevelopmentDays}",
+                            text = stringResource(Res.string.development_days) + ": ${project.totalDevelopmentDays}",
                             fontSize = 14.sp
                         )
                         Text(
@@ -622,7 +635,8 @@ class OverviewSection : Section() {
                                 .padding(
                                     top = 5.dp
                                 ),
-                            text = "Average development time: ${project.averageDevelopmentTime} days",
+                            text = stringResource(Res.string.average_development_time) + ": ${project.averageDevelopmentTime} "
+                                    + stringResource(Res.string.days),
                             fontSize = 14.sp
                         )
                     }
@@ -636,7 +650,7 @@ class OverviewSection : Section() {
                     Box(
                         modifier = Modifier
                             .background(
-                                if (title == "Best")
+                                if (title == stringResource(Res.string.best_performance))
                                     GREEN_COLOR
                                 else
                                     RED_COLOR

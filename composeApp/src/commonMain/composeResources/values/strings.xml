@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name" translatable="false">Pandoro</string>
+    <string name="app_version" translatable="false">1.0.3</string>
+    <string name="description_subtext">Pandoro is an open source management software useful for easily managing your projects and their updates</string>
     <string name="frequent_projects">Frequent projects</string>
     <string name="current_projects">Current projects</string>
     <string name="delete_project">Delete project</string>
     <string name="projects">Projects</string>
     <string name="notes">Notes</string>
+    <string name="notes_number">Notes number:</string>
     <string name="overview">Overview</string>
     <string name="profile">Profile</string>
     <string name="delete_text_dialog">If you confirm this event the project and its all information will be deleted and no more recoverable, confirm?</string>
@@ -39,6 +42,7 @@
     <string name="published">Published</string>
     <string name="by_me">By me</string>
     <string name="projects_performance">Projects performance</string>
+    <string name="updates_performance">Updates performance</string>
     <string name="development_days">Development days</string>
     <string name="best_performance">Best performance</string>
     <string name="worst_performance">Worst performance</string>
@@ -84,9 +88,12 @@
     <string name="schedule">Schedule</string>
     <string name="target_version">Target version</string>
     <string name="groups">Groups</string>
+    <string name="groups_number">Groups number:</string>
     <string name="stats">Stats</string>
     <string name="total_development_days">Total development days:</string>
     <string name="members">Members</string>
+    <string name="total_members">Total members:</string>
+    <string name="projects_number">Projects number:</string>
     <string name="remove_the_user_from">Remove the user from</string>
     <string name="remove_user_text">If you confirm this event, the user will be removed from the group and will no longer have access to the contents of that group</string>
     <string name="leave_group">Leave group</string>
@@ -99,8 +106,8 @@
     <string name="are_you_new_to_pandoro">Are you new to Pandoro?</string>
     <string name="sign_up">Sign up</string>
     <string name="sign_in">Sign In</string>
-    <string name="welcome_back">Welcome back</string>
-    <string name="hello">Hello</string>
+    <string name="welcome_back">Welcome back,</string>
+    <string name="hello">Hello,</string>
     <string name="edit_the_groups_projects">Edit the groups projects</string>
     <string name="you_must_insert_a_correct_server_address">You must insert a correct server address</string>
     <string name="you_must_insert_a_correct_name">You must insert a correct name</string>

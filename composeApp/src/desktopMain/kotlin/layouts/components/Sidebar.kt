@@ -16,10 +16,13 @@ import fontFamily
 import helpers.BACKGROUND_COLOR
 import helpers.Logo
 import helpers.PRIMARY_COLOR
-import helpers.appVersion
-import layouts.ui.screens.Home.Companion.activeScreen
+import layouts.ui.screens.Home
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.Res
+import pandoro.composeapp.generated.resources.app_version
 
 /**
  * This is the layout for the sidebar component
@@ -42,6 +45,7 @@ class Sidebar {
      *
      * No-any params required
      */
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     fun createSidebar() {
         Scaffold(
@@ -93,7 +97,7 @@ class Sidebar {
                         ),
                     color = BACKGROUND_COLOR
                 )
-                for (item in Section.sidebarMenu()) {
+                Section.sidebarMenu().forEach { item ->
                     Column(
                         modifier = Modifier
                             .padding(
@@ -102,13 +106,13 @@ class Sidebar {
                             .fillMaxWidth()
                             .height(30.dp)
                             .clickable {
-                                activeScreen.value = item
+                                Home.activeScreen.value = item.first
                             },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = item.toString(),
+                            text = item.second,
                             fontFamily = fontFamily,
                             fontSize = 16.sp
                         )
@@ -136,7 +140,7 @@ class Sidebar {
                         fontSize = 12.sp
                     )
                     Text(
-                        text = "v. $appVersion",
+                        text = "v. ${stringResource(Res.string.app_version)}",
                         fontFamily = fontFamily,
                         fontSize = 10.sp
                     )

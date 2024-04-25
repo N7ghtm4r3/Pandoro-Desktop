@@ -37,6 +37,10 @@ import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
+import pandoro.composeapp.generated.resources.Res.string
 import java.io.File
 
 /**
@@ -45,6 +49,7 @@ import java.io.File
  * @author Tecknobit - N7ghtm4r3
  * @see Section
  */
+@OptIn(ExperimentalResourceApi::class)
 class ProfileSection : Section() {
 
     companion object {
@@ -98,7 +103,7 @@ class ProfileSection : Section() {
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "Profile",
+                            text = stringResource(string.profile),
                             fontSize = 25.sp
                         )
                         Row(
@@ -184,7 +189,7 @@ class ProfileSection : Section() {
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
                                                     Text(
-                                                        text = "Name:"
+                                                        text = stringResource(string.name) + ":"
                                                     )
                                                     Text(
                                                         modifier = Modifier
@@ -203,7 +208,7 @@ class ProfileSection : Section() {
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
                                                     Text(
-                                                        text = "Surname:"
+                                                        text = stringResource(string.surname) + ":"
                                                     )
                                                     Text(
                                                         modifier = Modifier
@@ -216,7 +221,7 @@ class ProfileSection : Section() {
                                                 }
                                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                                     Text(
-                                                        text = "Email:"
+                                                        text = stringResource(string.email) + ":"
                                                     )
                                                     Text(
                                                         modifier = Modifier
@@ -245,7 +250,7 @@ class ProfileSection : Section() {
                                                 }
                                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                                     Text(
-                                                        text = "Password:"
+                                                        text = stringResource(string.password) + ":"
                                                     )
                                                     Text(
                                                         modifier = Modifier.padding(
@@ -291,7 +296,7 @@ class ProfileSection : Section() {
                                                     onClick = { localAuthHelper.logout() }
                                                 ) {
                                                     Text(
-                                                        text = "Logout"
+                                                        text = stringResource(string.logout)
                                                     )
                                                 }
                                                 Button(
@@ -311,7 +316,7 @@ class ProfileSection : Section() {
                                                     }
                                                 ) {
                                                     Text(
-                                                        text = "Delete"
+                                                        text = stringResource(string.delete)
                                                     )
                                                 }
                                             }
@@ -341,11 +346,13 @@ class ProfileSection : Section() {
                                 ) {
                                     if (changelogs.isEmpty()) {
                                         Column(
+                                            modifier = Modifier.
+                                                fillMaxSize(),
                                             horizontalAlignment = Alignment.CenterHorizontally,
                                             verticalArrangement = Arrangement.Center
                                         ) {
                                             Text(
-                                                text = "No-any changelogs",
+                                                text = stringResource(string.no_any_changelogs),
                                                 fontWeight = FontWeight.Bold
                                             )
                                         }
@@ -358,21 +365,25 @@ class ProfileSection : Section() {
                                                 }
                                             ) { changelog ->
                                                 Column(
-                                                    modifier = Modifier.clickable {
-                                                        val project = changelog.project
-                                                        if (project != null)
-                                                            navToProject(Sections.Profile, project)
-                                                        else {
-                                                            hideLeaveGroup = true
-                                                            navToGroup(Sections.Profile, changelog.group)
+                                                    modifier = Modifier
+                                                        .clickable {
+                                                            val project = changelog.project
+                                                            if (project != null)
+                                                                navToProject(Sections.Profile, project)
+                                                            else {
+                                                                hideLeaveGroup = true
+                                                                navToGroup(Sections.Profile, changelog.group)
+                                                            }
                                                         }
-                                                    }
                                                 ) {
                                                     Row(
-                                                        modifier = Modifier.padding(20.dp).height(50.dp)
+                                                        modifier = Modifier
+                                                            .padding(20.dp)
+                                                            .height(50.dp)
                                                     ) {
                                                         Column(
-                                                            modifier = Modifier.weight(10f)
+                                                            modifier = Modifier
+                                                                .weight(10f)
                                                         ) {
                                                             Row(
                                                                 horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -382,7 +393,9 @@ class ProfileSection : Section() {
                                                                 if (!isRed) {
                                                                     Badge(
                                                                         modifier = Modifier
-                                                                            .padding(end = 5.dp)
+                                                                            .padding(
+                                                                                end = 5.dp
+                                                                            )
                                                                             .size(10.dp)
                                                                             .clickable { readChangelog(changelog) }
                                                                     ) {
@@ -390,24 +403,27 @@ class ProfileSection : Section() {
                                                                     }
                                                                 }
                                                                 Text(
-                                                                    modifier =
-                                                                    if (!isRed) {
-                                                                        Modifier.clickable {
+                                                                    modifier = Modifier
+                                                                        .clickable(
+                                                                            enabled = !isRed
+                                                                        ) {
                                                                             readChangelog(changelog)
-                                                                        }
-                                                                    } else
-                                                                        Modifier,
+                                                                        },
                                                                     text = changelog.title,
                                                                     fontWeight = FontWeight.Bold
                                                                 )
                                                             }
                                                             Text(
-                                                                modifier = Modifier.padding(top = 5.dp),
+                                                                modifier = Modifier
+                                                                    .padding(
+                                                                        top = 5.dp
+                                                                    ),
                                                                 text = changelog.content
                                                             )
                                                         }
                                                         Column(
-                                                            modifier = Modifier.weight(1f),
+                                                            modifier = Modifier
+                                                                .weight(1f),
                                                             horizontalAlignment = Alignment.End,
                                                             verticalArrangement = Arrangement.Center
                                                         ) {
@@ -446,17 +462,26 @@ class ProfileSection : Section() {
                         val itemHeight = 95.dp
                         if (groups.isNotEmpty()) {
                             Column(
-                                modifier = Modifier.padding(top = 10.dp)
+                                modifier = Modifier
+                                    .padding(
+                                        top = 10.dp
+                                    )
                             ) {
                                 spaceContent()
                                 Text(
-                                    modifier = Modifier.padding(top = 10.dp),
-                                    text = "Groups",
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 10.dp
+                                        ),
+                                    text = stringResource(string.groups),
                                     fontSize = 20.sp
                                 )
                                 Text(
-                                    modifier = Modifier.padding(top = 10.dp),
-                                    text = "Groups number: ${groups.size}",
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 10.dp
+                                        ),
+                                    text = stringResource(string.groups_number) + " ${groups.size}",
                                     fontSize = 14.sp
                                 )
                                 spaceContent()
