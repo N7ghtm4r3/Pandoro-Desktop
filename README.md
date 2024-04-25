@@ -89,6 +89,17 @@ dependencies {
 </dependency>
 ```
 
+## Appearance
+
+<details>
+  <summary>Desktop UI</summary>
+  <img src="https://github.com/N7ghtm4r3/Pandoro-Desktop/blob/main/images/project.png" alt="project"/>
+  <img src="https://github.com/N7ghtm4r3/Pandoro-Desktop/blob/main/images/projects.png" alt="projects"/>
+  <img src="https://github.com/N7ghtm4r3/Pandoro-Desktop/blob/main/images/group.png" alt="group"/>
+  <img src="https://github.com/N7ghtm4r3/Pandoro-Desktop/blob/main/images/overview.png" alt="overview"/>
+  <img src="https://github.com/N7ghtm4r3/Pandoro-Desktop/blob/main/images/notes.png" alt="notes"/>
+</details>
+
 ## Authors
 
 - [@N7ghtm4r3](https://www.github.com/N7ghtm4r3)

@@ -89,7 +89,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                 modifier = Modifier
                     .padding(10.dp)
                     .height(55.dp),
-                label = stringResource(Res.string.surname),
+                label = stringResource(Res.string.description),
                 isError = !isValidProjectDescription(description),
                 onValueChange = { description = it },
                 value = description
