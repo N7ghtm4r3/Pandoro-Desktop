@@ -19,7 +19,9 @@ import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import kotlinx.coroutines.CoroutineScope
 
-
+/**
+ * **snackbarHostState** -> the state to display the [Snackbar]
+ */
 lateinit var snackbarHostState: SnackbarHostState
 
 /**

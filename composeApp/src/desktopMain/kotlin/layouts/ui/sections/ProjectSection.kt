@@ -766,7 +766,7 @@ class ProjectSection : Section(), SingleItemManager {
                                             top = 20.dp
                                         )
                                         .height(50.dp),
-                                    columns = GridCells.Adaptive(100.dp),
+                                    columns = GridCells.Adaptive(130.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
@@ -789,30 +789,33 @@ class ProjectSection : Section(), SingleItemManager {
                                             ),
                                             onClick = { navToGroup(Sections.Project, group) },
                                         ) {
-                                            Column(
-                                                modifier = Modifier
-                                                    .fillMaxSize(),
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Text(
-                                                    text = group.name,
-                                                    fontSize = 14.sp
-                                                )
-                                            }
-                                            Column(
-                                                modifier = Modifier
-                                                    .weight(1f)
-                                                    .fillMaxHeight(),
-                                                horizontalAlignment = Alignment.End,
-                                                verticalArrangement = Arrangement.Center
-                                            ) {
-                                                Box(
+                                            Row {
+                                                Column(
                                                     modifier = Modifier
-                                                        .background(PRIMARY_COLOR)
-                                                        .fillMaxHeight()
-                                                        .width(3.dp)
-                                                )
+                                                        .weight(5f)
+                                                        .fillMaxSize(),
+                                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Text(
+                                                        text = group.name,
+                                                        fontSize = 14.sp
+                                                    )
+                                                }
+                                                Column(
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .fillMaxHeight(),
+                                                    horizontalAlignment = Alignment.End,
+                                                    verticalArrangement = Arrangement.Center
+                                                ) {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .background(PRIMARY_COLOR)
+                                                            .fillMaxHeight()
+                                                            .width(5.dp)
+                                                    )
+                                                }
                                             }
                                         }
                                     }

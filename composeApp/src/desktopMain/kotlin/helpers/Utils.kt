@@ -16,6 +16,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import imageLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
@@ -188,6 +189,7 @@ fun Logo(
         modifier = modifier
             .size(size)
             .clip(CircleShape),
+        imageLoader = imageLoader,
         model = ImageRequest.Builder(LocalPlatformContext.current)
             .data(iUrl)
             .crossfade(true)
@@ -196,4 +198,3 @@ fun Logo(
         contentScale = ContentScale.Crop
     )
 }
-

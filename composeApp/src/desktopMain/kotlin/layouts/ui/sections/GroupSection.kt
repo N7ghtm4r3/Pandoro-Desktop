@@ -398,7 +398,7 @@ class GroupSection : Section(), SingleItemManager {
                                                 top = 20.dp
                                             )
                                             .height(50.dp),
-                                        columns = GridCells.Adaptive(100.dp),
+                                        columns = GridCells.Adaptive(130.dp),
                                         verticalArrangement = Arrangement.spacedBy(8.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         contentPadding = PaddingValues(
@@ -425,30 +425,33 @@ class GroupSection : Section(), SingleItemManager {
                                                 ),
                                                 onClick = { navToProject(Sections.Group, project) },
                                             ) {
-                                                Column(
-                                                    modifier = Modifier
-                                                        .fillMaxSize(),
-                                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                                    verticalArrangement = Arrangement.Center
-                                                ) {
-                                                    Text(
-                                                        text = project.name,
-                                                        fontSize = 14.sp
-                                                    )
-                                                }
-                                                Column(
-                                                    modifier = Modifier
-                                                        .weight(1f)
-                                                        .fillMaxHeight(),
-                                                    horizontalAlignment = Alignment.End,
-                                                    verticalArrangement = Arrangement.Center
-                                                ) {
-                                                    Box(
+                                                Row {
+                                                    Column(
                                                         modifier = Modifier
-                                                            .background(PRIMARY_COLOR)
-                                                            .fillMaxHeight()
-                                                            .width(3.dp)
-                                                    )
+                                                            .weight(5f)
+                                                            .fillMaxSize(),
+                                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                                        verticalArrangement = Arrangement.Center
+                                                    ) {
+                                                        Text(
+                                                            text = project.name,
+                                                            fontSize = 14.sp
+                                                        )
+                                                    }
+                                                    Column(
+                                                        modifier = Modifier
+                                                            .weight(1f)
+                                                            .fillMaxHeight(),
+                                                        horizontalAlignment = Alignment.End,
+                                                        verticalArrangement = Arrangement.Center
+                                                    ) {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .background(PRIMARY_COLOR)
+                                                                .fillMaxHeight()
+                                                                .width(5.dp)
+                                                        )
+                                                    }
                                                 }
                                             }
                                         }

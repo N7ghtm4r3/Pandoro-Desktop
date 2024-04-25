@@ -36,6 +36,7 @@ import com.tecknobit.pandorocore.records.users.PublicUser.*
 import com.tecknobit.pandorocore.records.users.User
 import com.tecknobit.pandorocore.records.users.User.LANGUAGE_KEY
 import com.tecknobit.pandorocore.ui.LocalUser
+import currentProfilePic
 import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
@@ -66,6 +67,9 @@ import java.util.prefs.Preferences
  */
 class Connect : UIScreen() {
 
+    /**
+     * **snackbarHostState** -> the state to display the [Snackbar]
+     */
     lateinit var snackbarHostState: SnackbarHostState
     
     /**
@@ -548,7 +552,8 @@ class Connect : UIScreen() {
             profilePic: String?,
             refreshUser: Boolean
         ): String {
-            return super.storeProfilePic(profilePic, refreshUser)
+            currentProfilePic.value = super.storeProfilePic(profilePic, refreshUser)
+            return currentProfilePic.value
         }
 
         /**

@@ -129,7 +129,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                         .fillMaxWidth()
                         .padding(
                             start = 15.dp,
-                            top = 15.dp
+                            top = 10.dp
                         ),
                     textAlign = TextAlign.Start,
                     text = stringResource(Res.string.add_to_a_group)
@@ -139,7 +139,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                         .padding(
                             top = 10.dp
                         )
-                        .height(175.dp),
+                        .height(160.dp),
                     columns = GridCells.Fixed(3),
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -177,11 +177,12 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                         }
                     }
                 }
-            } else
+            } else {
                 Spacer(
                     modifier = Modifier
                         .height(10.dp)
                 )
+            }
             Text(
                 modifier = Modifier
                     .clickable {

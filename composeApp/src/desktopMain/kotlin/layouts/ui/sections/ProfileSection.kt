@@ -30,6 +30,7 @@ import com.tecknobit.pandorocore.records.Changelog.ChangelogEvent.INVITED_GROUP
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.*
 import com.tecknobit.pandorocore.records.users.PublicUser.PROFILE_PIC_KEY
+import currentProfilePic
 import helpers.*
 import layouts.components.ChangeLanguage
 import layouts.components.DeleteGroup
@@ -87,7 +88,7 @@ class ProfileSection : Section() {
     override fun showSection() {
         hideLeaveGroup = false
         passwordProperty = remember { mutableStateOf(HIDE_PASSWORD) }
-        var showChangeLanguage = remember { mutableStateOf(false) }
+        val showChangeLanguage = remember { mutableStateOf(false) }
         showSection {
             LazyColumn(
                 modifier = Modifier
@@ -143,7 +144,7 @@ class ProfileSection : Section() {
                                         ) {
                                             var showFilePicker by remember { mutableStateOf(false) }
                                             Logo(
-                                                url = user.profilePic,
+                                                url = currentProfilePic.value,
                                                 size = 130.dp
                                             )
                                             IconButton(
@@ -168,9 +169,9 @@ class ProfileSection : Section() {
                                                     showFilePicker = false
                                                     val response = requester!!.execChangeProfilePic(File(path.path))
                                                     if (requester!!.successResponse()) {
-                                                        //TODO: REFRESH THE PROFILE PIC WHEN CHANGED
                                                         localAuthHelper.storeProfilePic(
-                                                            JsonHelper(response).getString(PROFILE_PIC_KEY)
+                                                            JsonHelper(response).getString(PROFILE_PIC_KEY),
+                                                            true
                                                         )
                                                     } else
                                                         showSnack(requester!!.errorMessage())
@@ -540,7 +541,6 @@ class ProfileSection : Section() {
                                         }
                                     ) { group ->
                                         val isAdmin = group.isUserAdmin(user)
-                                        //TODO: FIX UI ISSUES
                                         Card(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -559,48 +559,66 @@ class ProfileSection : Section() {
                                         ) {
                                             Row(
                                                 modifier = Modifier
-                                                    .padding(15.dp),
+                                                    .fillMaxSize(),
                                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Text(
-                                                    text = group.name,
-                                                    fontSize = 16.sp
-                                                )
-                                                Text(
-                                                    text = if (group.isUserMaintainer(user)) {
-                                                        if (isAdmin)
-                                                            ADMIN.toString()
-                                                        else
-                                                            MAINTAINER.toString()
-                                                    } else
-                                                        DEVELOPER.toString(),
-                                                    color = if (isAdmin)
-                                                        RED_COLOR
-                                                    else
-                                                        PRIMARY_COLOR,
-                                                    fontSize = 14.sp
-                                                )
-                                                if (isAdmin) {
-                                                    val showDeleteDialog = mutableStateOf(false)
-                                                    IconButton(
-                                                        onClick = { showDeleteDialog.value = true }
-                                                    ) {
-                                                        Icon(
-                                                            modifier = Modifier
-                                                                .size(20.dp),
-                                                            imageVector = Icons.Default.Delete,
-                                                            tint = RED_COLOR,
-                                                            contentDescription = null
+                                                Column (
+                                                    modifier = Modifier
+                                                        .weight(5f)
+                                                        .padding(
+                                                            15.dp
+                                                        )
+                                                ) {
+                                                    Text(
+                                                        text = group.name,
+                                                        fontSize = 16.sp
+                                                    )
+                                                    Row {
+                                                        Text(
+                                                            text = stringResource(string.role) + " ",
+                                                            fontSize = 16.sp
+                                                        )
+                                                        Text(
+                                                            text = if (group.isUserMaintainer(user)) {
+                                                                if (isAdmin)
+                                                                    ADMIN.toString()
+                                                                else
+                                                                    MAINTAINER.toString()
+                                                            } else
+                                                                DEVELOPER.toString(),
+                                                            color = if (isAdmin)
+                                                                RED_COLOR
+                                                            else
+                                                                PRIMARY_COLOR,
+                                                            fontSize = 14.sp
                                                         )
                                                     }
+                                                }
+                                                if (isAdmin) {
+                                                    val showDeleteDialog = mutableStateOf(false)
                                                     DeleteGroup(
                                                         show = showDeleteDialog,
                                                         group = group
                                                     )
+                                                    Column (
+                                                        modifier = Modifier
+                                                            .weight(1f),
+                                                        horizontalAlignment = Alignment.End
+                                                    ) {
+                                                        IconButton(
+                                                            onClick = { showDeleteDialog.value = true }
+                                                        ) {
+                                                            Icon(
+                                                                modifier = Modifier
+                                                                    .size(20.dp),
+                                                                imageVector = Icons.Default.Delete,
+                                                                tint = RED_COLOR,
+                                                                contentDescription = null
+                                                            )
+                                                        }
+                                                    }
                                                 }
-                                            }
-                                            if (group.author.id == user.id) {
                                                 Column(
                                                     modifier = Modifier
                                                         .fillMaxHeight(),

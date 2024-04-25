@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import currentProfilePic
 import fontFamily
 import helpers.BACKGROUND_COLOR
 import helpers.Logo
@@ -71,7 +72,7 @@ class Sidebar {
                                 color = BACKGROUND_COLOR,
                                 shape = CircleShape
                             ),
-                        url = user.profilePic,
+                        url = currentProfilePic.value,
                         size = 100.dp
                     )
                     Text(

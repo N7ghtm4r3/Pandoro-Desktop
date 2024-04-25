@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.formatters.TimeFormatter
 import com.tecknobit.pandorocore.helpers.Requester
 import com.tecknobit.pandorocore.records.users.User
+import currentProfilePic
 import fontFamily
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
@@ -26,10 +27,7 @@ import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.app_name
 import pandoro.composeapp.generated.resources.app_version
-import java.security.cert.X509Certificate
 import java.util.*
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 /**
  * This is the layout for the splash screen
@@ -74,7 +72,9 @@ class SplashScreen : UIScreen() {
         activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
-        Locale.setDefault(Locale.forLanguageTag(user.language))
+        if(user.language != null)
+            Locale.setDefault(Locale.forLanguageTag(user.language))
+        currentProfilePic = remember { mutableStateOf(user.profilePic) }
         var launch by remember { mutableStateOf(true) }
         var checkForUpdates by remember { mutableStateOf(true) }
         Box(
@@ -125,25 +125,6 @@ class SplashScreen : UIScreen() {
             else
                 navigator.navigate(connect.name)
         }
-    }
-
-    /**
-     * Method to validate a self-signed SLL certificate and bypass the checks of its validity<br></br>
-     * No-any params required
-     *
-     * @return list of trust managers as [Array] of [TrustManager]
-     * @apiNote this method disable all checks on the SLL certificate validity, so is recommended to
-     * use for test only or in a private distribution on own infrastructure
-     */
-    private fun validateSelfSignedCertificate(): Array<TrustManager> {
-        return arrayOf(object : X509TrustManager {
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                return arrayOf()
-            }
-
-            override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) {}
-            override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) {}
-        })
     }
 
 }

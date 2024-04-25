@@ -78,10 +78,8 @@ abstract class Section {
         var previousSections: MutableList<Sections> = mutableListOf()
 
         /**
-         * **sectionScaffoldState** -> the scaffold state for the scaffold of the popup
+         * **snackbarHostState** -> the state to display the [Snackbar]
          */
-        lateinit var sectionScaffoldState: ScaffoldState
-
         lateinit var snackbarHostState: SnackbarHostState
 
         /**
@@ -136,7 +134,6 @@ abstract class Section {
     @Composable
     protected fun showSection(content: @Composable (PaddingValues) -> Unit) {
         sectionCoroutineScope = rememberCoroutineScope()
-        sectionScaffoldState = rememberScaffoldState()
         snackbarHostState = remember { SnackbarHostState() }
         Scaffold(
             snackbarHost = {
