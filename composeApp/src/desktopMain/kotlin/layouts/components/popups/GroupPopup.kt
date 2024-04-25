@@ -90,14 +90,24 @@ fun showMembersSection(
     members: SnapshotStateList<String>
 ) {
     LazyColumn(
-        modifier = Modifier.padding(top = 10.dp, start = 15.dp).height(height)
+        modifier = Modifier
+            .padding(
+                top = 10.dp,
+                start = 15.dp
+            )
+            .height(height)
     ) {
         stickyHeader {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 5.dp
+                    )
             ) {
                 FloatingActionButton(
-                    modifier = Modifier.size(30.dp),
+                    modifier = Modifier
+                        .size(30.dp),
                     onClick = { members.add("") },
                     content = { Icon(Icons.Filled.Add, null) }
                 )
@@ -105,7 +115,8 @@ fun showMembersSection(
         }
         items(members.size) { index ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {

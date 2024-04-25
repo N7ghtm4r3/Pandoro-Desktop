@@ -60,7 +60,7 @@ class GroupSection : Section(), SingleItemManager {
      *
      * No-any params required
      */
-    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun showSection() {
         val isCurrentUserAnAdmin = currentGroup.value.isUserAdmin(user)
@@ -75,14 +75,17 @@ class GroupSection : Section(), SingleItemManager {
             ) {
                 stickyHeader {
                     Row(
-                        modifier = Modifier.fillParentMaxWidth().background(BACKGROUND_COLOR),
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .background(BACKGROUND_COLOR),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
                             onClick = { navBack() }
                         ) {
                             Icon(
-                                modifier = Modifier.size(22.dp),
+                                modifier = Modifier
+                                    .size(22.dp),
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = null
                             )

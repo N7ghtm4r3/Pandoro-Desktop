@@ -2,10 +2,10 @@ package layouts.components.popups
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,7 +39,7 @@ val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
 @Composable
 fun showCreateNotePopup(update: ProjectUpdate?) {
     createPopup(
-        width = 250.dp,
+        width = 300.dp,
         height = 200.dp,
         flag = showCreateNotePopup,
         title = if (update != null) "Create a note for the ${update.targetVersion} update" else "Create a new note",
@@ -48,34 +48,42 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
         content = {
             var content by remember { mutableStateOf("") }
             Column(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier
+                    .padding(20.dp)
             ) {
                 PandoroTextField(
-                    modifier = Modifier.padding(10.dp).height(55.dp),
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .height(55.dp),
                     label = "Content",
                     isError = !isContentNoteValid(content),
                     onValueChange = { content = it },
                     value = content
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(10.dp)
+                )
                 Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
-                        if (isContentNoteValid(content)) {
-                            if (update != null) {
-                                requester!!.execAddChangeNote(currentProject.value.id, update.id, content)
-                                if (requester!!.successResponse())
-                                    showCreateNotePopup.value = false
-                                else
-                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                            } else {
-                                requester!!.execAddNote(content)
-                                if (requester!!.successResponse())
-                                    showCreateNotePopup.value = false
-                                else
-                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                            }
-                        } else
-                            showSnack(coroutineScope, snackbarHostState, "Insert a correct content")
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            if (isContentNoteValid(content)) {
+                                if (update != null) {
+                                    requester!!.execAddChangeNote(currentProject.value.id, update.id, content)
+                                    if (requester!!.successResponse())
+                                        showCreateNotePopup.value = false
+                                    else
+                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                } else {
+                                    requester!!.execAddNote(content)
+                                    if (requester!!.successResponse())
+                                        showCreateNotePopup.value = false
+                                    else
+                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                }
+                            } else
+                                showSnack(coroutineScope, snackbarHostState, "Insert a correct content")
                     },
                     text = "Create note",
                     fontSize = 14.sp
@@ -112,7 +120,8 @@ fun showNoteInfoPopup(
         title = "Note info",
         content = {
             Column(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier
+                    .padding(20.dp)
             ) {
                 if (update != null) {
                     Text(

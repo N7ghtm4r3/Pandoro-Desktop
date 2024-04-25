@@ -32,6 +32,7 @@ import com.tecknobit.pandorocore.records.ProjectUpdate
 import com.tecknobit.pandorocore.records.ProjectUpdate.Status.PUBLISHED
 import com.tecknobit.pandorocore.records.ProjectUpdate.Status.SCHEDULED
 import com.tecknobit.pandorocore.ui.SingleItemManager
+import com.tecknobit.pandorocore.ui.formatNotesAsMarkdown
 import helpers.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +40,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import layouts.components.DeleteUpdate
 import layouts.components.PublishUpdate
+import layouts.components.popups.clipboard
 import layouts.components.showProjectChart
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentNote
@@ -48,7 +50,14 @@ import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import org.json.JSONException
+import pandoro.composeapp.generated.resources.Res
+import pandoro.composeapp.generated.resources.change_notes
+import pandoro.composeapp.generated.resources.export_notes
+import pandoro.composeapp.generated.resources.notes_formatted_in_markdown_copied
+import java.awt.datatransfer.StringSelection
 
 /**
  * This is the layout for the project section
@@ -64,7 +73,7 @@ class ProjectSection : Section(), SingleItemManager {
      *
      * No-any params required
      */
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
     @Composable
     override fun showSection() {
         var isGitHub = false
@@ -174,7 +183,10 @@ class ProjectSection : Section(), SingleItemManager {
                                 fontSize = 14.sp
                             )
                             Text(
-                                modifier = Modifier.padding(top = 5.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        top = 5.dp
+                                    ),
                                 text = "Last update: ${currentProject.value.lastUpdateDate}",
                                 fontSize = 14.sp
                             )
@@ -183,8 +195,13 @@ class ProjectSection : Section(), SingleItemManager {
                                 spaceContent()
                                 LazyVerticalGrid(
                                     modifier = Modifier
-                                        .padding(top = 20.dp)
-                                        .heightIn(0.dp, 820.dp),
+                                        .padding(
+                                            top = 20.dp
+                                        )
+                                        .heightIn(
+                                            min = 0.dp,
+                                            max = 820.dp
+                                        ),
                                     columns = GridCells.Fixed(2),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -205,7 +222,12 @@ class ProjectSection : Section(), SingleItemManager {
                                             update = update
                                         )
                                         Card(
-                                            modifier = Modifier.fillMaxWidth().height(400.dp).padding(bottom = 10.dp),
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(400.dp)
+                                                .padding(
+                                                    bottom = 10.dp
+                                                ),
                                             shape = RoundedCornerShape(7),
                                             colors = CardDefaults.cardColors(
                                                 containerColor = Color.White
@@ -215,17 +237,24 @@ class ProjectSection : Section(), SingleItemManager {
                                             )
                                         ) {
                                             Row(
-                                                modifier = Modifier.fillMaxSize()
+                                                modifier = Modifier
+                                                    .fillMaxSize()
                                             ) {
                                                 Column(
-                                                    modifier = Modifier.padding(20.dp).weight(10f).fillMaxHeight()
+                                                    modifier = Modifier
+                                                        .padding(20.dp)
+                                                        .weight(10f)
+                                                        .fillMaxHeight()
                                                 ) {
                                                     Text(
                                                         text = "v. ${update.targetVersion}",
                                                         fontSize = 18.sp
                                                     )
                                                     Text(
-                                                        modifier = Modifier.padding(top = 5.dp),
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                top = 5.dp
+                                                            ),
                                                         text = "Update ID: ${update.id}",
                                                         fontSize = 14.sp
                                                     )
@@ -233,13 +262,19 @@ class ProjectSection : Section(), SingleItemManager {
                                                     val author = update.author
                                                     if (hasGroup && author != null) {
                                                         Text(
-                                                            modifier = Modifier.padding(top = 5.dp),
+                                                            modifier = Modifier
+                                                                .padding(
+                                                                    top = 5.dp
+                                                                ),
                                                             text = "Author: ${author.completeName}",
                                                             fontSize = 14.sp
                                                         )
                                                     }
                                                     Text(
-                                                        modifier = Modifier.padding(top = 5.dp),
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                top = 5.dp
+                                                            ),
                                                         text = "Creation date: ${update.createDate}",
                                                         fontSize = 14.sp
                                                     )
@@ -248,13 +283,19 @@ class ProjectSection : Section(), SingleItemManager {
                                                         val startedBy = update.startedBy
                                                         if (hasGroup && startedBy != null) {
                                                             Text(
-                                                                modifier = Modifier.padding(top = 5.dp),
+                                                                modifier = Modifier
+                                                                    .padding(
+                                                                        top = 5.dp
+                                                                    ),
                                                                 text = "Started by: ${startedBy.completeName}",
                                                                 fontSize = 14.sp
                                                             )
                                                         }
                                                         Text(
-                                                            modifier = Modifier.padding(top = 5.dp),
+                                                            modifier = Modifier
+                                                                .padding(
+                                                                    top = 5.dp
+                                                                ),
                                                             text = "Start date: ${update.startDate}",
                                                             fontSize = 14.sp
                                                         )
@@ -264,13 +305,19 @@ class ProjectSection : Section(), SingleItemManager {
                                                         val publishedBy = update.publishedBy
                                                         if (hasGroup && publishedBy != null) {
                                                             Text(
-                                                                modifier = Modifier.padding(top = 5.dp),
+                                                                modifier = Modifier
+                                                                    .padding(
+                                                                        top = 5.dp
+                                                                    ),
                                                                 text = "Published by: ${publishedBy.completeName}",
                                                                 fontSize = 14.sp
                                                             )
                                                         }
                                                         Text(
-                                                            modifier = Modifier.padding(top = 5.dp),
+                                                            modifier = Modifier
+                                                                .padding(
+                                                                    top = 5.dp
+                                                                ),
                                                             text = "Publish date: ${update.publishDate}",
                                                             fontSize = 14.sp
                                                         )
@@ -279,18 +326,23 @@ class ProjectSection : Section(), SingleItemManager {
                                                         if (update.developmentDuration == 1)
                                                             timeGap = "day"
                                                         Text(
-                                                            modifier = Modifier.padding(top = 5.dp),
+                                                            modifier = Modifier
+                                                                .padding(
+                                                                    top = 5.dp
+                                                                ),
                                                             text = "Development duration: ${update.developmentDuration} $timeGap",
                                                             fontSize = 14.sp
                                                         )
                                                     }
                                                     if (!isPublished || isScheduled) {
                                                         Row(
-                                                            modifier = Modifier.height(30.dp),
+                                                            modifier = Modifier
+                                                                .height(30.dp),
                                                             verticalAlignment = Alignment.CenterVertically
                                                         ) {
                                                             Text(
-                                                                text = "Change notes",
+                                                                text = stringResource(Res.string.change_notes)
+                                                                        + ": ${changeNotes.size}",
                                                                 fontSize = 18.sp
                                                             )
                                                             IconButton(
@@ -300,7 +352,8 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 }
                                                             ) {
                                                                 Icon(
-                                                                    modifier = Modifier.size(20.dp),
+                                                                    modifier = Modifier
+                                                                        .size(20.dp),
                                                                     imageVector = Icons.Default.Add,
                                                                     contentDescription = null,
                                                                     tint = RED_COLOR
@@ -309,13 +362,20 @@ class ProjectSection : Section(), SingleItemManager {
                                                         }
                                                     } else {
                                                         Text(
-                                                            modifier = Modifier.padding(top = 5.dp),
-                                                            text = "Change notes",
+                                                            modifier = Modifier
+                                                                .padding(
+                                                                    top = 5.dp
+                                                                ),
+                                                            text = stringResource(Res.string.change_notes)
+                                                                    + ": ${changeNotes.size}",
                                                             fontSize = 18.sp
                                                         )
                                                     }
                                                     LazyColumn(
-                                                        modifier = Modifier.padding(top = 5.dp)
+                                                        modifier = Modifier
+                                                            .padding(
+                                                                top = 5.dp
+                                                            )
                                                     ) {
                                                         items(
                                                             items = changeNotes,
@@ -326,15 +386,22 @@ class ProjectSection : Section(), SingleItemManager {
                                                             if (!isPublished) {
                                                                 if (isScheduled) {
                                                                     Row(
-                                                                        modifier = Modifier.fillMaxWidth().height(55.dp),
+                                                                        modifier = Modifier
+                                                                            .fillMaxWidth()
+                                                                            .height(55.dp),
                                                                         verticalAlignment = Alignment.CenterVertically
                                                                     ) {
                                                                         Row(
-                                                                            modifier = Modifier.weight(4f).fillMaxWidth(),
+                                                                            modifier = Modifier
+                                                                                .weight(4f)
+                                                                                .fillMaxWidth(),
                                                                             verticalAlignment = Alignment.CenterVertically
                                                                         ) {
                                                                             Text(
-                                                                                modifier = Modifier.padding(end = 5.dp),
+                                                                                modifier = Modifier
+                                                                                    .padding(
+                                                                                        end = 5.dp
+                                                                                    ),
                                                                                 text = "-",
                                                                                 fontSize = 14.sp
                                                                             )
@@ -436,7 +503,9 @@ class ProjectSection : Section(), SingleItemManager {
                                                     }
                                                 }
                                                 Column(
-                                                    modifier = Modifier.weight(1f).fillMaxHeight(),
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .fillMaxHeight(),
                                                     horizontalAlignment = Alignment.End,
                                                     verticalArrangement = Arrangement.Center
                                                 ) {
@@ -458,62 +527,95 @@ class ProjectSection : Section(), SingleItemManager {
                                                                 }
                                                             }
                                                             DropdownMenu(
-                                                                modifier = Modifier.background(Color.White).width(200.dp),
+                                                                modifier = Modifier
+                                                                    .background(Color.White)
+                                                                    .width(200.dp),
                                                                 expanded = showMenu,
                                                                 onDismissRequest = { showMenu = false }
                                                             ) {
-                                                                DropdownMenuItem(
-                                                                    onClick = {
-                                                                        showMenu = false
-                                                                        if (isScheduled)
-                                                                            startUpdate(update)
-                                                                        else if (!isPublished) {
-                                                                            if (!areAllChangeNotesDone(changeNotes)) {
-                                                                                showPublishUpdate.value = true
-                                                                                showNotes.value = true
-                                                                            } else {
-                                                                                publishUpdate(
-                                                                                    showNotes, showPublishUpdate,
-                                                                                    update
+                                                                if(update.notes.isNotEmpty()) {
+                                                                    DropdownMenuItem(
+                                                                        text = {
+                                                                            Text(
+                                                                                text = stringResource(Res.string.export_notes)
+                                                                            )
+                                                                        },
+                                                                        trailingIcon = {
+                                                                            Icon(
+                                                                                imageVector = Icons.Default.ContentPaste,
+                                                                                contentDescription = null
+                                                                            )
+                                                                        },
+                                                                        onClick = {
+                                                                            showMenu = false
+                                                                            clipboard.setContents(
+                                                                                StringSelection(
+                                                                                    formatNotesAsMarkdown(
+                                                                                        update = update
+                                                                                    )
+                                                                            ), null)
+                                                                            showSnack(
+                                                                                Res.string.notes_formatted_in_markdown_copied
+                                                                            )
+                                                                        }
+                                                                    )
+                                                                }
+                                                                if(!isPublished) {
+                                                                    DropdownMenuItem(
+                                                                        onClick = {
+                                                                            showMenu = false
+                                                                            if (isScheduled)
+                                                                                startUpdate(update)
+                                                                            else if (!isPublished) {
+                                                                                if (!areAllChangeNotesDone(changeNotes)) {
+                                                                                    showPublishUpdate.value = true
+                                                                                    showNotes.value = true
+                                                                                } else {
+                                                                                    publishUpdate(
+                                                                                        showNotes, showPublishUpdate,
+                                                                                        update
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        text = {
+                                                                            Text(
+                                                                                text =
+                                                                                if (isScheduled)
+                                                                                    "Start update"
+                                                                                else if (!isPublished)
+                                                                                    "Publish update"
+                                                                                else "",
+                                                                                fontSize = 14.sp
+                                                                            )
+                                                                            Column(
+                                                                                modifier = Modifier
+                                                                                    .fillMaxWidth(),
+                                                                                horizontalAlignment = Alignment.End
+                                                                            ) {
+                                                                                Icon(
+                                                                                    modifier = Modifier
+                                                                                        .size(18.dp),
+                                                                                    imageVector =
+                                                                                    if (isScheduled)
+                                                                                        Icons.Default.PlayArrow
+                                                                                    else if (!isPublished)
+                                                                                        Icons.Default.Publish
+                                                                                    else
+                                                                                        Icons.Default.Edit,
+                                                                                    contentDescription = null,
+                                                                                    tint =
+                                                                                    if (isScheduled)
+                                                                                        YELLOW_COLOR
+                                                                                    else if (!isPublished)
+                                                                                        GREEN_COLOR
+                                                                                    else
+                                                                                        PRIMARY_COLOR
                                                                                 )
                                                                             }
                                                                         }
-                                                                    },
-                                                                    text = {
-                                                                        Text(
-                                                                            text =
-                                                                            if (isScheduled)
-                                                                                "Start update"
-                                                                            else if (!isPublished)
-                                                                                "Publish update"
-                                                                            else "",
-                                                                            fontSize = 14.sp
-                                                                        )
-                                                                        Column(
-                                                                            modifier = Modifier.fillMaxWidth(),
-                                                                            horizontalAlignment = Alignment.End
-                                                                        ) {
-                                                                            Icon(
-                                                                                modifier = Modifier.size(18.dp),
-                                                                                imageVector =
-                                                                                if (isScheduled)
-                                                                                    Icons.Default.PlayArrow
-                                                                                else if (!isPublished)
-                                                                                    Icons.Default.Publish
-                                                                                else
-                                                                                    Icons.Default.Edit,
-                                                                                contentDescription = null,
-                                                                                tint =
-                                                                                if (isScheduled)
-                                                                                    YELLOW_COLOR
-                                                                                else if (!isPublished)
-                                                                                    GREEN_COLOR
-                                                                                else
-                                                                                    PRIMARY_COLOR
-                                                                            )
-                                                                        }
-                                                                    }
-                                                                )
+                                                                    )
+                                                                }
                                                                 DropdownMenuItem(
                                                                     onClick = {
                                                                         showMenu = false
@@ -540,29 +642,26 @@ class ProjectSection : Section(), SingleItemManager {
                                                             }
                                                         }
                                                         IconButton(
-                                                            onClick = {
-                                                                if (isPublished)
-                                                                    showDeleteDialog.value = true
-                                                                else
-                                                                    showMenu = true
-                                                            }
+                                                            onClick = { showMenu = true }
                                                         ) {
                                                             Icon(
-                                                                imageVector = if (isPublished) Icons.Default.Delete else Icons.Default.MoreVert,
+                                                                imageVector = Icons.Default.MoreVert,
                                                                 contentDescription = null,
-                                                                tint = if (isPublished) RED_COLOR else PRIMARY_COLOR
+                                                                tint = PRIMARY_COLOR
                                                             )
                                                         }
                                                         Box(
-                                                            modifier = Modifier.background(
-                                                                if (isPublished)
-                                                                    GREEN_COLOR
-                                                                else if (isScheduled)
-                                                                    RED_COLOR
-                                                                else
-                                                                    YELLOW_COLOR
-                                                            )
-                                                                .fillMaxHeight().width(10.dp)
+                                                            modifier = Modifier
+                                                                .background(
+                                                                    if (isPublished)
+                                                                        GREEN_COLOR
+                                                                    else if (isScheduled)
+                                                                        RED_COLOR
+                                                                    else
+                                                                        YELLOW_COLOR
+                                                                )
+                                                                .fillMaxHeight()
+                                                                .width(10.dp)
                                                         )
                                                     }
                                                 }
@@ -603,13 +702,20 @@ class ProjectSection : Section(), SingleItemManager {
                             }
                             if (showGroupsSection) {
                                 Text(
-                                    modifier = Modifier.padding(top = 10.dp),
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 10.dp
+                                        ),
                                     text = "Groups number: ${groups.size}",
                                     fontSize = 14.sp
                                 )
                                 spaceContent()
                                 LazyVerticalGrid(
-                                    modifier = Modifier.padding(top = 20.dp).height(50.dp),
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 20.dp
+                                        )
+                                        .height(50.dp),
                                     columns = GridCells.Adaptive(100.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -634,7 +740,8 @@ class ProjectSection : Section(), SingleItemManager {
                                             onClick = { navToGroup(Sections.Project, group) },
                                         ) {
                                             Column(
-                                                modifier = Modifier.fillMaxSize(),
+                                                modifier = Modifier
+                                                    .fillMaxSize(),
                                                 horizontalAlignment = Alignment.CenterHorizontally,
                                                 verticalArrangement = Arrangement.Center
                                             ) {
@@ -644,12 +751,16 @@ class ProjectSection : Section(), SingleItemManager {
                                                 )
                                             }
                                             Column(
-                                                modifier = Modifier.weight(1f).fillMaxHeight(),
+                                                modifier = Modifier
+                                                    .weight(1f)
+                                                    .fillMaxHeight(),
                                                 horizontalAlignment = Alignment.End,
                                                 verticalArrangement = Arrangement.Center
                                             ) {
                                                 Box(
-                                                    modifier = Modifier.background(PRIMARY_COLOR).fillMaxHeight()
+                                                    modifier = Modifier
+                                                        .background(PRIMARY_COLOR)
+                                                        .fillMaxHeight()
                                                         .width(3.dp)
                                                 )
                                             }
@@ -663,7 +774,11 @@ class ProjectSection : Section(), SingleItemManager {
                             var showStatsSection by remember { mutableStateOf(true) }
                             var showStatsIcon by remember { mutableStateOf(Icons.Default.VisibilityOff) }
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth().
+                                    padding(
+                                        top = 10.dp
+                                    ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
@@ -792,7 +907,8 @@ class ProjectSection : Section(), SingleItemManager {
             }
         ) {
             Icon(
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier
+                    .size(20.dp),
                 imageVector = Icons.Default.Delete,
                 tint = RED_COLOR,
                 contentDescription = null

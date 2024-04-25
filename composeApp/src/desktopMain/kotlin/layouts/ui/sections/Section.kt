@@ -10,15 +10,18 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.currentProject
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 
 /**
  * The [Section] class is useful to give the base structure that a Pandoro's section must have
@@ -146,7 +149,23 @@ abstract class Section {
      *
      * @param message: message to show
      */
-    protected fun showSnack(message: String) {
+    @OptIn(ExperimentalResourceApi::class)
+    protected fun showSnack(
+        message: StringResource
+    ) {
+        sectionCoroutineScope.launch {
+            showSnack(getString(message))
+        }
+    }
+
+    /**
+     * Function to show a snackbar from a section
+     *
+     * @param message: message to show
+     */
+    protected fun showSnack(
+        message: String
+    ) {
         helpers.showSnack(sectionCoroutineScope, snackbarHostState, message)
     }
 

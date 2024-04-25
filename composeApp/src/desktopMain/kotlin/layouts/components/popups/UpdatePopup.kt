@@ -4,13 +4,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,26 +41,43 @@ fun showScheduleUpdatePopup() {
         content = {
             var targetVersion by remember { mutableStateOf("") }
             PandoroTextField(
-                modifier = Modifier.padding(10.dp).height(55.dp),
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(55.dp),
                 label = "Target version",
                 isError = !isValidVersion(targetVersion),
                 onValueChange = { targetVersion = it },
                 value = targetVersion
             )
             Text(
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp, top = 15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 15.dp,
+                        top = 15.dp
+                    ),
                 text = "Notes for the update",
                 textAlign = TextAlign.Start
             )
             LazyColumn(
-                modifier = Modifier.padding(top = 10.dp, start = 15.dp).height(225.dp)
+                modifier = Modifier
+                    .padding(
+                        top = 10.dp,
+                        start = 15.dp
+                    )
+                    .height(225.dp)
             ) {
                 stickyHeader {
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(top = 5.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = 5.dp
+                            )
                     ) {
                         FloatingActionButton(
-                            modifier = Modifier.size(30.dp),
+                            modifier = Modifier
+                                .size(30.dp),
                             onClick = { notes.add("") },
                             content = { Icon(Icons.Filled.Add, null) }
                         )
@@ -74,11 +91,14 @@ fun showScheduleUpdatePopup() {
                     ) {
                         val content = mutableStateOf(notes[index])
                         PandoroTextField(
-                            modifier = Modifier.padding(
-                                top = 10.dp,
-                                bottom = 10.dp,
-                                start = 10.dp
-                            ).width(220.dp).height(55.dp),
+                            modifier = Modifier
+                                .padding(
+                                    top = 10.dp,
+                                    bottom = 10.dp,
+                                    start = 10.dp
+                                )
+                                .width(220.dp)
+                                .height(55.dp),
                             label = "Content of the note",
                             isError = !isContentNoteValid(content.value),
                             onValueChange = {
@@ -89,13 +109,15 @@ fun showScheduleUpdatePopup() {
                                 }
                             },
                             value = content.value,
-                            textFieldModifier = Modifier.width(220.dp)
+                            textFieldModifier = Modifier
+                                .width(220.dp)
                         )
                         IconButton(
                             onClick = { notes.removeAt(index) }
                         ) {
                             Icon(
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier
+                                    .size(18.dp),
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = null,
                                 tint = RED_COLOR
@@ -104,9 +126,13 @@ fun showScheduleUpdatePopup() {
                     }
                 }
             }
-            Spacer(Modifier.height(15.dp))
+            Spacer(
+                modifier = Modifier
+                    .height(15.dp)
+            )
             Text(
-                modifier = Modifier.clickable {
+                modifier = Modifier
+                    .clickable {
                     if (isValidVersion(targetVersion)) {
                         if (notes.isNotEmpty()) {
                             var notesCorrect = true
