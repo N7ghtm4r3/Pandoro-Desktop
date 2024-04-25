@@ -233,11 +233,6 @@ class ProjectsSection : Section() {
                                                 }
                                                 if (showDeleteAlertDialog) {
                                                     AlertDialog(
-                                                        modifier = Modifier
-                                                            .size(
-                                                                width = 400.dp,
-                                                                height = 200.dp
-                                                            ),
                                                         shape = RoundedCornerShape(25.dp),
                                                         containerColor = BACKGROUND_COLOR,
                                                         onDismissRequest = { showDeleteAlertDialog = false },

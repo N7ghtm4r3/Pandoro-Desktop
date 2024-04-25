@@ -367,7 +367,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                     top = 5.dp
                                                                 ),
                                                             text = stringResource(Res.string.development_duration) +
-                                                                    " ${update.developmentDuration} $timeGap",
+                                                                    ": ${update.developmentDuration} $timeGap",
                                                             fontSize = 14.sp
                                                         )
                                                     }

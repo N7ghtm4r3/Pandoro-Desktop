@@ -1,8 +1,10 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components.popups
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.pandorocore.helpers.*
 import helpers.showSnack
+import kotlinx.coroutines.launch
 import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showEditEmailPopup
@@ -20,6 +23,10 @@ import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.ProfileSection.Companion.HIDE_PASSWORD
 import layouts.ui.sections.ProfileSection.Companion.passwordProperty
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * Function to show the popup to edit the email of the [User]
@@ -31,7 +38,7 @@ import layouts.ui.sections.ProfileSection.Companion.passwordProperty
 fun showEditEmailPopup() {
     showEditProfilePopup(
         show = showEditEmailPopup,
-        label = "Email",
+        label = stringResource(Res.string.email),
         item = "email"
     )
 }
@@ -46,7 +53,7 @@ fun showEditEmailPopup() {
 fun showEditPasswordPopup() {
     showEditProfilePopup(
         show = showEditPasswordPopup,
-        label = "Password",
+        label = stringResource(Res.string.password),
         item = "password"
     )
 }
@@ -68,46 +75,57 @@ private fun showEditProfilePopup(
         width = 250.dp,
         height = 200.dp,
         flag = show,
-        title = "Edit $item",
+        title = stringResource(Res.string.edit) + " $item",
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
             val isEditingEmail = label == "Email"
             var profileInfo by remember { mutableStateOf("") }
             Column(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier
+                    .padding(20.dp)
             ) {
                 PandoroTextField(
-                    modifier = Modifier.padding(10.dp).height(55.dp),
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .height(55.dp),
                     label = label,
                     isError = !isInputValid(item, profileInfo),
                     onValueChange = { profileInfo = it },
                     value = profileInfo
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(10.dp)
+                )
                 Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
-                        if (isInputValid(item, profileInfo)) {
-                            if (isEditingEmail) {
-                                requester!!.execChangeEmail(profileInfo)
-                                if (requester!!.successResponse())
-                                    localAuthHelper.storeEmail(profileInfo, true)
-                                else
-                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            if (isInputValid(item, profileInfo)) {
+                                if (isEditingEmail) {
+                                    requester!!.execChangeEmail(profileInfo)
+                                    if (requester!!.successResponse())
+                                        localAuthHelper.storeEmail(profileInfo, true)
+                                    else
+                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                } else {
+                                    requester!!.execChangePassword(profileInfo)
+                                    if (requester!!.successResponse()) {
+                                        localAuthHelper.storePassword(profileInfo, true)
+                                        if (passwordProperty.value != HIDE_PASSWORD)
+                                            passwordProperty.value = user.password
+                                    } else
+                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                }
+                                show.value = false
                             } else {
-                                requester!!.execChangePassword(profileInfo)
-                                if (requester!!.successResponse()) {
-                                    localAuthHelper.storePassword(profileInfo, true)
-                                    if (passwordProperty.value != HIDE_PASSWORD)
-                                        passwordProperty.value = user.password
-                                } else
-                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                coroutineScope.launch {
+                                    showSnack(coroutineScope, snackbarHostState, getString(Res.string.insert_a_correct) + " $item")
+                                }
                             }
-                            show.value = false
-                        } else
-                            showSnack(coroutineScope, snackbarHostState, "Insert a correct $item")
-                    },
-                    text = "Edit $item",
+                        },
+                    text = stringResource(Res.string.edit) + " $item",
                     fontSize = 14.sp
                 )
             }
@@ -126,25 +144,30 @@ fun showAddGroupPopup() {
     createPopup(
         height = 500.dp,
         flag = showAddGroupPopup,
-        title = "Create a new group",
+        title = stringResource(Res.string.create_a_new_group),
         columnModifier = Modifier,
         content = {
             Column(
-                modifier = Modifier.padding(20.dp),
+                modifier = Modifier
+                    .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 var groupName by remember { mutableStateOf("") }
                 PandoroTextField(
-                    modifier = Modifier.height(55.dp).align(Alignment.CenterHorizontally),
-                    label = "Name",
+                    modifier = Modifier
+                        .height(55.dp)
+                        .align(Alignment.CenterHorizontally),
+                    label = stringResource(Res.string.name),
                     isError = !isGroupNameValid(groupName),
                     onValueChange = { groupName = it },
                     value = groupName
                 )
                 var groupDescription by remember { mutableStateOf("") }
                 PandoroTextField(
-                    modifier = Modifier.height(55.dp).align(Alignment.CenterHorizontally),
-                    label = "Description",
+                    modifier = Modifier
+                        .height(55.dp)
+                        .align(Alignment.CenterHorizontally),
+                    label = stringResource(Res.string.description),
                     isError = !isGroupDescriptionValid(groupDescription),
                     onValueChange = { groupDescription = it },
                     value = groupDescription
@@ -153,24 +176,25 @@ fun showAddGroupPopup() {
                     height = 230.dp,
                     members = members
                 )
-                Spacer(Modifier.height(10.dp))
                 Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
-                        if (isGroupNameValid(groupName)) {
-                            if (isGroupDescriptionValid(groupDescription)) {
-                                if (checkMembersValidity(members)) {
-                                    requester!!.execCreateGroup(groupName, groupDescription, members)
-                                    if (requester!!.successResponse())
-                                        showAddGroupPopup.value = false
-                                    else
-                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                }
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            if (isGroupNameValid(groupName)) {
+                                if (isGroupDescriptionValid(groupDescription)) {
+                                    if (checkMembersValidity(members)) {
+                                        requester!!.execCreateGroup(groupName, groupDescription, members)
+                                        if (requester!!.successResponse())
+                                            showAddGroupPopup.value = false
+                                        else
+                                            showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                    }
+                                } else
+                                    showSnack(coroutineScope, snackbarHostState, Res.string.you_must_insert_a_correct_group_description)
                             } else
-                                showSnack(coroutineScope, snackbarHostState, "You must insert a correct group description")
-                        } else
-                            showSnack(coroutineScope, snackbarHostState, "You must insert a correct group name")
-                    },
-                    text = "Create group",
+                                showSnack(coroutineScope, snackbarHostState, Res.string.you_must_insert_a_correct_group_name)
+                        },
+                    text = stringResource(Res.string.create),
                     fontSize = 14.sp
                 )
             }

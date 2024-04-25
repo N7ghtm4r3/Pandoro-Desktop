@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components.popups
 
 import androidx.compose.foundation.clickable
@@ -22,6 +24,9 @@ import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
@@ -42,7 +47,7 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
         width = 300.dp,
         height = 200.dp,
         flag = showCreateNotePopup,
-        title = if (update != null) "Create a note for the ${update.targetVersion} update" else "Create a new note",
+        title = stringResource(Res.string.create_a_new_note),
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
@@ -55,7 +60,7 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                     modifier = Modifier
                         .padding(10.dp)
                         .height(55.dp),
-                    label = "Content",
+                    label = stringResource(Res.string.content),
                     isError = !isContentNoteValid(content),
                     onValueChange = { content = it },
                     value = content
@@ -83,9 +88,9 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                                         showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
                                 }
                             } else
-                                showSnack(coroutineScope, snackbarHostState, "Insert a correct content")
+                                showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_content)
                     },
-                    text = "Create note",
+                    text = stringResource(Res.string.create),
                     fontSize = 14.sp
                 )
             }
@@ -117,7 +122,7 @@ fun showNoteInfoPopup(
         } else
             270.dp,
         flag = showNoteInfoPopup,
-        title = "Note info",
+        title = stringResource(Res.string.note_info),
         content = {
             Column(
                 modifier = Modifier
@@ -125,7 +130,7 @@ fun showNoteInfoPopup(
             ) {
                 if (update != null) {
                     Text(
-                        text = "Update version: v. ${update.targetVersion}",
+                        text = stringResource(Res.string.update_version) + " v. ${update.targetVersion}",
                         fontSize = 14.sp
                     )
                 }
@@ -142,7 +147,7 @@ fun showNoteInfoPopup(
                             .weight(10f)
                             .fillMaxWidth()
                             .padding(top = 10.dp),
-                        text = "Note: ${note.content}",
+                        text = stringResource(Res.string.content) + ": ${note.content}",
                         fontSize = 14.sp
                     )
                     IconButton(
@@ -155,7 +160,7 @@ fun showNoteInfoPopup(
                             .size(16.dp),
                         onClick = {
                             clipboard.setContents(StringSelection(note.content), null)
-                            showSnack(coroutineScope, snackbarHostState, "Content copied successfully")
+                            showSnack(coroutineScope, snackbarHostState, Res.string.content_copied)
                         }
                     ) {
                         Icon(
@@ -170,14 +175,14 @@ fun showNoteInfoPopup(
                 if (showUsers && author != null) {
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = "Author: ${author.completeName}",
+                        text = stringResource(Res.string.author) + " ${author.completeName}",
                         fontSize = 14.sp
                     )
                     spaceContent(5.dp, end = 10.dp)
                 }
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
-                    text = "Creation date: ${note.creationDate}",
+                    text = stringResource(Res.string.creation_date) + " ${note.creationDate}",
                     fontSize = 14.sp
                 )
                 spaceContent(5.dp, end = 10.dp)
@@ -186,14 +191,14 @@ fun showNoteInfoPopup(
                     if (showUsers && markedAsDoneBy != null) {
                         Text(
                             modifier = Modifier.padding(top = 10.dp),
-                            text = "Marked as done by: ${markedAsDoneBy.completeName}",
+                            text = stringResource(Res.string.marked_as_done_by) + " ${markedAsDoneBy.completeName}",
                             fontSize = 14.sp
                         )
                         spaceContent(5.dp, end = 10.dp)
                     }
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = "Date of mark: ${note.markedAsDoneDate}",
+                        text = stringResource(Res.string.date_of_mark) + " ${note.markedAsDoneDate}",
                         fontSize = 14.sp
                     )
                     spaceContent(5.dp, end = 10.dp)

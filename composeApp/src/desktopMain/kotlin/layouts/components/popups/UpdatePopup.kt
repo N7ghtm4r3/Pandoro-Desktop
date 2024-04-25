@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components.popups
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -24,6 +26,9 @@ import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
 import layouts.ui.screens.SplashScreen.Companion.requester
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * Function to show the popup to schedule a new [ProjectUpdate]
@@ -37,14 +42,14 @@ fun showScheduleUpdatePopup() {
     createPopup(
         height = 450.dp,
         flag = showScheduleUpdatePopup,
-        title = "Schedule an update for ${currentProject.value.name} project",
+        title = stringResource(Res.string.schedule_update),
         content = {
             var targetVersion by remember { mutableStateOf("") }
             PandoroTextField(
                 modifier = Modifier
                     .padding(10.dp)
                     .height(55.dp),
-                label = "Target version",
+                label = stringResource(Res.string.target_version),
                 isError = !isValidVersion(targetVersion),
                 onValueChange = { targetVersion = it },
                 value = targetVersion
@@ -56,7 +61,7 @@ fun showScheduleUpdatePopup() {
                         start = 15.dp,
                         top = 15.dp
                     ),
-                text = "Notes for the update",
+                text = stringResource(Res.string.change_notes),
                 textAlign = TextAlign.Start
             )
             LazyColumn(
@@ -99,7 +104,7 @@ fun showScheduleUpdatePopup() {
                                 )
                                 .width(220.dp)
                                 .height(55.dp),
-                            label = "Content of the note",
+                            label = stringResource(Res.string.content),
                             isError = !isContentNoteValid(content.value),
                             onValueChange = {
                                 if (it.isNotEmpty()) {
@@ -148,13 +153,13 @@ fun showScheduleUpdatePopup() {
                                 else
                                     showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
                             } else
-                                showSnack(coroutineScope, snackbarHostState, "You must insert correct notes")
+                                showSnack(coroutineScope, snackbarHostState, Res.string.you_must_insert_correct_notes)
                         } else
-                            showSnack(coroutineScope, snackbarHostState, "You must insert one note at least")
+                            showSnack(coroutineScope, snackbarHostState, Res.string.you_must_insert_one_note_at_least)
                     } else
-                        showSnack(coroutineScope, snackbarHostState, "Insert a correct target version")
+                        showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_target_version)
                 },
-                text = "Schedule update",
+                text = stringResource(Res.string.schedule),
                 fontSize = 14.sp
             )
         }

@@ -15,6 +15,7 @@
     <string name="confirm">Conferma</string>
     <string name="no_projects_found">Nessun progetto trovato</string>
     <string name="add_a_new_project">Aggiungi un nuovo progetto</string>
+    <string name="edit_project">Modifica progetto</string>
     <string name="add">Aggiungi</string>
     <string name="name">Nome</string>
     <string name="description">Descrizione</string>
@@ -76,7 +77,7 @@
     <string name="publish_date">Data di pubblicazione:</string>
     <string name="update_info">Aggiornamento info</string>
     <string name="change_notes">Change notes</string>
-    <string name="development_duration">Durata dello sviluppo:</string>
+    <string name="development_duration">Durata sviluppo</string>
     <string name="days">giorni</string>
     <string name="day">giorno</string>
     <string name="start_update">Avvia</string>
@@ -84,8 +85,11 @@
     <string name="delete_update">Cancella l'aggiornamento</string>
     <string name="delete_update_text">Se confermi questo evento l'aggiornamento e tutte le sue informazioni saranno cancellate e non più recuperabili, confermi?</string>
     <string name="marked_as_done_by">Contrassegnato come fatto da:</string>
-    <string name="schedule_update">Nuovo\naggiornamento</string>
+    <string name="schedule_update">Nuovo aggiornamento</string>
     <string name="schedule">Conferma</string>
+    <string name="update_version">Versione aggiornamento:</string>
+    <string name="content_copied">Contenuto copiato con successo</string>
+    <string name="wrong_group_list">Elenco membri errato</string>
     <string name="target_version">Versione target</string>
     <string name="groups">Gruppi</string>
     <string name="groups_number">Numero di gruppi:</string>
@@ -109,6 +113,7 @@
     <string name="welcome_back">Bentornat</string>
     <string name="hello">Ciao</string>
     <string name="edit_the_groups_projects">Modifica i progetti dei gruppi</string>
+    <string name="insert_a_correct">È necessario inserire una corretta</string>
     <string name="you_must_insert_a_correct_server_address">È necessario inserire un indirizzo server corretto</string>
     <string name="you_must_insert_a_correct_name">È necessario inserire un nome corretto</string>
     <string name="you_must_insert_a_correct_surname">È necessario inserire un cognome corretto</string>

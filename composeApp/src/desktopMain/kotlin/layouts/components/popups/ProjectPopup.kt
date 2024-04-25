@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components.popups
 
 import androidx.compose.foundation.clickable
@@ -5,9 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +27,9 @@ import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * Function to show the popup to add a new project
@@ -34,18 +39,18 @@ import layouts.ui.screens.SplashScreen.Companion.user
 @Wrapper
 @Composable
 fun showAddProjectPopup() {
-    showProjectPopup("Add a new project", "Add project", showAddProjectPopup)
+    showProjectPopup(stringResource(Res.string.add_a_new_project), stringResource(Res.string.add), showAddProjectPopup)
 }
 
 /**
  * Function to show the popup to edit an old project
  *
- * No-any params required
+ * @param project: the project to edit
  */
 @Wrapper
 @Composable
 fun showEditProjectPopup(project: Project) {
-    showProjectPopup("Edit " + project.name + " project", "Edit project", showEditPopup, project)
+    showProjectPopup(stringResource(Res.string.edit_project), stringResource(Res.string.edit), showEditPopup, project)
 }
 
 /**
@@ -64,41 +69,54 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
     var version by remember { mutableStateOf(if (project != null) project.version else "") }
     var repository by remember { mutableStateOf(if (project != null) project.projectRepo else "") }
     createPopup(
-        height = if (user.adminGroups.isNotEmpty()) 665.dp else 465.dp,
+        height = if (user.adminGroups.isNotEmpty())
+            665.dp
+        else
+            465.dp,
         flag = flag,
         title = title,
         content = {
             PandoroTextField(
-                modifier = Modifier.padding(10.dp).height(55.dp),
-                label = "Name",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(55.dp),
+                label = stringResource(Res.string.name),
                 isError = !isValidProjectName(name),
                 onValueChange = { name = it },
                 value = name
             )
             PandoroTextField(
-                modifier = Modifier.padding(10.dp).height(55.dp),
-                label = "Description",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(55.dp),
+                label = stringResource(Res.string.surname),
                 isError = !isValidProjectDescription(description),
                 onValueChange = { description = it },
                 value = description
             )
             PandoroTextField(
-                modifier = Modifier.padding(10.dp).height(55.dp),
-                label = "Short description",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(55.dp),
+                label = stringResource(Res.string.short_description),
                 isError = !isValidProjectShortDescription(shortDescription),
                 onValueChange = { shortDescription = it },
                 value = shortDescription
             )
             PandoroTextField(
-                modifier = Modifier.padding(10.dp).height(55.dp),
-                label = "Version",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(55.dp),
+                label = stringResource(Res.string.version),
                 isError = !isValidVersion(version),
                 onValueChange = { version = it },
                 value = version
             )
             PandoroTextField(
-                modifier = Modifier.padding(10.dp).height(55.dp),
-                label = "Project repository",
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(55.dp),
+                label = stringResource(Res.string.project_repository),
                 isError = !isValidRepository(repository),
                 onValueChange = { repository = it },
                 value = repository
@@ -107,12 +125,21 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
             project?.groups?.forEach { group -> groups.add(group.id) }
             if (user.adminGroups.isNotEmpty()) {
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 15.dp, top = 15.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 15.dp,
+                            top = 15.dp
+                        ),
                     textAlign = TextAlign.Start,
-                    text = if (name.isNotEmpty()) "Add $name to a group" else "Add to a group"
+                    text = stringResource(Res.string.add_to_a_group)
                 )
                 LazyVerticalGrid(
-                    modifier = Modifier.padding(top = 10.dp).height(175.dp),
+                    modifier = Modifier
+                        .padding(
+                            top = 10.dp
+                        )
+                        .height(175.dp),
                     columns = GridCells.Fixed(3),
                     contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -151,45 +178,49 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                     }
                 }
             } else
-                Spacer(Modifier.height(10.dp))
+                Spacer(
+                    modifier = Modifier
+                        .height(10.dp)
+                )
             Text(
-                modifier = Modifier.clickable {
-                    if (isValidProjectName(name)) {
-                        if (isValidProjectDescription(description)) {
-                            if (isValidProjectShortDescription(shortDescription)) {
-                                if (isValidVersion(version)) {
-                                    version = version.replace("v. ", "")
-                                    if (isValidRepository(repository)) {
-                                        if (project == null) {
-                                            requester!!.execAddProject(
-                                                name, description, shortDescription, version,
-                                                groups, repository
-                                            )
-                                            if (requester!!.successResponse())
-                                                flag.value = false
-                                            else
-                                                showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                        } else {
-                                            requester!!.execEditProject(
-                                                project.id, name, description, shortDescription,
-                                                version, groups, repository
-                                            )
-                                            if (requester!!.successResponse())
-                                                flag.value = false
-                                            else
-                                                showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                        }
+                modifier = Modifier
+                    .clickable {
+                        if (isValidProjectName(name)) {
+                            if (isValidProjectDescription(description)) {
+                                if (isValidProjectShortDescription(shortDescription)) {
+                                    if (isValidVersion(version)) {
+                                        version = version.replace("v. ", "")
+                                        if (isValidRepository(repository)) {
+                                            if (project == null) {
+                                                requester!!.execAddProject(
+                                                    name, description, shortDescription, version,
+                                                    groups, repository
+                                                )
+                                                if (requester!!.successResponse())
+                                                    flag.value = false
+                                                else
+                                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                            } else {
+                                                requester!!.execEditProject(
+                                                    project.id, name, description, shortDescription,
+                                                    version, groups, repository
+                                                )
+                                                if (requester!!.successResponse())
+                                                    flag.value = false
+                                                else
+                                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                            }
+                                        } else
+                                            showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_repository_url)
                                     } else
-                                        showSnack(coroutineScope, snackbarHostState, "Insert a correct repository url")
+                                        showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_version)
                                 } else
-                                    showSnack(coroutineScope, snackbarHostState, "Insert a correct version")
+                                    showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_short_description)
                             } else
-                                showSnack(coroutineScope, snackbarHostState, "Insert a correct short description")
+                                showSnack(coroutineScope, snackbarHostState, Res.string.description)
                         } else
-                            showSnack(coroutineScope, snackbarHostState, "Insert a correct description")
-                    } else
-                        showSnack(coroutineScope, snackbarHostState, "Insert a correct name")
-                },
+                            showSnack(coroutineScope, snackbarHostState, Res.string.name)
+                    },
                 text = buttonText,
                 fontSize = 14.sp
             )

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components
 
 import androidx.compose.foundation.layout.*
@@ -27,6 +29,9 @@ import layouts.ui.sections.Section
 import layouts.ui.sections.Section.Companion.navBack
 import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.snackbarHostState
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * Function to delete an update
@@ -34,15 +39,14 @@ import layouts.ui.sections.Section.Companion.snackbarHostState
  * @param show: the flaw whether show the [AlertDialog]
  * @param update: the update to delete
  */
+@OptIn(ExperimentalResourceApi::class)
 @Wrapper
 @Composable
 fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
     AlertDialogContainer(
         show = show,
-        title = "Delete update ${update.targetVersion}",
-        text = "If you confirm this action the update and its all "
-                + "information will be deleted and no more recoverable, "
-                + "confirm?",
+        title = stringResource(Res.string.delete_update) + " ${update.targetVersion}",
+        text = stringResource(Res.string.delete_update_text),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -51,7 +55,11 @@ fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
                     if (!requester!!.successResponse())
                         showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
                 },
-                content = { Text(text = "Confirm") }
+                content = {
+                    Text(
+                        text = stringResource(Res.string.confirm)
+                    )
+                }
             )
         }
     )
@@ -73,9 +81,8 @@ fun RemoveUser(
 ) {
     AlertDialogContainer(
         show = show,
-        title = "Remove the user from ${group.name}",
-        text = "If you confirm this action, the user will be removed from the group and will no longer have access to the" +
-                " contents of that group",
+        title = stringResource(Res.string.remove_the_user_from) + " ${group.name}",
+        text = stringResource(Res.string.remove_user_text),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -86,7 +93,8 @@ fun RemoveUser(
                 },
                 content = {
                     Text(
-                        text = "Confirm")
+                        text = stringResource(Res.string.confirm)
+                    )
                 }
             )
         }
@@ -99,7 +107,6 @@ fun RemoveUser(
  * @param show: the flaw whether show the [AlertDialog]
  * @param group: the group to leave
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Wrapper
 @Composable
 fun LeaveGroup(
@@ -134,7 +141,7 @@ fun LeaveGroup(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Choose the next admin",
+                        text = stringResource(Res.string.choose_the_next_admin),
                         fontSize = 18.sp
                     )
                     Column(
@@ -194,14 +201,22 @@ fun LeaveGroup(
                                     show.value = false
                                     showNextAdmin.value = false
                                 },
-                                content = { Text(text = "Dismiss") }
+                                content = {
+                                    Text(
+                                        text = stringResource(Res.string.dismiss)
+                                    )
+                                }
                             )
                             TextButton(
                                 onClick = {
                                     leaveGroup(show, group, nextAdmin)
                                     showNextAdmin.value = false
                                 },
-                                content = { Text(text = "Confirm") }
+                                content = {
+                                    Text(
+                                        text = stringResource(Res.string.confirm)
+                                    )
+                                }
                             )
                         }
                     }
@@ -211,9 +226,8 @@ fun LeaveGroup(
     }
     AlertDialogContainer(
         show = show,
-        title = "Leave the ${group.name} group",
-        text = "If you confirm this action, you will be removed from the group and will no longer have access to the" +
-                " contents of that group",
+        title = stringResource(Res.string.leave_group),
+        text = stringResource(Res.string.leave_group_text),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -240,7 +254,11 @@ fun LeaveGroup(
                     } else
                         leaveGroup(show, group)
                 },
-                content = { Text(text = "Confirm") }
+                content = {
+                    Text(
+                        text = stringResource(Res.string.confirm)
+                    )
+                }
             )
         }
     )
@@ -284,8 +302,8 @@ fun DeleteGroup(
 ) {
     AlertDialogContainer(
         show = show,
-        title = "Delete the ${group.name} group",
-        text = "If you confirm this action, the group and all its information will be deleted and no more recoverable",
+        title = stringResource(Res.string.delete_group),
+        text = stringResource(Res.string.delete_group_text),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -294,7 +312,11 @@ fun DeleteGroup(
                     if (!requester!!.successResponse())
                         showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
                 },
-                content = { Text(text = "Confirm") }
+                content = {
+                    Text(
+                        text = stringResource(Res.string.confirm)
+                    )
+                }
             )
         }
     )
@@ -313,9 +335,8 @@ fun PublishUpdate(
 ) {
     AlertDialogContainer(
         show = show,
-        title = "Not all the change notes are done",
-        text = "You are publishing an update where not all the change notes are marked as done, do you want anyway " +
-                "publish the update?",
+        title = stringResource(Res.string.not_all_the_change_notes_are_done),
+        text = stringResource(Res.string.check_change_notes_message),
         confirmButton = confirmButton
     )
 }
@@ -338,18 +359,17 @@ private fun AlertDialogContainer(
     dismissButton: @Composable (() -> Unit)? = {
         TextButton(
             onClick = { show.value = false },
-            content = { Text(text = "Dismiss") }
+            content = {
+                Text(
+                    text = stringResource(Res.string.dismiss)
+                )
+            }
         )
     },
     confirmButton: @Composable () -> Unit
 ) {
     if (show.value) {
         AlertDialog(
-            modifier = Modifier
-                .size(
-                    width = 400.dp,
-                    height = 200.dp
-                ),
             shape = RoundedCornerShape(25.dp),
             containerColor = BACKGROUND_COLOR,
             onDismissRequest = { show.value = false },

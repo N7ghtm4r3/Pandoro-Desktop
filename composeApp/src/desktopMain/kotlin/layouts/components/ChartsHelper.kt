@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components
 
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,9 @@ import com.tecknobit.pandorocore.records.ProjectUpdate
 import helpers.GREEN_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * Function to show the [LineChart] of a project
@@ -45,14 +50,14 @@ fun showProjectChart(publishedUpdates: ArrayList<ProjectUpdate>) {
             data = BarChartData(
                 categories = listOf(
                     BarChartCategory(
-                        name = "Development duration",
+                        name = stringResource(Res.string.development_duration),
                         entries = updates
                     )
                 )
             ),
             overlayDataEntryLabel = { dataName, value ->
                 Text(
-                    text = "$dataName: ${(value as Float).toInt()} days",
+                    text = "$dataName: ${(value as Float).toInt()} " + stringResource(Res.string.days),
                     color = Color.Black,
                     fontSize = 14.sp
                 )
@@ -62,7 +67,8 @@ fun showProjectChart(publishedUpdates: ArrayList<ProjectUpdate>) {
                 cornerRadius = 5.dp,
                 barsSpacing = 10.dp
             ),
-            modifier = Modifier.height(300.dp),
+            modifier = Modifier
+                .height(300.dp),
             animation = ChartAnimation.Sequenced(),
         )
     }
@@ -90,12 +96,12 @@ fun showOverviewChart(
         personalPoint = 1.0
     val data = listOf(
         PieChartData(
-            name = "Personal",
+            name = stringResource(Res.string.personal),
             color = personalDataColor,
             value = personalPoint
         ),
         PieChartData(
-            name = "Group",
+            name = stringResource(Res.string.group),
             color = groupDataColor,
             value = group.toDouble()
         )
@@ -103,7 +109,9 @@ fun showOverviewChart(
     PieChart(
         modifier = Modifier
             .size(240.dp)
-            .padding(start = offset)
+            .padding(
+                start = offset
+            )
             .shadow(
                 elevation = 10.dp,
                 shape = CircleShape

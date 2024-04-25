@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package layouts.components.popups
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -34,6 +36,9 @@ import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.snackbarHostState
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
+import pandoro.composeapp.generated.resources.*
 
 /**
  * Function to show the popup to add members to a [Group]
@@ -46,7 +51,7 @@ fun showAddMembersPopup(group: Group) {
     createPopup(
         height = 400.dp,
         flag = showAddMembersPopup,
-        title = "Add a new members for the group",
+        title = stringResource(Res.string.add_new_members),
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
@@ -67,9 +72,9 @@ fun showAddMembersPopup(group: Group) {
                             else
                                 showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
                         } else
-                            showSnack(coroutineScope, snackbarHostState, "Wrong groups list")
+                            showSnack(coroutineScope, snackbarHostState, Res.string.wrong_group_list)
                     },
-                    text = "Add members",
+                    text = stringResource(Res.string.add),
                     fontSize = 14.sp
                 )
             }
@@ -122,12 +127,15 @@ fun showMembersSection(
             ) {
                 val member = mutableStateOf(members[index])
                 PandoroTextField(
-                    modifier = Modifier.padding(
-                        top = 10.dp,
-                        bottom = 10.dp,
-                        start = 10.dp
-                    ).width(220.dp).height(55.dp),
-                    label = "Email of the member",
+                    modifier = Modifier
+                        .padding(
+                            top = 10.dp,
+                            bottom = 10.dp,
+                            start = 10.dp
+                        )
+                        .width(220.dp)
+                        .height(55.dp),
+                    label = stringResource(Res.string.email_of_the_member),
                     isError = !isEmailValid(member.value),
                     onValueChange = {
                         if (it.isNotEmpty()) {
@@ -137,13 +145,15 @@ fun showMembersSection(
                         }
                     },
                     value = member.value,
-                    textFieldModifier = Modifier.width(220.dp)
+                    textFieldModifier = Modifier
+                        .width(220.dp)
                 )
                 IconButton(
                     onClick = { members.removeAt(index) }
                 ) {
                     Icon(
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier
+                            .size(18.dp),
                         imageVector = Icons.Default.Delete,
                         contentDescription = null,
                         tint = RED_COLOR
@@ -165,7 +175,7 @@ fun showEditProjectGroupPopup() {
     createPopup(
         height = 400.dp,
         flag = showEditProjectGroupPopup,
-        title = "Edit the projects of the group",
+        title = stringResource(Res.string.edit_the_groups_projects),
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
@@ -175,9 +185,16 @@ fun showEditProjectGroupPopup() {
                 groupProjects.add(project.id)
             }
             LazyVerticalGrid(
-                modifier = Modifier.height(310.dp).padding(top = 10.dp),
+                modifier = Modifier
+                    .height(310.dp)
+                    .padding(
+                        top = 10.dp
+                    ),
                 columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -212,16 +229,21 @@ fun showEditProjectGroupPopup() {
                     }
                 }
             }
-            Spacer(Modifier.height(20.dp))
+            Spacer(
+                modifier = Modifier
+                    .height(20.dp)
+            )
             Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
-                    requester!!.execEditProjects(currentGroup.value.id, projects)
-                    if (requester!!.successResponse())
-                        showEditProjectGroupPopup.value = false
-                    else
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
-                },
-                text = "Edit projects",
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable {
+                        requester!!.execEditProjects(currentGroup.value.id, projects)
+                        if (requester!!.successResponse())
+                            showEditProjectGroupPopup.value = false
+                        else
+                            showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
+                    },
+                text = stringResource(Res.string.edit),
                 fontSize = 14.sp
             )
         }
