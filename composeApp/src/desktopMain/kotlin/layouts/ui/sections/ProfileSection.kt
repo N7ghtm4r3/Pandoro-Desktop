@@ -23,13 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import com.tecknobit.apimanager.formatters.JsonHelper
-import com.tecknobit.pandorocore.helpers.LANGUAGES_SUPPORTED
+import com.tecknobit.equinox.inputs.InputValidator.LANGUAGES_SUPPORTED
 import com.tecknobit.pandorocore.records.Changelog
 import com.tecknobit.pandorocore.records.Changelog.ChangelogEvent.INVITED_GROUP
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.*
-import com.tecknobit.pandorocore.records.users.PublicUser.PROFILE_PIC_KEY
 import currentProfilePic
 import helpers.*
 import layouts.components.ChangeLanguage
@@ -38,13 +36,11 @@ import layouts.ui.screens.Home
 import layouts.ui.screens.Home.Companion.changelogs
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
 import pandoro.composeapp.generated.resources.Res.string
-import java.io.File
 
 /**
  * This is the layout for the profile section
@@ -167,14 +163,14 @@ class ProfileSection : Section() {
                                             ) { path ->
                                                 if (path != null) {
                                                     showFilePicker = false
-                                                    val response = requester!!.execChangeProfilePic(File(path.path))
+                                                    /*val response = requester!!.execChangeProfilePic(File(path.path))
                                                     if (requester!!.successResponse()) {
                                                         localAuthHelper.storeProfilePic(
                                                             JsonHelper(response).getString(PROFILE_PIC_KEY),
                                                             true
                                                         )
                                                     } else
-                                                        showSnack(requester!!.errorMessage())
+                                                        showSnack(requester!!.errorMessage())*/
                                                 }
                                             }
                                         }
@@ -344,11 +340,11 @@ class ProfileSection : Section() {
                                                         contentColor = Color.White
                                                     ),
                                                     onClick = {
-                                                        requester!!.execDeleteAccount()
+                                                        /*requester!!.execDeleteAccount()
                                                         if (requester!!.successResponse())
                                                             localAuthHelper.logout()
                                                         else
-                                                            showSnack(requester!!.errorMessage())
+                                                            showSnack(requester!!.errorMessage())*/
                                                     }
                                                 ) {
                                                     Text(
@@ -471,12 +467,12 @@ class ProfileSection : Section() {
                                                                         if (changelogGroup != null)
                                                                             groupId = changelogGroup.id
                                                                     }
-                                                                    requester!!.execDeleteChangelog(
+                                                                    /*requester!!.execDeleteChangelog(
                                                                         changelog.id,
                                                                         groupId
                                                                     )
                                                                     if (!requester!!.successResponse())
-                                                                        showSnack(requester!!.errorMessage())
+                                                                        showSnack(requester!!.errorMessage())*/
                                                                 }
                                                             ) {
                                                                 Icon(
@@ -664,9 +660,9 @@ class ProfileSection : Section() {
      * @param changelog: the changelog to read
      */
     private fun readChangelog(changelog: Changelog) {
-        requester!!.execReadChangelog(changelog.id)
+        /*requester!!.execReadChangelog(changelog.id)
         if (!requester!!.successResponse())
-            showSnack(requester!!.errorMessage())
+            showSnack(requester!!.errorMessage())*/
     }
 
 }

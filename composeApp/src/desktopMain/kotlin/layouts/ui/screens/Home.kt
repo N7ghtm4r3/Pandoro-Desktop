@@ -29,23 +29,17 @@ import layouts.components.Sidebar.Companion.SIDEBAR_WIDTH
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
-import layouts.ui.screens.SplashScreen.Companion.isRefreshing
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
 import layouts.ui.sections.Section.*
-import layouts.ui.sections.Section.Companion.sectionCoroutineScope
-import layouts.ui.sections.Section.Companion.snackbarHostState
 import layouts.ui.sections.Section.Sections.*
 import layouts.ui.theme.PrimaryLight
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.decline
 import pandoro.composeapp.generated.resources.join
+import viewmodels.MainActivityViewModel
 import java.util.*
 
 /**
@@ -56,7 +50,7 @@ import java.util.*
  * @see ListManager
  */
 @OptIn(ExperimentalResourceApi::class)
-class Home : UIScreen(), ListManager {
+class Home : UIScreen() {
 
     /**
      * **projects** -> instance to show the [ProjectsSection]
@@ -87,6 +81,11 @@ class Home : UIScreen(), ListManager {
      * **profile** -> instance to show the [Profile]
      */
     private val profile = ProfileSection()
+
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
+    private val viewModel = MainActivityViewModel()
 
     companion object {
 
@@ -208,7 +207,7 @@ class Home : UIScreen(), ListManager {
                         notRedChangelogs.add(changelog)
                 }
                 if (notRedChangelogs.isNotEmpty() && activeScreen.value != Profile)
-                    showNotifies()
+                    ShowNotifies()
                 else {
                     when (activeScreen.value) {
                         Projects, Project, Notes, Profile -> createFab()
@@ -242,13 +241,7 @@ class Home : UIScreen(), ListManager {
                             .background(BACKGROUND_COLOR)
                     ) {
                         when (activeScreen.value) {
-                            Projects -> {
-                                if (!isRefreshing.value) {
-                                    refreshValues()
-                                    isRefreshing.value = true
-                                }
-                                projects.showSection()
-                            }
+                            Projects -> projects.showSection()
                             Notes -> notes.showSection()
                             Overview -> overview.showSection()
                             Profile -> profile.showSection()
@@ -313,7 +306,7 @@ class Home : UIScreen(), ListManager {
      * No-any params required
      */
     @Composable
-    private fun showNotifies() {
+    private fun ShowNotifies() {
         LazyColumn(
             contentPadding = PaddingValues(20.dp)
         ) {
@@ -357,7 +350,7 @@ class Home : UIScreen(), ListManager {
                                             end = 5.dp
                                         ).align(alignment = Alignment.End),
                                     onClick = {
-                                        requester!!.execReadChangelog(changelog.id)
+                                        /*requester!!.execReadChangelog(changelog.id)
                                         if (requester!!.successResponse())
                                             changelogs.remove(changelog)
                                         else
@@ -365,7 +358,7 @@ class Home : UIScreen(), ListManager {
                                                 sectionCoroutineScope,
                                                 snackbarHostState,
                                                 requester!!.errorMessage()
-                                            )
+                                            )*/
                                     }
                                 ) {
                                     Icon(
@@ -417,7 +410,7 @@ class Home : UIScreen(), ListManager {
                                                 contentColor = Color.White
                                             ),
                                             onClick = {
-                                                requester!!.execDeclineInvitation(changelog.group.id, changelog.id)
+                                                /*requester!!.execDeclineInvitation(changelog.group.id, changelog.id)
                                                 if (requester!!.successResponse())
                                                     changelogs.remove(changelog)
                                                 else {
@@ -425,7 +418,7 @@ class Home : UIScreen(), ListManager {
                                                         sectionCoroutineScope, snackbarHostState,
                                                         requester!!.errorMessage()
                                                     )
-                                                }
+                                                }*/
                                             }
                                         ) {
                                             Text(
@@ -440,7 +433,7 @@ class Home : UIScreen(), ListManager {
                                                 contentColor = Color.White
                                             ),
                                             onClick = {
-                                                requester!!.execAcceptInvitation(changelog.group.id, changelog.id)
+                                                /*requester!!.execAcceptInvitation(changelog.group.id, changelog.id)
                                                 if (requester!!.successResponse())
                                                     changelogs.remove(changelog)
                                                 else {
@@ -448,7 +441,7 @@ class Home : UIScreen(), ListManager {
                                                         sectionCoroutineScope, snackbarHostState,
                                                         requester!!.errorMessage()
                                                     )
-                                                }
+                                                }*/
                                             }
                                         ) {
                                             Text(
@@ -461,74 +454,6 @@ class Home : UIScreen(), ListManager {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    /**
-     * Function to refresh a list of items to display in the UI
-     *
-     * No-any params required
-     */
-    override fun refreshValues() {
-        CoroutineScope(Dispatchers.Default).launch {
-            var response: String
-            while (user.id != null) {
-                if (activeScreen.value == Projects || activeScreen.value == Group || activeScreen.value == Overview) {
-                    val tmpProjectsList = mutableStateListOf<com.tecknobit.pandorocore.records.Project>()
-                    response = requester!!.execProjectsList()
-                    if (requester!!.successResponse()) {
-                        try {
-                            val jProjects = JSONArray(response)
-                            jProjects.forEach { jProject ->
-                                tmpProjectsList.add(com.tecknobit.pandorocore.records.Project(jProject as JSONObject))
-                            }
-                            if (needToRefresh(ProjectsSection.projectsList, tmpProjectsList)) {
-                                ProjectsSection.projectsList.clear()
-                                ProjectsSection.projectsList.addAll(tmpProjectsList)
-                                user.setProjects(ProjectsSection.projectsList)
-                            }
-                        } catch (_: JSONException) {
-                        }
-                    } else
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
-                }
-                if (activeScreen.value == Profile || activeScreen.value == Project) {
-                    val tmpGroups = mutableStateListOf<Group>()
-                    response = requester!!.execGroupsList()
-                    if (requester!!.successResponse()) {
-                        try {
-                            val jGroups = JSONArray(response)
-                            jGroups.forEach { jGroup ->
-                                tmpGroups.add(Group(jGroup as JSONObject))
-                            }
-                            if (needToRefresh(ProfileSection.groups, tmpGroups)) {
-                                ProfileSection.groups.clear()
-                                ProfileSection.groups.addAll(tmpGroups)
-                                user.setGroups(ProfileSection.groups)
-                            }
-                        } catch (_: JSONException) {
-                        }
-                    } else
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
-                }
-                val tmpChangelogs = mutableStateListOf<Changelog>()
-                response = requester!!.execChangelogsList()
-                if (requester!!.successResponse()) {
-                    try {
-                        val jChangelogs = JSONArray(response)
-                        jChangelogs.forEach { jChangelog ->
-                            tmpChangelogs.add(Changelog(jChangelog as JSONObject))
-                        }
-                        if (needToRefresh(changelogs, tmpChangelogs)) {
-                            changelogs.clear()
-                            changelogs.addAll(tmpChangelogs)
-                        }
-                    } catch (_: Exception) {
-                    }
-                } else
-                    showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
-                delay(1000)
             }
         }
     }

@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.netguru.multiplatform.charts.pie.PieChart
 import com.tecknobit.apimanager.trading.TradingTools.computeProportion
+import com.tecknobit.equinox.environment.records.EquinoxUser
 import com.tecknobit.pandorocore.records.Project
 import com.tecknobit.pandorocore.records.ProjectUpdate.Status
 import com.tecknobit.pandorocore.records.ProjectUpdate.Status.*
-import com.tecknobit.pandorocore.records.users.PublicUser
 import com.tecknobit.pandorocore.records.users.User
 import com.tecknobit.pandorocore.ui.OverviewUIHelper
 import helpers.*
@@ -714,7 +714,7 @@ class OverviewSection : Section() {
         var updates = 0
         user.projects.forEach { project ->
             project.updates.forEach { update ->
-                val author: PublicUser? = when (status) {
+                val author: EquinoxUser? = when (status) {
                     SCHEDULED -> update.author
                     IN_DEVELOPMENT -> update.startedBy
                     PUBLISHED -> update.publishedBy

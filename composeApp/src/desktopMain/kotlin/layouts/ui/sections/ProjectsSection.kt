@@ -1,6 +1,5 @@
 package layouts.ui.sections
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -8,7 +7,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -22,11 +24,9 @@ import com.tecknobit.pandorocore.ui.filterProjects
 import com.tecknobit.pandorocore.ui.populateFrequentProjects
 import helpers.BACKGROUND_COLOR
 import helpers.RED_COLOR
-import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -105,7 +105,7 @@ class ProjectsSection : Section() {
             text = title,
             fontSize = 25.sp
         )
-        PandoroTextField(
+        /*PandoroTextField(
             modifier = Modifier
                 .padding(
                     top = 20.dp,
@@ -132,7 +132,7 @@ class ProjectsSection : Section() {
                     contentDescription = null,
                 )
             }
-        )
+        )*/
         if (projects.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -259,11 +259,11 @@ class ProjectsSection : Section() {
                                                         confirmButton = {
                                                             TextButton(
                                                                 onClick = {
-                                                                    requester!!.execDeleteProject(project.id)
+                                                                    /*requester!!.execDeleteProject(project.id)
                                                                     showDeleteAlertDialog = false
                                                                     actionsSelected = false
                                                                     if (!requester!!.successResponse())
-                                                                        showSnack(requester!!.errorMessage())
+                                                                        showSnack(requester!!.errorMessage())*/
                                                                 },
                                                                 content = {
                                                                     Text(

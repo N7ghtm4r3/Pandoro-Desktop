@@ -24,20 +24,11 @@ import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
 import helpers.spaceContent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentNote
 import layouts.ui.screens.Home.Companion.currentUpdate
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
-import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import org.json.JSONArray
-import org.json.JSONObject
 import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.notes
 import pandoro.composeapp.generated.resources.notes_number
@@ -169,7 +160,7 @@ class NotesSection : Section(), ListManager {
                                             ),
                                             checked = markAsDone,
                                             onCheckedChange = {
-                                                if (it) {
+                                                /*if (it) {
                                                     requester!!.execMarkNoteAsDone(note.id)
                                                     if (requester!!.successResponse())
                                                         markAsDone = true
@@ -181,7 +172,7 @@ class NotesSection : Section(), ListManager {
                                                         markAsDone = false
                                                     else
                                                         showSnack(requester!!.errorMessage())
-                                                }
+                                                }*/
                                             }
                                         )
                                         Spacer(
@@ -209,9 +200,9 @@ class NotesSection : Section(), ListManager {
                                     ) {
                                         IconButton(
                                             onClick = {
-                                                requester!!.execDeleteNote(note.id)
+                                                /*requester!!.execDeleteNote(note.id)
                                                 if (!requester!!.successResponse())
-                                                    showSnack(requester!!.errorMessage())
+                                                    showSnack(requester!!.errorMessage())*/
                                             }
                                         ) {
                                             Icon(
@@ -238,7 +229,7 @@ class NotesSection : Section(), ListManager {
      * No-any params required
      */
     override fun refreshValues() {
-        CoroutineScope(Dispatchers.Default).launch {
+       /* CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Notes) {
                 val tmpNotes = mutableStateListOf<Note>()
                 val response = requester!!.execNotesList()
@@ -255,7 +246,7 @@ class NotesSection : Section(), ListManager {
                     showSnack(requester!!.errorMessage())
                 delay(1000)
             }
-        }
+        }*/
     }
 
 }

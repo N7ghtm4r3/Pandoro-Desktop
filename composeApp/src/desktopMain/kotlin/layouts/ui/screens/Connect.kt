@@ -20,43 +20,39 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation.Companion.None
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.apimanager.formatters.JsonHelper
-import com.tecknobit.pandorocore.helpers.*
-import com.tecknobit.pandorocore.helpers.InputStatus.*
-import com.tecknobit.pandorocore.helpers.ScreenType.SignIn
-import com.tecknobit.pandorocore.helpers.ScreenType.SignUp
+import com.tecknobit.equinox.environment.records.EquinoxUser.*
+import com.tecknobit.equinox.inputs.InputValidator.*
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isServerAddressValid
+import com.tecknobit.pandorocore.helpers.InputsValidator.ScreenType
+import com.tecknobit.pandorocore.helpers.InputsValidator.ScreenType.SignIn
+import com.tecknobit.pandorocore.helpers.InputsValidator.ScreenType.SignUp
+import com.tecknobit.pandorocore.helpers.PandoroRequester
 import com.tecknobit.pandorocore.records.structures.PandoroItem.IDENTIFIER_KEY
-import com.tecknobit.pandorocore.records.users.PublicUser.*
 import com.tecknobit.pandorocore.records.users.User
 import com.tecknobit.pandorocore.records.users.User.LANGUAGE_KEY
 import com.tecknobit.pandorocore.ui.LocalUser
 import currentProfilePic
-import helpers.*
+import helpers.BACKGROUND_COLOR
+import helpers.PRIMARY_COLOR
+import helpers.RED_COLOR
+import helpers.openUrl
 import kotlinx.coroutines.CoroutineScope
 import layouts.components.PandoroTextField
-import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.screens.Home.Companion.changelogs
-import layouts.ui.screens.SplashScreen.Companion.isRefreshing
-import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.NotesSection.Companion.notes
-import layouts.ui.sections.ProfileSection.Companion.groups
-import layouts.ui.sections.ProjectsSection.Companion.projectsList
-import layouts.ui.sections.Section.Sections
 import navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.json.JSONObject
 import pandoro.composeapp.generated.resources.*
 import pandoro.composeapp.generated.resources.Res.string
+import viewmodels.ConnectViewModel
+import viewmodels.PandoroViewModel.Companion.requester
 import java.util.prefs.Preferences
 
 /**
@@ -68,11 +64,6 @@ import java.util.prefs.Preferences
 class Connect : UIScreen() {
 
     /**
-     * **snackbarHostState** -> the state to display the [Snackbar]
-     */
-    lateinit var snackbarHostState: SnackbarHostState
-    
-    /**
      * **sectionCoroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
      */
     private lateinit var coroutineScope: CoroutineScope
@@ -83,6 +74,20 @@ class Connect : UIScreen() {
     private var screenType: MutableState<ScreenType> = mutableStateOf(SignIn)
 
     /**
+     * **snackbarHostState** the host to launch the snackbars
+     */
+    private val snackbarHostState by lazy {
+        SnackbarHostState()
+    }
+
+    /**
+     * **projectsScreen** -> the screen to show the projects
+     */
+    private val viewModel = ConnectViewModel(
+        snackbarHostState = snackbarHostState
+    )
+
+    /**
      * Function to show the content of the [Connect]
      *
      * No-any params required
@@ -90,7 +95,6 @@ class Connect : UIScreen() {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun showScreen() {
-        snackbarHostState = remember { SnackbarHostState() }
         coroutineScope = rememberCoroutineScope()
         Box(
             modifier = Modifier
@@ -191,6 +195,12 @@ class Connect : UIScreen() {
                                     .fillMaxSize()
                                     .padding(20.dp)
                             ) {
+                                viewModel.serverAddress = remember { mutableStateOf("") }
+                                viewModel.serverSecret = remember { mutableStateOf("") }
+                                viewModel.name = remember { mutableStateOf("") }
+                                viewModel.surname = remember { mutableStateOf("") }
+                                viewModel.email = remember { mutableStateOf("") }
+                                viewModel.password = remember { mutableStateOf("") }
                                 Column {
                                     Text(
                                         text = stringResource(
@@ -213,30 +223,24 @@ class Connect : UIScreen() {
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    var serverAddress by remember { mutableStateOf("") }
                                     PandoroTextField(
                                         modifier = Modifier
                                             .height(55.dp),
-                                        label = stringResource(string.server_address),
-                                        isError = !isServerAddressValid(serverAddress),
-                                        onValueChange = { serverAddress = it },
-                                        value = serverAddress
+                                        label = string.server_address,
+                                        value = viewModel.serverAddress,
+                                        isError = !isServerAddressValid(viewModel.serverAddress.value)
                                     )
                                     Spacer(
                                         modifier = Modifier
                                             .height(10.dp)
                                     )
-                                    var serverSecret by remember { mutableStateOf("") }
-                                    var name by remember { mutableStateOf("") }
-                                    var surname by remember { mutableStateOf("") }
                                     if (screenType.value == SignUp) {
                                         PandoroTextField(
                                             modifier = Modifier
                                                 .height(55.dp),
-                                            label = stringResource(string.server_secret),
-                                            isError = !isServerSecretValid(serverSecret),
-                                            onValueChange = { serverSecret = it },
-                                            value = serverSecret
+                                            label = string.server_secret,
+                                            value = viewModel.serverSecret,
+                                            isError = !isServerSecretValid(viewModel.serverSecret.value),
                                         )
                                         Spacer(
                                             modifier = Modifier
@@ -245,10 +249,9 @@ class Connect : UIScreen() {
                                         PandoroTextField(
                                             modifier = Modifier
                                                 .height(55.dp),
-                                            label = stringResource(string.name),
-                                            isError = !isNameValid(name),
-                                            onValueChange = { name = it },
-                                            value = name
+                                            label = string.name,
+                                            value = viewModel.name,
+                                            isError = !isNameValid(viewModel.name.value),
                                         )
                                         Spacer(
                                             modifier = Modifier
@@ -257,48 +260,51 @@ class Connect : UIScreen() {
                                         PandoroTextField(
                                             modifier = Modifier
                                                 .height(55.dp),
-                                            label = stringResource(string.surname),
-                                            isError = !isSurnameValid(surname),
-                                            onValueChange = { surname = it },
-                                            value = surname
+                                            label = string.surname,
+                                            value = viewModel.surname,
+                                            isError = !isSurnameValid(viewModel.surname.value)
                                         )
                                         Spacer(
                                             modifier = Modifier
                                                 .height(10.dp)
                                         )
                                     }
-                                    var email by remember { mutableStateOf("") }
-                                    var password by remember { mutableStateOf("") }
-                                    var isVisible by remember { mutableStateOf(false) }
                                     PandoroTextField(
                                         modifier = Modifier
                                             .height(55.dp),
-                                        label = stringResource(string.email),
-                                        isError = !isEmailValid(email),
-                                        onValueChange = { email = it.replace(" ", "") },
-                                        value = email
+                                        label = string.email,
+                                        value = viewModel.email,
+                                        isError = !isEmailValid(viewModel.email.value),
+                                        onValueChange = {
+                                            viewModel.email.value = it.replace(" ", "")
+                                        }
                                     )
                                     Spacer(
                                         modifier = Modifier
                                             .height(10.dp)
                                     )
+                                    var isVisible by remember { mutableStateOf(false) }
                                     PandoroTextField(
                                         modifier = Modifier
                                             .height(55.dp),
-                                        visualTransformation = if (isVisible)
-                                            None
+                                        visualTransformation = if (isVisible) None
                                         else
                                             PasswordVisualTransformation(),
-                                        label = stringResource(string.password),
-                                        isError = !isPasswordValid(password),
-                                        onValueChange = { password = it.replace(" ", "") },
-                                        value = password,
+                                        label = string.password,
+                                        value = viewModel.password,
+                                        isError = !isPasswordValid(viewModel.password.value),
+                                        onValueChange = {
+                                            viewModel.password.value = it.replace(" ", "")
+                                        },
                                         trailingIcon = {
                                             IconButton(
                                                 onClick = { isVisible = !isVisible }
                                             ) {
                                                 Icon(
-                                                    imageVector = if (isVisible) Default.VisibilityOff else Default.Visibility,
+                                                    imageVector = if (isVisible)
+                                                        Default.VisibilityOff
+                                                    else
+                                                        Default.Visibility,
                                                     contentDescription = null,
                                                 )
                                             }
@@ -315,41 +321,8 @@ class Connect : UIScreen() {
                                         shape = RoundedCornerShape(10.dp),
                                         onClick = {
                                             when (screenType.value) {
-                                                SignUp -> {
-                                                    if (isServerAddressValid(serverAddress)) {
-                                                        if (isServerSecretValid(serverSecret)) {
-                                                            if (isNameValid(name)) {
-                                                                if (isSurnameValid(surname)) {
-                                                                    checkCredentials(
-                                                                        serverAddress = serverAddress,
-                                                                        serverSecret = serverSecret,
-                                                                        email = email,
-                                                                        password = password,
-                                                                        name = name,
-                                                                        surname = surname
-                                                                    )
-                                                                } else
-                                                                    showAuthError(string.you_must_insert_a_correct_surname)
-                                                            } else
-                                                                showAuthError(string.you_must_insert_a_correct_name)
-                                                        } else
-                                                            showAuthError(string.you_must_insert_a_correct_server_secret)
-                                                    } else
-                                                        showAuthError(string.you_must_insert_a_correct_server_address)
-                                                }
-
-                                                SignIn -> {
-                                                    if (isServerAddressValid(serverAddress)) {
-                                                        checkCredentials(
-                                                            serverAddress = serverAddress,
-                                                            email = email,
-                                                            password = password,
-                                                            name = name,
-                                                            surname = surname
-                                                        )
-                                                    } else
-                                                        showAuthError(string.you_must_insert_a_correct_server_address)
-                                                }
+                                                SignUp -> viewModel.signUp()
+                                                SignIn -> viewModel.signIn()
                                             }
                                         }
                                     ) {
@@ -368,8 +341,8 @@ class Connect : UIScreen() {
                                                 top = 25.dp
                                             )
                                             .clickable {
-                                                name = ""
-                                                surname = ""
+                                                viewModel.name.value = ""
+                                                viewModel.surname.value = ""
                                                 if (screenType.value == SignUp)
                                                     screenType.value = SignIn
                                                 else
@@ -407,74 +380,6 @@ class Connect : UIScreen() {
     }
 
     /**
-     * Function to check the validity of the credentials
-     *
-     * @param serverAddress: the address of the Pandoro's backend
-     * @param serverSecret: the secret of the Pandoro's backend
-     * @param name: the name of the user
-     * @param surname: the surname of the user
-     * @param email: email to check
-     * @param password: password to check
-     */
-    @OptIn(ExperimentalResourceApi::class)
-    private fun checkCredentials(
-        serverAddress: String,
-        serverSecret: String? = null,
-        email: String,
-        password: String,
-        name: String,
-        surname: String,
-    ) {
-        val language: String?
-        when (areCredentialsValid(email, password)) {
-            OK -> {
-                requester = Requester(serverAddress, null, null)
-                val response = if (serverSecret.isNullOrBlank()) {
-                    language = ""
-                    JsonHelper(requester!!.execSignIn(email, password))
-                } else {
-                    language = Locale.current.toLanguageTag().substringBefore("-")
-                    JsonHelper(requester!!.execSignUp(serverSecret, name, surname, email, password, language))
-                }
-                if (requester!!.successResponse()) {
-                    localAuthHelper.initUserSession(
-                        response,
-                        serverAddress,
-                        name.ifEmpty { response.getString(NAME_KEY) },
-                        surname.ifEmpty { response.getString(SURNAME_KEY) },
-                        email,
-                        password,
-                        language.ifEmpty { response.getString(LANGUAGE_KEY) }
-                    )
-                } else
-                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-            }
-            WRONG_PASSWORD -> {
-                showAuthError(string.you_must_insert_a_correct_password)
-            }
-            WRONG_EMAIL -> {
-                showAuthError(string.you_must_insert_a_correct_email)
-            }
-        }
-    }
-
-    /**
-     * Function to show an auth error
-     *
-     * @param errorMessage: error message to show
-     */
-    @OptIn(ExperimentalResourceApi::class)
-    private fun showAuthError(
-        errorMessage: StringResource
-    ) {
-        showSnack(
-            scope = coroutineScope,
-            snackbarHostState = snackbarHostState,
-            message = errorMessage
-        )
-    }
-
-    /**
      * This **LocalAuthHelper** class is useful to manage the auth credentials in local
      *
      * @author Tecknobit - N7ghtm4r3
@@ -506,14 +411,15 @@ class Connect : UIScreen() {
                         .put(SURNAME_KEY, preferences.get(SURNAME_KEY, null))
                         .put(EMAIL_KEY, preferences.get(EMAIL_KEY, null))
                         .put(PASSWORD_KEY, preferences.get(PASSWORD_KEY, null))
-                        .put(LANGUAGE_KEY, preferences.get(LANGUAGE_KEY, DEFAULT_USER_LANGUAGE))
+                        .put(LANGUAGE_KEY, preferences.get(LANGUAGE_KEY, DEFAULT_LANGUAGE))
                 )
-                requester = Requester(host!!, userId, userToken)
-                isRefreshing.value = false
-            } else {
-                requester = null
+                requester = PandoroRequester(
+                    host = host!!,
+                    userId = userId,
+                    userToken = userToken
+                )
+            } else
                 user = User()
-            }
         }
 
         /**
@@ -580,12 +486,7 @@ class Connect : UIScreen() {
         override fun logout() {
             preferences.clear()
             initUserCredentials()
-            projectsList.clear()
-            groups.clear()
-            changelogs.clear()
-            notes.clear()
             navigator.navigate(splashScreen.name)
-            activeScreen.value = Sections.Projects
         }
 
     }

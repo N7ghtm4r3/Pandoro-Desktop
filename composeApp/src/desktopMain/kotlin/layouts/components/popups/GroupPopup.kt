@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.pandorocore.helpers.checkMembersValidity
-import com.tecknobit.pandorocore.helpers.isEmailValid
+import com.tecknobit.equinox.inputs.InputValidator.isEmailValid
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.checkMembersValidity
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Project
 import helpers.BACKGROUND_COLOR
@@ -32,9 +32,7 @@ import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.showAddMembersPopup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.Section.Companion.sectionCoroutineScope
 import layouts.ui.sections.Section.Companion.snackbarHostState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -66,11 +64,11 @@ fun showAddMembersPopup(group: Group) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
                         if (checkMembersValidity(members)) {
-                            requester!!.execAddMembers(group.id, members.toList())
+                            /*requester!!.execAddMembers(group.id, members.toList())
                             if (requester!!.successResponse())
                                 showAddMembersPopup.value = false
                             else
-                                showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())*/
                         } else
                             showSnack(coroutineScope, snackbarHostState, Res.string.wrong_group_list)
                     },
@@ -135,7 +133,7 @@ fun showMembersSection(
                         )
                         .width(220.dp)
                         .height(55.dp),
-                    label = stringResource(Res.string.email_of_the_member),
+                    label = Res.string.email_of_the_member,
                     isError = !isEmailValid(member.value),
                     onValueChange = {
                         if (it.isNotEmpty()) {
@@ -144,7 +142,7 @@ fun showMembersSection(
                             members.add(index, it)
                         }
                     },
-                    value = member.value,
+                    value = member,
                     textFieldModifier = Modifier
                         .width(220.dp)
                 )
@@ -237,11 +235,11 @@ fun showEditProjectGroupPopup() {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable {
-                        requester!!.execEditProjects(currentGroup.value.id, projects)
+                        /*requester!!.execEditProjects(currentGroup.value.id, projects)
                         if (requester!!.successResponse())
                             showEditProjectGroupPopup.value = false
                         else
-                            showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
+                            showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
                     },
                 text = stringResource(Res.string.edit),
                 fontSize = 14.sp

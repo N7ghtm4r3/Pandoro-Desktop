@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalResourceApi::class)
+@file:OptIn(ExperimentalResourceApi::class, ExperimentalResourceApi::class)
 
 package layouts.components
 
@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
-import com.tecknobit.pandorocore.helpers.LANGUAGES_SUPPORTED
+import com.tecknobit.equinox.inputs.InputValidator.LANGUAGES_SUPPORTED
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.ProjectUpdate
 import com.tecknobit.pandorocore.records.users.GroupMember
@@ -29,7 +29,6 @@ import helpers.showSnack
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.Section
 import layouts.ui.sections.Section.Companion.navBack
@@ -57,10 +56,10 @@ fun DeleteUpdate(show: MutableState<Boolean>, update: ProjectUpdate) {
         confirmButton = {
             TextButton(
                 onClick = {
-                    requester!!.execDeleteUpdate(currentProject.value.id, update.id)
+                    /*requester!!.execDeleteUpdate(currentProject.value.id, update.id)
                     show.value = false
                     if (!requester!!.successResponse())
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
+                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
                 },
                 content = {
                     Text(
@@ -93,10 +92,10 @@ fun RemoveUser(
         confirmButton = {
             TextButton(
                 onClick = {
-                    requester!!.execRemoveMember(group.id, memberId)
+                    /*requester!!.execRemoveMember(group.id, memberId)
                     show.value = false
                     if (!requester!!.successResponse())
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
+                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
                 },
                 content = {
                     Text(
@@ -286,13 +285,13 @@ private fun leaveGroup(
     var nextAdminId: String? = null
     if (nextAdmin != null)
         nextAdminId = nextAdmin.id
-    requester!!.execLeaveGroup(group.id, nextAdminId)
+    /*requester!!.execLeaveGroup(group.id, nextAdminId)
     show.value = false
     if (requester!!.successResponse()) {
         navBack()
         activeScreen.value = Section.Sections.Projects
     } else
-        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
+        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
 }
 
 /**
@@ -314,10 +313,10 @@ fun DeleteGroup(
         confirmButton = {
             TextButton(
                 onClick = {
-                    requester!!.execDeleteGroup(group.id)
+                    /*requester!!.execDeleteGroup(group.id)
                     show.value = false
                     if (!requester!!.successResponse())
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())
+                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
                 },
                 content = {
                     Text(
@@ -400,7 +399,7 @@ fun ChangeLanguage(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        requester!!.execChangeLanguage(
+                        /*requester!!.execChangeLanguage(
                             newLanguage = selectedLanguage
                         )
                         if(requester!!.successResponse()) {
@@ -410,7 +409,7 @@ fun ChangeLanguage(
                             )
                             navigator.navigate(splashScreen.name)
                         }
-                        show.value = false
+                        show.value = false*/
                     }
                 ) {
                     Text(

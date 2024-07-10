@@ -23,9 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.pandorocore.helpers.areAllChangeNotesDone
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.areAllChangeNotesDone
 import com.tecknobit.pandorocore.records.Note
-import com.tecknobit.pandorocore.records.Project
 import com.tecknobit.pandorocore.records.Project.RepositoryPlatform.GitLab
 import com.tecknobit.pandorocore.records.Project.RepositoryPlatform.Github
 import com.tecknobit.pandorocore.records.ProjectUpdate
@@ -34,25 +33,17 @@ import com.tecknobit.pandorocore.records.ProjectUpdate.Status.SCHEDULED
 import com.tecknobit.pandorocore.ui.SingleItemManager
 import com.tecknobit.pandorocore.ui.formatNotesAsMarkdown
 import helpers.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import layouts.components.DeleteUpdate
 import layouts.components.PublishUpdate
 import layouts.components.popups.clipboard
 import layouts.components.showProjectChart
-import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentNote
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.currentUpdate
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
-import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import org.json.JSONException
 import pandoro.composeapp.generated.resources.*
 import java.awt.datatransfer.StringSelection
 
@@ -470,7 +461,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                             ),
                                                                             checked = isMarkedAsDone,
                                                                             onCheckedChange = {
-                                                                                if (it) {
+                                                                                /*if (it) {
                                                                                     requester!!.execMarkChangeNoteAsDone(
                                                                                         currentProject.value.id,
                                                                                         update.id,
@@ -490,7 +481,7 @@ class ProjectSection : Section(), SingleItemManager {
                                                                                         isMarkedAsDone = false
                                                                                     else
                                                                                         showSnack(requester!!.errorMessage())
-                                                                                }
+                                                                                }*/
                                                                             }
                                                                         )
                                                                         Text(
@@ -894,7 +885,7 @@ class ProjectSection : Section(), SingleItemManager {
      * No-any params required
      */
     override fun refreshItem() {
-        CoroutineScope(Dispatchers.Default).launch {
+        /*CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Project) {
                 try {
                     val response = requester!!.execGetSingleProject(currentProject.value.id)
@@ -908,7 +899,7 @@ class ProjectSection : Section(), SingleItemManager {
                 }
                 delay(1000)
             }
-        }
+        }*/
     }
 
     /**
@@ -917,9 +908,9 @@ class ProjectSection : Section(), SingleItemManager {
      * @param projectUpdate: the update to start
      */
     private fun startUpdate(projectUpdate: ProjectUpdate) {
-        requester!!.execStartUpdate(currentProject.value.id, projectUpdate.id)
+        /*requester!!.execStartUpdate(currentProject.value.id, projectUpdate.id)
         if (!requester!!.successResponse())
-            showSnack(requester!!.errorMessage())
+            showSnack(requester!!.errorMessage())*/
     }
 
     /**
@@ -934,12 +925,12 @@ class ProjectSection : Section(), SingleItemManager {
         showPublishUpdate: MutableState<Boolean>,
         projectUpdate: ProjectUpdate
     ) {
-        requester!!.execPublishUpdate(currentProject.value.id, projectUpdate.id)
+        /*requester!!.execPublishUpdate(currentProject.value.id, projectUpdate.id)
         if (requester!!.successResponse()) {
             showPublishUpdate.value = false
             showNotes.value = false
         } else
-            showSnack(requester!!.errorMessage())
+            showSnack(requester!!.errorMessage())*/
     }
 
     /**
@@ -955,9 +946,9 @@ class ProjectSection : Section(), SingleItemManager {
     ) {
         IconButton(
             onClick = {
-                requester!!.execDeleteChangeNote(currentProject.value.id, update.id, note.id)
+                /*requester!!.execDeleteChangeNote(currentProject.value.id, update.id, note.id)
                 if (!requester!!.successResponse())
-                    showSnack(requester!!.errorMessage())
+                    showSnack(requester!!.errorMessage())*/
             }
         ) {
             Icon(

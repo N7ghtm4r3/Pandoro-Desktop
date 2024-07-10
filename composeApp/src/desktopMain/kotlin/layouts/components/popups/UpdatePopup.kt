@@ -20,12 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandorocore.helpers.*
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isContentNoteValid
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidVersion
 import helpers.RED_COLOR
 import helpers.showSnack
-import layouts.components.PandoroTextField
-import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
-import layouts.ui.screens.SplashScreen.Companion.requester
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -45,7 +44,7 @@ fun showScheduleUpdatePopup() {
         title = stringResource(Res.string.schedule_update),
         content = {
             var targetVersion by remember { mutableStateOf("") }
-            PandoroTextField(
+            /*PandoroTextField(
                 modifier = Modifier
                     .padding(10.dp)
                     .height(55.dp),
@@ -53,7 +52,7 @@ fun showScheduleUpdatePopup() {
                 isError = !isValidVersion(targetVersion),
                 onValueChange = { targetVersion = it },
                 value = targetVersion
-            )
+            )*/
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -95,7 +94,7 @@ fun showScheduleUpdatePopup() {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         val content = mutableStateOf(notes[index])
-                        PandoroTextField(
+                        /*PandoroTextField(
                             modifier = Modifier
                                 .padding(
                                     top = 10.dp,
@@ -116,7 +115,7 @@ fun showScheduleUpdatePopup() {
                             value = content.value,
                             textFieldModifier = Modifier
                                 .width(220.dp)
-                        )
+                        )*/
                         IconButton(
                             onClick = { notes.removeAt(index) }
                         ) {
@@ -147,11 +146,11 @@ fun showScheduleUpdatePopup() {
                                     break
                             }
                             if (notesCorrect) {
-                                requester!!.execScheduleUpdate(currentProject.value.id, targetVersion, notes)
+                                /*requester!!.execScheduleUpdate(currentProject.value.id, targetVersion, notes)
                                 if (requester!!.successResponse())
                                     showScheduleUpdatePopup.value = false
                                 else
-                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                    showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())*/
                             } else
                                 showSnack(coroutineScope, snackbarHostState, Res.string.you_must_insert_correct_notes)
                         } else

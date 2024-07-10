@@ -24,28 +24,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember
 import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.PENDING
 import com.tecknobit.pandorocore.records.users.GroupMember.Role
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.ADMIN
 import com.tecknobit.pandorocore.ui.SingleItemManager
 import helpers.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import layouts.components.LeaveGroup
 import layouts.components.RemoveUser
-import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.ProfileSection.Companion.hideLeaveGroup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import org.json.JSONException
 import pandoro.composeapp.generated.resources.*
 import kotlin.math.ceil
 
@@ -265,7 +257,7 @@ class GroupSection : Section(), SingleItemManager {
                                                             Role.entries.forEach { role ->
                                                                 DropdownMenuItem(
                                                                     onClick = {
-                                                                        requester!!.execChangeMemberRole(
+                                                                        /*requester!!.execChangeMemberRole(
                                                                             currentGroup.value.id,
                                                                             member.id,
                                                                             role
@@ -273,7 +265,7 @@ class GroupSection : Section(), SingleItemManager {
                                                                         if (requester!!.successResponse())
                                                                             showRoleMenu = false
                                                                         else
-                                                                            showSnack(requester!!.errorMessage())
+                                                                            showSnack(requester!!.errorMessage())*/
                                                                     },
                                                                     text = {
                                                                         Text(
@@ -501,7 +493,7 @@ class GroupSection : Section(), SingleItemManager {
      * No-any params required
      */
     override fun refreshItem() {
-        CoroutineScope(Dispatchers.Default).launch {
+        /*CoroutineScope(Dispatchers.Default).launch {
             while (user.id != null && activeScreen.value == Sections.Group) {
                 try {
                     val response = requester!!.execGetSingleGroup(currentGroup.value.id)
@@ -514,7 +506,7 @@ class GroupSection : Section(), SingleItemManager {
                 }
                 delay(1000)
             }
-        }
+        }*/
     }
 
 }

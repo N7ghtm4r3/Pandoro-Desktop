@@ -17,15 +17,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
-import com.tecknobit.pandorocore.helpers.*
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectDescription
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectName
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectShortDescription
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidRepository
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidVersion
 import com.tecknobit.pandorocore.records.Project
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.showSnack
-import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.Home.Companion.showEditPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
 import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -76,7 +78,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
         flag = flag,
         title = title,
         content = {
-            PandoroTextField(
+            /*PandoroTextField(
                 modifier = Modifier
                     .padding(10.dp)
                     .height(55.dp),
@@ -120,7 +122,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                 isError = !isValidRepository(repository),
                 onValueChange = { repository = it },
                 value = repository
-            )
+            )*/
             val groups = ArrayList<String>()
             project?.groups?.forEach { group -> groups.add(group.id) }
             if (user.adminGroups.isNotEmpty()) {
@@ -192,7 +194,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                                     if (isValidVersion(version)) {
                                         version = version.replace("v. ", "")
                                         if (isValidRepository(repository)) {
-                                            if (project == null) {
+                                            /*if (project == null) {
                                                 requester!!.execAddProject(
                                                     name, description, shortDescription, version,
                                                     groups, repository
@@ -210,7 +212,7 @@ private fun showProjectPopup(title: String, buttonText: String, flag: MutableSta
                                                     flag.value = false
                                                 else
                                                     showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                            }
+                                            }*/
                                         } else
                                             showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_repository_url)
                                     } else

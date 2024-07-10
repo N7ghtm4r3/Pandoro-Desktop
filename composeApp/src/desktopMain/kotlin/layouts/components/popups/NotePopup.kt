@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.pandorocore.helpers.isContentNoteValid
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isContentNoteValid
 import com.tecknobit.pandorocore.records.Note
 import com.tecknobit.pandorocore.records.ProjectUpdate
 import helpers.showSnack
@@ -23,7 +23,6 @@ import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showCreateNotePopup
 import layouts.ui.screens.Home.Companion.showNoteInfoPopup
-import layouts.ui.screens.SplashScreen.Companion.requester
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -51,7 +50,7 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
         columnModifier = Modifier,
         titleSize = 15.sp,
         content = {
-            var content by remember { mutableStateOf("") }
+            val content = remember { mutableStateOf("") }
             Column(
                 modifier = Modifier
                     .padding(20.dp)
@@ -60,9 +59,8 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                     modifier = Modifier
                         .padding(10.dp)
                         .height(55.dp),
-                    label = stringResource(Res.string.content),
-                    isError = !isContentNoteValid(content),
-                    onValueChange = { content = it },
+                    label = Res.string.content,
+                    isError = !isContentNoteValid(content.value),
                     value = content
                 )
                 Spacer(
@@ -73,8 +71,8 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .clickable {
-                            if (isContentNoteValid(content)) {
-                                if (update != null) {
+                            if (isContentNoteValid(content.value)) {
+                                /*if (update != null) {
                                     requester!!.execAddChangeNote(currentProject.value.id, update.id, content)
                                     if (requester!!.successResponse())
                                         showCreateNotePopup.value = false
@@ -86,7 +84,7 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                                         showCreateNotePopup.value = false
                                     else
                                         showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                }
+                                }*/
                             } else
                                 showSnack(coroutineScope, snackbarHostState, Res.string.insert_a_correct_content)
                     },

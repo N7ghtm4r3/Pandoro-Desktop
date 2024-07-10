@@ -12,8 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.apimanager.formatters.TimeFormatter
-import com.tecknobit.pandorocore.helpers.Requester
+import com.tecknobit.equinox.environment.records.EquinoxUser.DEFAULT_PROFILE_PIC
 import com.tecknobit.pandorocore.records.users.User
 import currentProfilePic
 import fontFamily
@@ -54,11 +53,6 @@ class SplashScreen : UIScreen() {
          */
         var user = User()
 
-        /**
-         * **requester** -> the stance to manage the requests with the backend
-         */
-        var requester: Requester? = null
-
     }
 
     /**
@@ -72,9 +66,17 @@ class SplashScreen : UIScreen() {
         activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
-        if(user.language != null)
+        if(user.language != null) {
             Locale.setDefault(Locale.forLanguageTag(user.language))
-        currentProfilePic = remember { mutableStateOf(user.profilePic) }
+        }
+        currentProfilePic = remember {
+            mutableStateOf(
+                if(user.profilePic != null)
+                    user.profilePic
+                else
+                    DEFAULT_PROFILE_PIC
+            )
+        }
         var launch by remember { mutableStateOf(true) }
         var checkForUpdates by remember { mutableStateOf(true) }
         Box(
@@ -118,9 +120,8 @@ class SplashScreen : UIScreen() {
                 }
             )
         }
-        TimeFormatter.changeDefaultPattern("dd/MM/yyyy HH:mm:ss")
         if(launch) {
-            if (requester != null)
+            if (user.id != null)
                 navigator.navigate(home.name)
             else
                 navigator.navigate(connect.name)
