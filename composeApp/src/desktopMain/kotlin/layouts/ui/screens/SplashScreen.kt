@@ -62,7 +62,7 @@ class SplashScreen : UIScreen() {
      */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
-    override fun showScreen() {
+    override fun ShowScreen() {
         activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()

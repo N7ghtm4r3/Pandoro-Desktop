@@ -26,6 +26,7 @@ import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
+import viewmodels.NotesSectionViewModel
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
@@ -41,8 +42,10 @@ val clipboard: Clipboard = Toolkit.getDefaultToolkit().systemClipboard
  * @param update: the update where add the new [Note], if **null** will be created for the [User]
  */
 @Composable
-fun showCreateNotePopup(update: ProjectUpdate?) {
-    createPopup(
+fun showCreateNotePopup(
+    update: ProjectUpdate?
+) {
+    CreatePopup(
         width = 300.dp,
         height = 200.dp,
         flag = showCreateNotePopup,
@@ -72,14 +75,22 @@ fun showCreateNotePopup(update: ProjectUpdate?) {
                         .align(Alignment.CenterHorizontally)
                         .clickable {
                             if (isContentNoteValid(content.value)) {
+                                if(update != null) {
+                                    //TODO: MAKE THE REAL WORKFLOW
+                                } else {
+                                    val viewModel = NotesSectionViewModel(
+                                        snackbarHostState = snackbarHostState
+                                    )
+                                    viewModel.addNote(
+                                        content = content.value,
+                                        onSuccess = {
+                                            showCreateNotePopup.value = false
+                                        }
+                                    )
+                                }
+
                                 /*if (update != null) {
                                     requester!!.execAddChangeNote(currentProject.value.id, update.id, content)
-                                    if (requester!!.successResponse())
-                                        showCreateNotePopup.value = false
-                                    else
-                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                } else {
-                                    requester!!.execAddNote(content)
                                     if (requester!!.successResponse())
                                         showCreateNotePopup.value = false
                                     else
@@ -108,7 +119,7 @@ fun showNoteInfoPopup(
     update: ProjectUpdate?
 ) {
     val contentLength = note.content.length
-    createPopup(
+    CreatePopup(
         height =
         if (!note.isMarkedAsDone && contentLength < 50)
             200.dp

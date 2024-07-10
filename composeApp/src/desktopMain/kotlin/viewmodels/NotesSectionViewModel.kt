@@ -2,11 +2,15 @@ package viewmodels
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
-import com.tecknobit.apimanager.formatters.JsonHelper
+import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
 import com.tecknobit.pandorocore.records.Note
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import layouts.ui.sections.NotesSection
+import layouts.ui.sections.Section.Sections.*
 
 /**
- * The **NotesScreenViewModel** class is the support class used by the [NotesScreenViewModel]
+ * The **NotesSectionViewModel** class is the support class used by the [NotesSection]
  * to manage the notes of the user
  *
  * @param snackbarHostState: the host to launch the snackbar messages
@@ -16,23 +20,45 @@ import com.tecknobit.pandorocore.records.Note
  * @see ViewModel
  * @see FetcherManagerWrapper
  */
-class NotesScreenViewModel(
+//TODO: TO COMMENT
+class NotesSectionViewModel(
     override var snackbarHostState: SnackbarHostState?
 ): PandoroViewModel(
     snackbarHostState = snackbarHostState
 ) {
 
     /**
+     * **_projects** -> list of the projects of the user
+     */
+    private val _notes = MutableStateFlow<MutableList<Note>>(mutableListOf())
+    val notes: StateFlow<MutableList<Note>> = _notes
+
+    fun refreshValues() {
+        execRefreshingRoutine(
+            currentContext = NotesSection::class.java,
+            routine = {
+                requester.sendRequest(
+                    request = { requester.getNotesList() },
+                    onSuccess = { response ->
+                        _notes.value = Note.getInstances(
+                            response.getJSONArray(RESPONSE_MESSAGE_KEY)
+                        )
+                    },
+                    onFailure = { showSnack(it) }
+                )
+            }
+        )
+    }
+
+    /**
      * Function to execute the request to add a new note
      *
      * @param content: the content of the note
      * @param onSuccess: the action to execute whether the request has been successful
-     * @param onFailure: the action to execute whether the request has been failed
      */
     fun addNote(
         content: String,
-        onSuccess: () -> Unit,
-        onFailure: (JsonHelper) -> Unit
+        onSuccess: () -> Unit
     ) {
         requester.sendRequest(
             request = {
@@ -41,7 +67,7 @@ class NotesScreenViewModel(
                 )
             },
             onSuccess = { onSuccess.invoke() },
-            onFailure = { onFailure.invoke(it) }
+            onFailure = { showSnack(it) }
         )
     }
 

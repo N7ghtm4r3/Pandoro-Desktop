@@ -127,19 +127,19 @@ fun App() {
                     route = splashScreen.name,
                     navTransition = NavTransition(),
                 ) {
-                    SplashScreen().showScreen()
+                    SplashScreen().ShowScreen()
                 }
                 scene(
                     route = connect.name,
                     navTransition = NavTransition(),
                 ) {
-                    Connect().showScreen()
+                    Connect().ShowScreen()
                 }
                 scene(
                     route = home.name,
                     navTransition = NavTransition(),
                 ) {
-                    Home().showScreen()
+                    Home().ShowScreen()
                 }
             }
         }

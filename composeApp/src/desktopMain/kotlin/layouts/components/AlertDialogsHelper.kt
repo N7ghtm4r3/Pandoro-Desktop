@@ -2,7 +2,6 @@
 
 package layouts.components
 
-import Routes.splashScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,16 +24,7 @@ import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.PEND
 import helpers.BACKGROUND_COLOR
 import helpers.Logo
 import helpers.PRIMARY_COLOR
-import helpers.showSnack
-import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.screens.Home.Companion.currentProject
-import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.Section
-import layouts.ui.sections.Section.Companion.navBack
-import layouts.ui.sections.Section.Companion.sectionCoroutineScope
-import layouts.ui.sections.Section.Companion.snackbarHostState
-import navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -450,6 +440,10 @@ private fun AlertDialogContainer(
 ) {
     if (show.value) {
         AlertDialog(
+            modifier = Modifier
+                .widthIn(
+                    max = 400.dp
+                ),
             shape = RoundedCornerShape(25.dp),
             containerColor = BACKGROUND_COLOR,
             onDismissRequest = { show.value = false },

@@ -134,12 +134,10 @@ class ProfileScreenViewModel(
      *
      * @param group: the group where the user has been invited
      * @param changelog: the related changelog of the invitation
-     * @param onSuccess: the action to execute if the request has been successful
      */
     fun declineInvitation(
         group: Group,
-        changelog: Changelog,
-        onSuccess: () -> Unit
+        changelog: Changelog
     ) {
         requester.sendRequest(
             request = {
@@ -148,7 +146,7 @@ class ProfileScreenViewModel(
                     changelogId = changelog.id
                 )
             },
-            onSuccess = { onSuccess.invoke() },
+            onSuccess = { },
             onFailure = { showSnack(it) }
         )
     }
@@ -158,12 +156,10 @@ class ProfileScreenViewModel(
      *
      * @param group: the group where the user has been invited
      * @param changelog: the related changelog of the invitation
-     * @param onSuccess: the action to execute if the request has been successful
      */
     fun acceptInvitation(
         group: Group,
-        changelog: Changelog,
-        onSuccess: () -> Unit
+        changelog: Changelog
     ) {
         requester.sendRequest(
             request = {
@@ -172,7 +168,7 @@ class ProfileScreenViewModel(
                     changelogId = changelog.id
                 )
             },
-            onSuccess = { onSuccess.invoke() },
+            onSuccess = { },
             onFailure = { showSnack(it) }
         )
     }

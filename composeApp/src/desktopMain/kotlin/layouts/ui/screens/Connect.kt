@@ -94,7 +94,7 @@ class Connect : UIScreen() {
      */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
-    override fun showScreen() {
+    override fun ShowScreen() {
         coroutineScope = rememberCoroutineScope()
         Box(
             modifier = Modifier

@@ -67,7 +67,7 @@ private fun showEditProfilePopup(
     label: String,
     item: String
 ) {
-    createPopup(
+    CreatePopup(
         width = 250.dp,
         height = 200.dp,
         flag = show,
@@ -136,7 +136,7 @@ private fun showEditProfilePopup(
 @Composable
 fun showAddGroupPopup() {
     val members = mutableStateListOf("")
-    createPopup(
+    CreatePopup(
         height = 500.dp,
         flag = showAddGroupPopup,
         title = stringResource(Res.string.create_a_new_group),

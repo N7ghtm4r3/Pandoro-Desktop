@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * **snackbarHostState** -> the state to display the [Snackbar]
  */
-lateinit var snackbarHostState: SnackbarHostState
+val snackbarHostState: SnackbarHostState = SnackbarHostState()
 
 /**
  * **sectionCoroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
@@ -42,7 +41,7 @@ lateinit var coroutineScope: CoroutineScope
  * @param horizontalAlignment: the [Alignment] for the content column
  */
 @Composable
-fun createPopup(
+fun CreatePopup(
     width: Dp = 400.dp,
     height: Dp,
     flag: MutableState<Boolean>,
@@ -57,92 +56,93 @@ fun createPopup(
     content: @Composable ColumnScope.() -> Unit,
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
 ) {
-    snackbarHostState = remember { SnackbarHostState() }
-    coroutineScope = rememberCoroutineScope()
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Popup(
-            alignment = Alignment.BottomStart,
-            offset = IntOffset(
-                x = 250.dp.dpToPx().toInt(),
-                y = 0
-            ),
-            properties = PopupProperties(
-                focusable = true
-            ), onPreviewKeyEvent = { false }, onKeyEvent = { false }) {
-            Card(
-                modifier = Modifier
-                    .size(
-                        width = width,
-                        height = height
-                    ),
-                shape = RoundedCornerShape(
-                    topEnd = 15.dp,
-                    bottomEnd = 15.dp
+    if(flag.value) {
+        coroutineScope = rememberCoroutineScope()
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Popup(
+                alignment = Alignment.BottomStart,
+                offset = IntOffset(
+                    x = 250.dp.dpToPx().toInt(),
+                    y = 0
                 ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                )
-            ) {
-                Scaffold(
-                    snackbarHost = {
-                        SnackbarHost(hostState = snackbarHostState) {
-                            Snackbar(
-                                containerColor = PRIMARY_COLOR,
-                                contentColor = BACKGROUND_COLOR,
-                                snackbarData = it
-                            )
-                        }
-                    }
+                properties = PopupProperties(
+                    focusable = true
+                ), onPreviewKeyEvent = { false }, onKeyEvent = { false }) {
+                Card(
+                    modifier = Modifier
+                        .size(
+                            width = width,
+                            height = height
+                        ),
+                    shape = RoundedCornerShape(
+                        topEnd = 15.dp,
+                        bottomEnd = 15.dp
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 10.dp
+                    )
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
+                    Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(hostState = snackbarHostState) {
+                                Snackbar(
+                                    containerColor = PRIMARY_COLOR,
+                                    contentColor = BACKGROUND_COLOR,
+                                    snackbarData = it
+                                )
+                            }
+                        }
                     ) {
-                        Row {
-                            Column(
-                                modifier = Modifier
-                                    .weight(10f).
-                                    fillMaxWidth()
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            Row {
+                                Column(
+                                    modifier = Modifier
+                                        .weight(10f).
+                                        fillMaxWidth()
                                         .padding(
                                             start = 15.dp,
                                             top = 15.dp
                                         )
-                            ) {
-                                Text(
-                                    text = title,
-                                    fontSize = titleSize
-                                )
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxWidth()
-                            ) {
-                                IconButton(
-                                    modifier = Modifier
-                                        .size(25.dp)
-                                        .padding(
-                                            top = 5.dp,
-                                            end = 5.dp
-                                        )
-                                        .align(alignment = Alignment.End),
-                                    onClick = { flag.value = false }
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = null
+                                    Text(
+                                        text = title,
+                                        fontSize = titleSize
                                     )
                                 }
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .fillMaxWidth()
+                                ) {
+                                    IconButton(
+                                        modifier = Modifier
+                                            .size(25.dp)
+                                            .padding(
+                                                top = 5.dp,
+                                                end = 5.dp
+                                            )
+                                            .align(alignment = Alignment.End),
+                                        onClick = { flag.value = false }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
                             }
+                            Column(
+                                modifier = columnModifier,
+                                horizontalAlignment = horizontalAlignment,
+                                content = content
+                            )
                         }
-                        Column(
-                            modifier = columnModifier,
-                            horizontalAlignment = horizontalAlignment,
-                            content = content
-                        )
                     }
                 }
             }

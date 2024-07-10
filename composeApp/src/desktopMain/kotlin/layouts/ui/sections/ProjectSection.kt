@@ -63,11 +63,11 @@ class ProjectSection : Section(), SingleItemManager {
      */
     @OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
     @Composable
-    override fun showSection() {
+    override fun ShowSection() {
         var isGitHub = false
         val hasGroup = currentProject.value.hasGroups()
         refreshItem()
-        showSection {
+        ShowSection {
             LazyColumn {
                 stickyHeader {
                     Row(

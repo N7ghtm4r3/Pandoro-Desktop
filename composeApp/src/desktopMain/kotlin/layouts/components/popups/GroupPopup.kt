@@ -44,9 +44,11 @@ import pandoro.composeapp.generated.resources.*
  * @param group: the group where add the members
  */
 @Composable
-fun showAddMembersPopup(group: Group) {
+fun ShowAddMembersPopup(
+    group: Group
+) {
     val members = mutableStateListOf("")
-    createPopup(
+    CreatePopup(
         height = 400.dp,
         flag = showAddMembersPopup,
         title = stringResource(Res.string.add_new_members),
@@ -66,7 +68,7 @@ fun showAddMembersPopup(group: Group) {
                         if (checkMembersValidity(members)) {
                             /*requester!!.execAddMembers(group.id, members.toList())
                             if (requester!!.successResponse())
-                                showAddMembersPopup.value = false
+                                ShowAddMembersPopup.value = false
                             else
                                 showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())*/
                         } else
@@ -170,7 +172,7 @@ fun showMembersSection(
 @Composable
 fun showEditProjectGroupPopup() {
     val uProjects = user.projects
-    createPopup(
+    CreatePopup(
         height = 400.dp,
         flag = showEditProjectGroupPopup,
         title = stringResource(Res.string.edit_the_groups_projects),

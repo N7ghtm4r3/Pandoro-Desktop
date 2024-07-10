@@ -17,6 +17,6 @@ abstract class UIScreen {
      * No-any params required
      */
     @Composable
-    abstract fun showScreen()
+    abstract fun ShowScreen()
 
 }

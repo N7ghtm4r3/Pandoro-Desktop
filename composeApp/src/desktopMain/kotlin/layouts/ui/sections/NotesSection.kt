@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandorocore.records.Note
-import com.tecknobit.pandorocore.ui.ListManager
 import helpers.BACKGROUND_COLOR
 import helpers.PRIMARY_COLOR
 import helpers.RED_COLOR
@@ -32,24 +30,21 @@ import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.notes
 import pandoro.composeapp.generated.resources.notes_number
+import viewmodels.NotesSectionViewModel
 
 /**
  * This is the layout for the notes section
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
- * @see ListManager
  */
-class NotesSection : Section(), ListManager {
+class NotesSection : Section() {
 
-    companion object {
+    private lateinit var myNotes: List<Note>
 
-        /**
-         * **notes** -> the list of the notes
-         */
-        val notes: SnapshotStateList<Note> = mutableStateListOf()
-
-    }
+    private val viewModel = NotesSectionViewModel(
+        snackbarHostState = snackbarHostState
+    )
 
     /**
      * Function to show the content of the [NotesSection]
@@ -58,10 +53,12 @@ class NotesSection : Section(), ListManager {
      */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
-    override fun showSection() {
+    override fun ShowSection() {
+        viewModel.setActiveContext(this::class.java)
+        viewModel.refreshValues()
+        myNotes = viewModel.notes.collectAsState().value
         var markModeEnabled by remember { mutableStateOf(false) }
-        refreshValues()
-        showSection {
+        ShowSection {
             Column {
                 Row(
                     modifier = Modifier
@@ -83,7 +80,10 @@ class NotesSection : Section(), ListManager {
                         onClick = { markModeEnabled = !markModeEnabled }
                     ) {
                         Icon(
-                            imageVector = if (!markModeEnabled) Icons.Default.EditNote else Icons.Default.Notes,
+                            imageVector = if (!markModeEnabled)
+                                Icons.Default.EditNote
+                            else
+                                Icons.Default.Notes,
                             contentDescription = null
                         )
                     }
@@ -100,7 +100,7 @@ class NotesSection : Section(), ListManager {
                             .padding(
                                 top = 5.dp
                             ),
-                        text = stringResource(Res.string.notes_number) + " ${notes.size}",
+                        text = stringResource(Res.string.notes_number) + " ${myNotes.size}",
                         fontSize = 14.sp
                     )
                     spaceContent()
@@ -116,7 +116,7 @@ class NotesSection : Section(), ListManager {
                         )
                     ) {
                         items(
-                            items = notes,
+                            items = myNotes,
                             key = { note ->
                                 note.id
                             }
@@ -149,7 +149,7 @@ class NotesSection : Section(), ListManager {
                                         ),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    var markAsDone = note.isMarkedAsDone
+                                    val markAsDone = mutableStateOf(note.isMarkedAsDone)
                                     if (markModeEnabled) {
                                         Checkbox(
                                             modifier = Modifier
@@ -158,21 +158,12 @@ class NotesSection : Section(), ListManager {
                                                 checkedColor = PRIMARY_COLOR,
                                                 checkmarkColor = BACKGROUND_COLOR
                                             ),
-                                            checked = markAsDone,
+                                            checked = markAsDone.value,
                                             onCheckedChange = {
-                                                /*if (it) {
-                                                    requester!!.execMarkNoteAsDone(note.id)
-                                                    if (requester!!.successResponse())
-                                                        markAsDone = true
-                                                    else
-                                                        showSnack(requester!!.errorMessage())
-                                                } else {
-                                                    requester!!.execMarkNoteAsToDo(note.id)
-                                                    if (requester!!.successResponse())
-                                                        markAsDone = false
-                                                    else
-                                                        showSnack(requester!!.errorMessage())
-                                                }*/
+                                                viewModel.manageNote(
+                                                    markAsDone = markAsDone,
+                                                    note = note
+                                                )
                                             }
                                         )
                                         Spacer(
@@ -189,7 +180,10 @@ class NotesSection : Section(), ListManager {
                                             text = content,
                                             textAlign = TextAlign.Justify,
                                             fontSize = 14.sp,
-                                            textDecoration = if (markAsDone) TextDecoration.LineThrough else null
+                                            textDecoration = if (markAsDone.value)
+                                                TextDecoration.LineThrough
+                                            else
+                                                null
                                         )
                                     }
                                     Column(
@@ -200,9 +194,9 @@ class NotesSection : Section(), ListManager {
                                     ) {
                                         IconButton(
                                             onClick = {
-                                                /*requester!!.execDeleteNote(note.id)
-                                                if (!requester!!.successResponse())
-                                                    showSnack(requester!!.errorMessage())*/
+                                                viewModel.deleteNote(
+                                                    note = note
+                                                )
                                             }
                                         ) {
                                             Icon(
@@ -221,32 +215,6 @@ class NotesSection : Section(), ListManager {
                 }
             }
         }
-    }
-
-    /**
-     * Function to refresh a list of items to display in the UI
-     *
-     * No-any params required
-     */
-    override fun refreshValues() {
-       /* CoroutineScope(Dispatchers.Default).launch {
-            while (user.id != null && activeScreen.value == Sections.Notes) {
-                val tmpNotes = mutableStateListOf<Note>()
-                val response = requester!!.execNotesList()
-                if (requester!!.successResponse()) {
-                    val jNotes = JSONArray(response)
-                    jNotes.forEach { jNote ->
-                        tmpNotes.add(Note(jNote as JSONObject))
-                    }
-                    if (needToRefresh(notes, tmpNotes)) {
-                        notes.clear()
-                        notes.addAll(tmpNotes)
-                    }
-                } else
-                    showSnack(requester!!.errorMessage())
-                delay(1000)
-            }
-        }*/
     }
 
 }

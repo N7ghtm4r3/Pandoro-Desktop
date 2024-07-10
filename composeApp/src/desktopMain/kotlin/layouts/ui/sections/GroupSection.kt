@@ -57,12 +57,12 @@ class GroupSection : Section(), SingleItemManager {
      */
     @OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
     @Composable
-    override fun showSection() {
+    override fun ShowSection() {
         val isCurrentUserAnAdmin = currentGroup.value.isUserAdmin(user)
         val authorId = currentGroup.value.author.id
         val isCurrentUserAMaintainer = currentGroup.value.isUserMaintainer(user)
         refreshItem()
-        showSection {
+        ShowSection {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),

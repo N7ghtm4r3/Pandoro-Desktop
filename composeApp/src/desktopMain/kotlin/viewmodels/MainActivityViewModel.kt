@@ -1,8 +1,8 @@
 package viewmodels
 
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
+import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectDescription
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectName
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectShortDescription
@@ -10,10 +10,16 @@ import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidReposi
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidVersion
 import com.tecknobit.pandorocore.records.Changelog
 import com.tecknobit.pandorocore.records.Group
-import com.tecknobit.pandorocore.records.Note
 import com.tecknobit.pandorocore.records.Project
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import layouts.ui.screens.Home
+import layouts.ui.screens.Home.Companion.activeScreen
+import layouts.ui.screens.Home.Companion.changelogs
+import layouts.ui.screens.Home.Companion.currentGroup
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
+import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.ProfileSection.Companion.groups
 import layouts.ui.sections.Section.Sections.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import pandoro.composeapp.generated.resources.*
@@ -53,26 +59,15 @@ class MainActivityViewModel(
     private val _changelogs = MutableStateFlow<MutableList<Changelog>>(mutableListOf())
 
     /**
-     * **_notes** -> list of the notes of the user
-     */
-    private val _notes = MutableStateFlow<MutableList<Note>>(mutableListOf())
-
-    /**
      * **_isServerOffline** -> whether the server is currently offline
      */
     private val _isServerOffline = MutableStateFlow(false)
     val isServerOffline = _isServerOffline
 
     init {
-        /*groups = _groups
+        groups = _groups
         changelogs = _changelogs
-        notes = _notes*/
     }
-
-    /**
-     * **unreadChangelogsNumber** -> the number of the changelogs yet to read
-     */
-    lateinit var unreadChangelogsNumber: MutableIntState
 
     /**
      * **name** -> the name of the project
@@ -110,9 +105,10 @@ class MainActivityViewModel(
      * No-any params required
      */
     fun refreshValues() {
-        /*execRefreshingRoutine(
-            currentContext = MainActivity::class.java,
+        execRefreshingRoutine(
+            currentContext = Home::class.java,
             routine = {
+                println("TO FIX THE STOP AND RESTART")
                 if(activeScreen.value == Projects || activeScreen.value == Overview
                     || currentGroup != null) {
                     requester.sendRequest(
@@ -136,16 +132,6 @@ class MainActivityViewModel(
                         },
                         onFailure = { showSnack(it) }
                     )
-                } else if(activeScreen.value == Notes) {
-                    requester.sendRequest(
-                        request = { requester.getNotesList() },
-                        onSuccess = { response ->
-                            _notes.value = Note.getInstances(
-                                response.getJSONArray(RESPONSE_MESSAGE_KEY)
-                            )
-                        },
-                        onFailure = { showSnack(it) }
-                    )
                 }
                 requester.sendRequest(
                     request = { requester.getChangelogsList() },
@@ -154,11 +140,6 @@ class MainActivityViewModel(
                         _changelogs.value = Changelog.getInstances(
                             response.getJSONArray(RESPONSE_MESSAGE_KEY)
                         )
-                        unreadChangelogsNumber.intValue = 0
-                        _changelogs.value.forEach { changelog ->
-                            if(!changelog.isRed)
-                                unreadChangelogsNumber.intValue++
-                        }
                     },
                     onFailure = {
                         localAuthHelper.logout()
@@ -167,7 +148,7 @@ class MainActivityViewModel(
                     onConnectionError = { _isServerOffline.value = true }
                 )
             }
-        )*/
+        )
     }
 
     /**

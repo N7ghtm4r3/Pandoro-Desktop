@@ -24,11 +24,11 @@ import com.tecknobit.pandorocore.records.ProjectUpdate
 import com.tecknobit.pandorocore.ui.ListManager
 import helpers.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.StateFlow
 import layouts.components.Sidebar
 import layouts.components.Sidebar.Companion.SIDEBAR_WIDTH
 import layouts.components.popups.*
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
-import layouts.ui.screens.Home.Companion.showAddProjectPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
 import layouts.ui.sections.Section.*
@@ -40,6 +40,7 @@ import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.decline
 import pandoro.composeapp.generated.resources.join
 import viewmodels.MainActivityViewModel
+import viewmodels.ProfileScreenViewModel
 import java.util.*
 
 /**
@@ -49,43 +50,9 @@ import java.util.*
  * @see UIScreen
  * @see ListManager
  */
+//TODO: TO COMMENT
 @OptIn(ExperimentalResourceApi::class)
 class Home : UIScreen() {
-
-    /**
-     * **projects** -> instance to show the [ProjectsSection]
-     */
-    private val projects = ProjectsSection()
-
-    /**
-     * **project** -> instance to show the [ProjectSection]
-     */
-    private val project = ProjectSection()
-
-    /**
-     * **group** -> instance to show the [GroupSection]
-     */
-    private val group = GroupSection()
-
-    /**
-     * **notes** -> instance to show the [NotesSection]
-     */
-    private val notes = NotesSection()
-
-    /**
-     * **overview** -> instance to show the [OverviewSection]
-     */
-    private val overview = OverviewSection()
-
-    /**
-     * **profile** -> instance to show the [Profile]
-     */
-    private val profile = ProfileSection()
-
-    /**
-     * *viewModel* -> the support view model to manage the requests to the backend
-     */
-    private val viewModel = MainActivityViewModel()
 
     companion object {
 
@@ -97,15 +64,15 @@ class Home : UIScreen() {
         /**
          * **changelogs** -> list of [Changelog] as changelogs for the [User]
          */
-        val changelogs = mutableStateListOf<Changelog>()
+        lateinit var changelogs: StateFlow<List<Changelog>>
 
         /**
-         * **showAddProjectPopup** -> flag whether show the [showAddProjectPopup]
+         * **ShowAddProjectPopup** -> flag whether show the [ShowAddProjectPopup]
          */
         lateinit var showAddProjectPopup: MutableState<Boolean>
 
         /**
-         * **showEditPopup** -> flag whether show the [showEditProjectPopup]
+         * **showEditPopup** -> flag whether show the [ShowEditProjectPopup]
          */
         lateinit var showEditPopup: MutableState<Boolean>
 
@@ -125,7 +92,7 @@ class Home : UIScreen() {
         lateinit var showNoteInfoPopup: MutableState<Boolean>
 
         /**
-         * **showAddMembersPopup** -> flag whether show the [showAddMembersPopup]
+         * **ShowAddMembersPopup** -> flag whether show the [ShowAddMembersPopup]
          */
         lateinit var showAddMembersPopup: MutableState<Boolean>
 
@@ -172,13 +139,65 @@ class Home : UIScreen() {
     }
 
     /**
+     * **projects** -> instance to show the [ProjectsSection]
+     */
+    private val projects = ProjectsSection()
+
+    /**
+     * **project** -> instance to show the [ProjectSection]
+     */
+    private val project = ProjectSection()
+
+    /**
+     * **group** -> instance to show the [GroupSection]
+     */
+    private val group = GroupSection()
+
+    /**
+     * **notes** -> instance to show the [NotesSection]
+     */
+    private val notes = NotesSection()
+
+    /**
+     * **overview** -> instance to show the [OverviewSection]
+     */
+    private val overview = OverviewSection()
+
+    /**
+     * **profile** -> instance to show the [Profile]
+     */
+    private val profile = ProfileSection()
+
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
+    private val viewModel = MainActivityViewModel()
+
+    /**
+     * *snackbarHostState* -> the host to launch the snackbar messages
+     */
+    private val snackbarHostState = SnackbarHostState()
+
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
+    private val profileViewModel = ProfileScreenViewModel(
+        snackbarHostState = snackbarHostState
+    )
+
+    private lateinit var myChangelogs: List<Changelog>
+
+    /**
      * Function to show the content of the [Home]
      *
      * No-any params required
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun showScreen() {
+    override fun ShowScreen() {
+        viewModel.setActiveContext(this::class.java)
+        viewModel.refreshValues()
+        myChangelogs = changelogs.collectAsState().value
         currentProject = remember { mutableStateOf(com.tecknobit.pandorocore.records.Project()) }
         currentGroup = remember { mutableStateOf(Group()) }
         showAddProjectPopup = remember { mutableStateOf(false) }
@@ -200,9 +219,14 @@ class Home : UIScreen() {
                     )
                 )
             },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState
+                )
+             },
             floatingActionButton = {
                 val notRedChangelogs = mutableListOf<Changelog>()
-                changelogs.forEach { changelog ->
+                myChangelogs.forEach { changelog ->
                     if (!changelog.isRed)
                         notRedChangelogs.add(changelog)
                 }
@@ -210,10 +234,10 @@ class Home : UIScreen() {
                     ShowNotifies()
                 else {
                     when (activeScreen.value) {
-                        Projects, Project, Notes, Profile -> createFab()
+                        Projects, Project, Notes, Profile -> CreateFab()
                         Group -> {
                             if (currentGroup.value.isUserMaintainer(user))
-                                createFab()
+                                CreateFab()
                         }
 
                         else -> {}
@@ -241,36 +265,28 @@ class Home : UIScreen() {
                             .background(BACKGROUND_COLOR)
                     ) {
                         when (activeScreen.value) {
-                            Projects -> projects.showSection()
-                            Notes -> notes.showSection()
-                            Overview -> overview.showSection()
-                            Profile -> profile.showSection()
-                            Project -> project.showSection()
-                            Group -> group.showSection()
+                            Projects -> projects.ShowSection()
+                            Notes -> notes.ShowSection()
+                            Overview -> overview.ShowSection()
+                            Profile -> profile.ShowSection()
+                            Project -> project.ShowSection()
+                            Group -> group.ShowSection()
                         }
                     }
                 }
             }
-            if (showAddProjectPopup.value)
-                showAddProjectPopup()
-            if (showEditPopup.value)
-                showEditProjectPopup(currentProject.value)
-            if (showScheduleUpdatePopup.value)
-                showScheduleUpdatePopup()
-            if (showCreateNotePopup.value)
-                showCreateNotePopup(currentUpdate)
-            if (showNoteInfoPopup.value)
+            ShowAddProjectPopup()
+            if(showEditPopup.value)
+                ShowEditProjectPopup(currentProject.value)
+            showScheduleUpdatePopup()
+            showCreateNotePopup(currentUpdate)
+            if(showNoteInfoPopup.value)
                 showNoteInfoPopup(currentNote, currentUpdate)
-            if (showAddMembersPopup.value)
-                showAddMembersPopup(currentGroup.value)
-            if (showEditProjectGroupPopup.value)
-                showEditProjectGroupPopup()
-            if (showEditEmailPopup.value)
-                showEditEmailPopup()
-            if (showEditPasswordPopup.value)
-                showEditPasswordPopup()
-            if (showAddGroupPopup.value)
-                showAddGroupPopup()
+            ShowAddMembersPopup(currentGroup.value)
+            showEditProjectGroupPopup()
+            showEditEmailPopup()
+            showEditPasswordPopup()
+            showAddGroupPopup()
         }
     }
 
@@ -280,7 +296,7 @@ class Home : UIScreen() {
      * No-any params required
      */
     @Composable
-    private fun createFab() {
+    private fun CreateFab() {
         FloatingActionButton(
             onClick = {
                 when (activeScreen.value) {
@@ -311,7 +327,7 @@ class Home : UIScreen() {
             contentPadding = PaddingValues(20.dp)
         ) {
             items(
-                items = changelogs,
+                items = myChangelogs,
                 key = { changelog ->
                     changelog.id
                 }
@@ -323,13 +339,8 @@ class Home : UIScreen() {
                             .padding(
                                 bottom = 10.dp
                             )
-                            .size(
-                                width = 500.dp,
-                                height = if (!isJoinRequest)
-                                    115.dp
-                                else
-                                    155.dp
-                            ),
+                            .width(500.dp)
+                            .wrapContentHeight(),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
                         ),
@@ -344,21 +355,16 @@ class Home : UIScreen() {
                         ) {
                             if (!isJoinRequest) {
                                 IconButton(
-                                    modifier = Modifier.size(25.dp)
+                                    modifier = Modifier
+                                        .size(25.dp)
                                         .padding(
                                             top = 5.dp,
                                             end = 5.dp
                                         ).align(alignment = Alignment.End),
                                     onClick = {
-                                        /*requester!!.execReadChangelog(changelog.id)
-                                        if (requester!!.successResponse())
-                                            changelogs.remove(changelog)
-                                        else
-                                            showSnack(
-                                                sectionCoroutineScope,
-                                                snackbarHostState,
-                                                requester!!.errorMessage()
-                                            )*/
+                                        profileViewModel.readChangelog(
+                                            changelog = changelog
+                                        )
                                     }
                                 ) {
                                     Icon(
@@ -410,15 +416,10 @@ class Home : UIScreen() {
                                                 contentColor = Color.White
                                             ),
                                             onClick = {
-                                                /*requester!!.execDeclineInvitation(changelog.group.id, changelog.id)
-                                                if (requester!!.successResponse())
-                                                    changelogs.remove(changelog)
-                                                else {
-                                                    showSnack(
-                                                        sectionCoroutineScope, snackbarHostState,
-                                                        requester!!.errorMessage()
-                                                    )
-                                                }*/
+                                                profileViewModel.declineInvitation(
+                                                    group = changelog.group,
+                                                    changelog = changelog
+                                                )
                                             }
                                         ) {
                                             Text(
@@ -433,15 +434,10 @@ class Home : UIScreen() {
                                                 contentColor = Color.White
                                             ),
                                             onClick = {
-                                                /*requester!!.execAcceptInvitation(changelog.group.id, changelog.id)
-                                                if (requester!!.successResponse())
-                                                    changelogs.remove(changelog)
-                                                else {
-                                                    showSnack(
-                                                        sectionCoroutineScope, snackbarHostState,
-                                                        requester!!.errorMessage()
-                                                    )
-                                                }*/
+                                                profileViewModel.acceptInvitation(
+                                                    group = changelog.group,
+                                                    changelog = changelog
+                                                )
                                             }
                                         ) {
                                             Text(

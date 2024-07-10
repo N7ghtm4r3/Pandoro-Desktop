@@ -1,14 +1,11 @@
 package layouts.ui.sections
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Project
@@ -80,7 +77,7 @@ abstract class Section {
         /**
          * **snackbarHostState** -> the state to display the [Snackbar]
          */
-        lateinit var snackbarHostState: SnackbarHostState
+        val snackbarHostState = SnackbarHostState()
 
         /**
          * **sectionCoroutineScope** -> the coroutine scope to manage the coroutines of the [Scaffold]
@@ -124,7 +121,7 @@ abstract class Section {
      * No-any params required
      */
     @Composable
-    abstract fun showSection()
+    abstract fun ShowSection()
 
     /**
      * Function to show the content of the section
@@ -132,9 +129,8 @@ abstract class Section {
      * @param content: the content of the section to show
      */
     @Composable
-    protected fun showSection(content: @Composable (PaddingValues) -> Unit) {
+    protected fun ShowSection(content: @Composable (PaddingValues) -> Unit) {
         sectionCoroutineScope = rememberCoroutineScope()
-        snackbarHostState = remember { SnackbarHostState() }
         Scaffold(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState) {

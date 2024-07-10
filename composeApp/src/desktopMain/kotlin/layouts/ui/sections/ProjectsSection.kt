@@ -1,5 +1,6 @@
 package layouts.ui.sections
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -7,13 +8,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,12 +21,14 @@ import com.tecknobit.pandorocore.ui.filterProjects
 import com.tecknobit.pandorocore.ui.populateFrequentProjects
 import helpers.BACKGROUND_COLOR
 import helpers.RED_COLOR
+import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.Home.Companion.showEditPopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
+import viewmodels.MainActivityViewModel
 
 /**
  * This is the layout for the projects section
@@ -37,17 +36,9 @@ import pandoro.composeapp.generated.resources.*
  * @author Tecknobit - N7ghtm4r3
  * @see Section
  */
+//TODO: TO COMMENT
 @OptIn(ExperimentalResourceApi::class)
 class ProjectsSection : Section() {
-
-    companion object {
-
-        /**
-         * **projectsList** -> the list of the projects
-         */
-        val projectsList: SnapshotStateList<Project> = mutableStateListOf()
-
-    }
 
     /**
      * **maxHeight** -> the max height of the [BoxWithConstraints] where are nested the [LazyVerticalGrid]
@@ -55,13 +46,24 @@ class ProjectsSection : Section() {
     private var maxHeight = 0.dp
 
     /**
+     * **projectsList** -> the list of the projects
+     */
+    private lateinit var projectsList: List<Project>
+
+    private val viewModel = MainActivityViewModel(
+        snackbarHostState = snackbarHostState
+    )
+
+    /**
      * Function to show the content of the [ProjectsSection]
      *
      * No-any params required
      */
     @Composable
-    override fun showSection() {
-        showSection {
+    override fun ShowSection() {
+        viewModel.refreshValues()
+        projectsList = viewModel.projects.collectAsState().value
+        ShowSection {
             BoxWithConstraints {
                 this@ProjectsSection.maxHeight = maxHeight
                 Spacer(Modifier.height(10.dp))
@@ -93,10 +95,13 @@ class ProjectsSection : Section() {
     @Composable
     private fun populateLazyGrid(
         title: String,
-        list: SnapshotStateList<Project>
+        list: List<Project>
     ) {
-        var query by remember { mutableStateOf("") }
-        val projects = filterProjects(query = query, list).toMutableStateList()
+        val query = remember { mutableStateOf("") }
+        val projects = filterProjects(
+            query = query.value,
+            list = list
+        ).toMutableStateList()
         Text(
             modifier = Modifier
                 .padding(
@@ -105,7 +110,7 @@ class ProjectsSection : Section() {
             text = title,
             fontSize = 25.sp
         )
-        /*PandoroTextField(
+        PandoroTextField(
             modifier = Modifier
                 .padding(
                     top = 20.dp,
@@ -116,23 +121,22 @@ class ProjectsSection : Section() {
                     height = 55.dp
                 ),
             label = stringResource(Res.string.search),
-            onValueChange = {
-                query = it
-            },
             value = query,
             trailingIcon = {
                 Icon(
-                    modifier = if (query.isNotEmpty()) {
-                        Modifier
-                            .clickable {
-                                query = ""
-                            }
-                    } else Modifier,
-                    imageVector = if (query.isEmpty()) Icons.Default.Search else Icons.Default.Clear,
+                    modifier = Modifier.clickable(
+                        enabled = query.value.isNotEmpty()
+                    ) {
+                        query.value = ""
+                    },
+                    imageVector = if (query.value.isEmpty())
+                        Icons.Default.Search
+                    else
+                        Icons.Default.Clear,
                     contentDescription = null,
                 )
             }
-        )*/
+        )
         if (projects.isEmpty()) {
             Column(
                 modifier = Modifier
@@ -233,6 +237,10 @@ class ProjectsSection : Section() {
                                                 }
                                                 if (showDeleteAlertDialog) {
                                                     AlertDialog(
+                                                        modifier = Modifier
+                                                            .widthIn(
+                                                                max = 400.dp
+                                                            ),
                                                         shape = RoundedCornerShape(25.dp),
                                                         containerColor = BACKGROUND_COLOR,
                                                         onDismissRequest = { showDeleteAlertDialog = false },
@@ -259,11 +267,13 @@ class ProjectsSection : Section() {
                                                         confirmButton = {
                                                             TextButton(
                                                                 onClick = {
-                                                                    /*requester!!.execDeleteProject(project.id)
-                                                                    showDeleteAlertDialog = false
-                                                                    actionsSelected = false
-                                                                    if (!requester!!.successResponse())
-                                                                        showSnack(requester!!.errorMessage())*/
+                                                                    viewModel.deleteProject(
+                                                                        project = project,
+                                                                        onSuccess = {
+                                                                            showDeleteAlertDialog = false
+                                                                            actionsSelected = false
+                                                                        }
+                                                                    )
                                                                 },
                                                                 content = {
                                                                     Text(

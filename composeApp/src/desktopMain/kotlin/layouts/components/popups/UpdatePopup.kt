@@ -38,7 +38,7 @@ import pandoro.composeapp.generated.resources.*
 @Composable
 fun showScheduleUpdatePopup() {
     val notes = mutableStateListOf("")
-    createPopup(
+    CreatePopup(
         height = 450.dp,
         flag = showScheduleUpdatePopup,
         title = stringResource(Res.string.schedule_update),

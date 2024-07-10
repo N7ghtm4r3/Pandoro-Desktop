@@ -51,7 +51,7 @@ class OverviewSection : Section() {
      */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
-    override fun showSection() {
+    override fun ShowSection() {
         overviewUIHelper = OverviewUIHelper(user.projects)
         LazyColumn(
             modifier = Modifier
