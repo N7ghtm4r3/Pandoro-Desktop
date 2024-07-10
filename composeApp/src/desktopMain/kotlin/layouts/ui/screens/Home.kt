@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 import layouts.components.Sidebar
 import layouts.components.Sidebar.Companion.SIDEBAR_WIDTH
 import layouts.components.popups.*
-import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.*
 import layouts.ui.sections.Section.*
@@ -59,7 +58,7 @@ class Home : UIScreen() {
         /**
          * **activeScreen** -> the instance of the active screen of the application to show
          */
-        lateinit var activeScreen: MutableState<Sections>
+        var activeScreen = mutableStateOf(Projects)
 
         /**
          * **changelogs** -> list of [Changelog] as changelogs for the [User]
@@ -102,17 +101,17 @@ class Home : UIScreen() {
         lateinit var showEditProjectGroupPopup: MutableState<Boolean>
 
         /**
-         * **showEditEmailPopup** -> flag whether show the [showEditEmailPopup]
+         * **ShowEditEmailPopup** -> flag whether show the [ShowEditEmailPopup]
          */
         lateinit var showEditEmailPopup: MutableState<Boolean>
 
         /**
-         * **showEditPasswordPopup** -> flag whether show the [showEditPasswordPopup]
+         * **ShowEditPasswordPopup** -> flag whether show the [ShowEditPasswordPopup]
          */
         lateinit var showEditPasswordPopup: MutableState<Boolean>
 
         /**
-         * **showAddGroupPopup** -> flag whether show the [showAddGroupPopup]
+         * **ShowAddGroupPopup** -> flag whether show the [ShowAddGroupPopup]
          */
         lateinit var showAddGroupPopup: MutableState<Boolean>
 
@@ -225,12 +224,15 @@ class Home : UIScreen() {
                 )
              },
             floatingActionButton = {
-                val notRedChangelogs = mutableListOf<Changelog>()
+                var showNotifies = false
                 myChangelogs.forEach { changelog ->
-                    if (!changelog.isRed)
-                        notRedChangelogs.add(changelog)
+                    if (!changelog.isRed) {
+                        showNotifies = true
+                        return@forEach
+                    }
                 }
-                if (notRedChangelogs.isNotEmpty() && activeScreen.value != Profile)
+                //TODO: TO FIX BECAUSE IS NOT SHOWN
+                if (showNotifies && activeScreen.value != Profile)
                     ShowNotifies()
                 else {
                     when (activeScreen.value) {
@@ -284,9 +286,9 @@ class Home : UIScreen() {
                 showNoteInfoPopup(currentNote, currentUpdate)
             ShowAddMembersPopup(currentGroup.value)
             showEditProjectGroupPopup()
-            showEditEmailPopup()
-            showEditPasswordPopup()
-            showAddGroupPopup()
+            ShowEditEmailPopup()
+            ShowEditPasswordPopup()
+            ShowAddGroupPopup()
         }
     }
 

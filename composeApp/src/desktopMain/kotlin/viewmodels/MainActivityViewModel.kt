@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import layouts.ui.screens.Home
 import layouts.ui.screens.Home.Companion.activeScreen
 import layouts.ui.screens.Home.Companion.changelogs
-import layouts.ui.screens.Home.Companion.currentGroup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
 import layouts.ui.sections.ProfileSection.Companion.groups
@@ -110,7 +109,7 @@ class MainActivityViewModel(
             routine = {
                 println("TO FIX THE STOP AND RESTART")
                 if(activeScreen.value == Projects || activeScreen.value == Overview
-                    || currentGroup != null) {
+                    /*|| currentGroup != null*/) {
                     requester.sendRequest(
                         request = { requester.getProjectsList() },
                         onSuccess = { response ->

@@ -6,6 +6,7 @@ import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
 import com.tecknobit.pandorocore.records.Note
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import layouts.ui.screens.Home
 import layouts.ui.sections.NotesSection
 import layouts.ui.sections.Section.Sections.*
 
@@ -35,7 +36,7 @@ class NotesSectionViewModel(
 
     fun refreshValues() {
         execRefreshingRoutine(
-            currentContext = NotesSection::class.java,
+            currentContext = Home::class.java,
             routine = {
                 requester.sendRequest(
                     request = { requester.getNotesList() },

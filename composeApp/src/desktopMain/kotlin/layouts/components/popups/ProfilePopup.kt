@@ -19,10 +19,19 @@ import layouts.components.PandoroTextField
 import layouts.ui.screens.Home.Companion.showAddGroupPopup
 import layouts.ui.screens.Home.Companion.showEditEmailPopup
 import layouts.ui.screens.Home.Companion.showEditPasswordPopup
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
+import layouts.ui.screens.SplashScreen.Companion.user
+import layouts.ui.sections.ProfileSection.Companion.HIDE_PASSWORD
+import layouts.ui.sections.ProfileSection.Companion.passwordProperty
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
+import viewmodels.ProfileScreenViewModel
+
+private val viewModel = ProfileScreenViewModel(
+    snackbarHostState = snackbarHostState
+)
 
 /**
  * Function to show the popup to edit the email of the [User]
@@ -31,8 +40,8 @@ import pandoro.composeapp.generated.resources.*
  */
 @Wrapper
 @Composable
-fun showEditEmailPopup() {
-    showEditProfilePopup(
+fun ShowEditEmailPopup() {
+    ShowEditProfilePopup(
         show = showEditEmailPopup,
         label = stringResource(Res.string.email),
         item = "email"
@@ -46,8 +55,8 @@ fun showEditEmailPopup() {
  */
 @Wrapper
 @Composable
-fun showEditPasswordPopup() {
-    showEditProfilePopup(
+fun ShowEditPasswordPopup() {
+    ShowEditProfilePopup(
         show = showEditPasswordPopup,
         label = stringResource(Res.string.password),
         item = "password"
@@ -62,7 +71,7 @@ fun showEditPasswordPopup() {
  * @param item: the item between **email** and **password**
  */
 @Composable
-private fun showEditProfilePopup(
+private fun ShowEditProfilePopup(
     show: MutableState<Boolean>,
     label: String,
     item: String
@@ -98,25 +107,37 @@ private fun showEditProfilePopup(
                         .align(Alignment.CenterHorizontally)
                         .clickable {
                             if (isInputValid(item, profileInfo.value)) {
-                                /*if (isEditingEmail) {
-                                    requester!!.execChangeEmail(profileInfo)
-                                    if (requester!!.successResponse())
-                                        localAuthHelper.storeEmail(profileInfo, true)
-                                    else
-                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
+                                if (isEditingEmail) {
+                                    viewModel.changeEmail(
+                                        newEmail = profileInfo.value,
+                                        onSuccess = {
+                                            localAuthHelper.storeEmail(
+                                                email = profileInfo.value,
+                                                refreshUser = true
+                                            )
+                                        }
+                                    )
                                 } else {
-                                    requester!!.execChangePassword(profileInfo)
-                                    if (requester!!.successResponse()) {
-                                        localAuthHelper.storePassword(profileInfo, true)
-                                        if (passwordProperty.value != HIDE_PASSWORD)
-                                            passwordProperty.value = user.password
-                                    } else
-                                        showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())
-                                }*/
+                                    viewModel.changePassword(
+                                        newPassword = profileInfo.value,
+                                        onSuccess = {
+                                            localAuthHelper.storePassword(
+                                                password = profileInfo.value,
+                                                refreshUser = true
+                                            )
+                                            if (passwordProperty.value != HIDE_PASSWORD)
+                                                passwordProperty.value = user.password
+                                        }
+                                    )
+                                }
                                 show.value = false
                             } else {
                                 coroutineScope.launch {
-                                    showSnack(coroutineScope, snackbarHostState, getString(Res.string.insert_a_correct) + " $item")
+                                    showSnack(
+                                        scope = coroutineScope,
+                                        snackbarHostState = snackbarHostState,
+                                        message = getString(Res.string.insert_a_correct) + " $item"
+                                    )
                                 }
                             }
                         },
@@ -134,7 +155,7 @@ private fun showEditProfilePopup(
  * No-any params required
  */
 @Composable
-fun showAddGroupPopup() {
+fun ShowAddGroupPopup() {
     val members = mutableStateListOf("")
     CreatePopup(
         height = 500.dp,
@@ -178,7 +199,7 @@ fun showAddGroupPopup() {
                                     if (checkMembersValidity(members)) {
                                         /*requester!!.execCreateGroup(groupName, groupDescription, members)
                                         if (requester!!.successResponse())
-                                            showAddGroupPopup.value = false
+                                            ShowAddGroupPopup.value = false
                                         else
                                             showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())*/
                                     }

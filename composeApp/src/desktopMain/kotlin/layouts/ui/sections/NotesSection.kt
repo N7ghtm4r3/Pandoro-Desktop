@@ -54,7 +54,6 @@ class NotesSection : Section() {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowSection() {
-        viewModel.setActiveContext(this::class.java)
         viewModel.refreshValues()
         myNotes = viewModel.notes.collectAsState().value
         var markModeEnabled by remember { mutableStateOf(false) }

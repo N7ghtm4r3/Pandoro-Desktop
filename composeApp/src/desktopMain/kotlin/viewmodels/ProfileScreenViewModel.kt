@@ -52,12 +52,10 @@ class ProfileScreenViewModel(
      *
      * @param newEmail: the new email of the user
      * @param onSuccess: the action to execute whether the request has been successful
-     * @param onFailure: the action to execute whether the request has been failed
      */
     fun changeEmail(
         newEmail: String,
-        onSuccess: () -> Unit,
-        onFailure: (JsonHelper) -> Unit
+        onSuccess: () -> Unit
     ) {
         requester.sendRequest(
             request = {
@@ -66,7 +64,7 @@ class ProfileScreenViewModel(
                 )
             },
             onSuccess = { onSuccess.invoke() },
-            onFailure = { onFailure.invoke(it) }
+            onFailure = { showSnack(it ) }
         )
     }
 
@@ -75,12 +73,10 @@ class ProfileScreenViewModel(
      *
      * @param newPassword: the new password of the user
      * @param onSuccess: the action to execute whether the request has been successful
-     * @param onFailure: the action to execute whether the request has been failed
      */
     fun changePassword(
         newPassword: String,
-        onSuccess: () -> Unit,
-        onFailure: (JsonHelper) -> Unit
+        onSuccess: () -> Unit
     ) {
         requester.sendRequest(
             request = {
@@ -89,7 +85,7 @@ class ProfileScreenViewModel(
                 )
             },
             onSuccess = { onSuccess.invoke() },
-            onFailure = { onFailure.invoke(it) }
+            onFailure = { showSnack(it) }
         )
     }
 

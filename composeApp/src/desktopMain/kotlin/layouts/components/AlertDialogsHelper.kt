@@ -2,6 +2,7 @@
 
 package layouts.components
 
+import Routes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,10 +25,13 @@ import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.PEND
 import helpers.BACKGROUND_COLOR
 import helpers.Logo
 import helpers.PRIMARY_COLOR
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
+import navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
+import viewmodels.ProfileScreenViewModel
 
 /**
  * Function to delete an update
@@ -340,10 +344,12 @@ fun PublishUpdate(
 /**
  * Function to show the dialog to change the language of the user
  *
+ * @param viewModel: the support view model to manage the requests to the backend
  * @param show: whether show the dialog or not
  */
 @Composable
 fun ChangeLanguage(
+    viewModel: ProfileScreenViewModel,
     show: MutableState<Boolean>
 ) {
     var selectedLanguage by remember { mutableStateOf(user.language) }
@@ -389,17 +395,17 @@ fun ChangeLanguage(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        /*requester!!.execChangeLanguage(
-                            newLanguage = selectedLanguage
+                        viewModel.changeLanguage(
+                            newLanguage = selectedLanguage,
+                            onSuccess = {
+                                localAuthHelper.storeLanguage(
+                                    language = selectedLanguage,
+                                    refreshUser = true
+                                )
+                                navigator.navigate(Routes.splashScreen.name)
+                            }
                         )
-                        if(requester!!.successResponse()) {
-                            localAuthHelper.storeLanguage(
-                                language = selectedLanguage,
-                                refreshUser = true
-                            )
-                            navigator.navigate(splashScreen.name)
-                        }
-                        show.value = false*/
+                        show.value = false
                     }
                 ) {
                     Text(

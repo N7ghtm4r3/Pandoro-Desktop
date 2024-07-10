@@ -2,16 +2,45 @@ package layouts.ui.sections
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import com.tecknobit.pandorocore.records.Changelog
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import com.tecknobit.equinox.environment.records.EquinoxUser.PROFILE_PIC_KEY
+import com.tecknobit.equinox.inputs.InputValidator.LANGUAGES_SUPPORTED
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.*
+import currentProfilePic
 import helpers.*
 import kotlinx.coroutines.flow.StateFlow
+import layouts.components.ChangeLanguage
+import layouts.components.DeleteGroup
+import layouts.ui.screens.Home
+import layouts.ui.screens.Home.Companion.changelogs
+import layouts.ui.screens.Home.Companion.showEditPasswordPopup
+import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
+import pandoro.composeapp.generated.resources.Res.string
+import viewmodels.ProfileScreenViewModel
 
 /**
  * This is the layout for the profile section
@@ -45,6 +74,10 @@ class ProfileSection : Section() {
         lateinit var passwordProperty: MutableState<String>
     }
 
+    private val viewModel = ProfileScreenViewModel(
+        snackbarHostState = snackbarHostState
+    )
+
     /**
      * Function to show the content of the [ProfileSection]
      *
@@ -53,7 +86,9 @@ class ProfileSection : Section() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun ShowSection() {
-        /*hideLeaveGroup = false
+        val myChangelogs = changelogs.collectAsState().value
+        val myGroups = groups.collectAsState().value
+        hideLeaveGroup = false
         passwordProperty = remember { mutableStateOf(HIDE_PASSWORD) }
         val showChangeLanguage = remember { mutableStateOf(false) }
         ShowSection {
@@ -134,14 +169,15 @@ class ProfileSection : Section() {
                                             ) { path ->
                                                 if (path != null) {
                                                     showFilePicker = false
-                                                    /*val response = requester!!.execChangeProfilePic(File(path.path))
-                                                    if (requester!!.successResponse()) {
-                                                        localAuthHelper.storeProfilePic(
-                                                            JsonHelper(response).getString(PROFILE_PIC_KEY),
-                                                            true
-                                                        )
-                                                    } else
-                                                        showSnack(requester!!.errorMessage())*/
+                                                    viewModel.changeProfilePic(
+                                                        imagePath = path.path,
+                                                        onSuccess = { response ->
+                                                            localAuthHelper.storeProfilePic(
+                                                                response.getString(PROFILE_PIC_KEY),
+                                                                true
+                                                            )
+                                                        }
+                                                    )
                                                 }
                                             }
                                         }
@@ -281,6 +317,7 @@ class ProfileSection : Section() {
                                                     }
                                                 }
                                                 ChangeLanguage(
+                                                    viewModel = viewModel,
                                                     show = showChangeLanguage
                                                 )
                                             }
@@ -310,13 +347,7 @@ class ProfileSection : Section() {
                                                         containerColor = RED_COLOR,
                                                         contentColor = Color.White
                                                     ),
-                                                    onClick = {
-                                                        /*requester!!.execDeleteAccount()
-                                                        if (requester!!.successResponse())
-                                                            localAuthHelper.logout()
-                                                        else
-                                                            showSnack(requester!!.errorMessage())*/
-                                                    }
+                                                    onClick = { viewModel.deleteAccount() }
                                                 ) {
                                                     Text(
                                                         text = stringResource(string.delete)
@@ -347,7 +378,7 @@ class ProfileSection : Section() {
                                         defaultElevation = 2.dp
                                     )
                                 ) {
-                                    if (changelogs.isEmpty()) {
+                                    if (myChangelogs.isEmpty()) {
                                         Column(
                                             modifier = Modifier.
                                                 fillMaxSize(),
@@ -362,7 +393,7 @@ class ProfileSection : Section() {
                                     } else {
                                         LazyColumn {
                                             items(
-                                                items = changelogs,
+                                                items = myChangelogs,
                                                 key = { changelog ->
                                                     changelog.id
                                                 }
@@ -400,7 +431,11 @@ class ProfileSection : Section() {
                                                                                 end = 5.dp
                                                                             )
                                                                             .size(10.dp)
-                                                                            .clickable { readChangelog(changelog) }
+                                                                            .clickable {
+                                                                                viewModel.readChangelog(
+                                                                                    changelog = changelog
+                                                                                )
+                                                                            }
                                                                     ) {
                                                                         Text(text = "")
                                                                     }
@@ -410,7 +445,9 @@ class ProfileSection : Section() {
                                                                         .clickable(
                                                                             enabled = !isRed
                                                                         ) {
-                                                                            readChangelog(changelog)
+                                                                            viewModel.readChangelog(
+                                                                                changelog = changelog
+                                                                            )
                                                                         },
                                                                     text = changelog.title,
                                                                     fontWeight = FontWeight.Bold
@@ -432,18 +469,9 @@ class ProfileSection : Section() {
                                                         ) {
                                                             IconButton(
                                                                 onClick = {
-                                                                    var groupId: String? = null
-                                                                    if (changelog.changelogEvent == INVITED_GROUP) {
-                                                                        val changelogGroup = changelog.group
-                                                                        if (changelogGroup != null)
-                                                                            groupId = changelogGroup.id
-                                                                    }
-                                                                    /*requester!!.execDeleteChangelog(
-                                                                        changelog.id,
-                                                                        groupId
+                                                                    viewModel.deleteChangelog(
+                                                                        changelog = changelog
                                                                     )
-                                                                    if (!requester!!.successResponse())
-                                                                        showSnack(requester!!.errorMessage())*/
                                                                 }
                                                             ) {
                                                                 Icon(
@@ -463,7 +491,7 @@ class ProfileSection : Section() {
                             }
                         }
                         val itemHeight = 95.dp
-                        if (groups.isNotEmpty()) {
+                        if (myGroups.isNotEmpty()) {
                             Column(
                                 modifier = Modifier
                                     .padding(
@@ -484,11 +512,11 @@ class ProfileSection : Section() {
                                         .padding(
                                             top = 10.dp
                                         ),
-                                    text = stringResource(string.groups_number) + " ${groups.size}",
+                                    text = stringResource(string.groups_number) + " ${myGroups.size}",
                                     fontSize = 14.sp
                                 )
                                 spaceContent()
-                                var units = groups.size
+                                var units = myGroups.size
                                 if (units < 4)
                                     units = 4
                                 LazyVerticalGrid(
@@ -502,7 +530,7 @@ class ProfileSection : Section() {
                                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                                 ) {
                                     items(
-                                        items = groups,
+                                        items = myGroups,
                                         key = { group ->
                                             group.id
                                         }
@@ -609,7 +637,7 @@ class ProfileSection : Section() {
                     }
                 }
             }
-        }*/
+        }
     }
 
     /**
@@ -623,17 +651,6 @@ class ProfileSection : Section() {
             HIDE_PASSWORD
         else
             user.password
-    }
-
-    /**
-     * Function to read a changelog
-     *
-     * @param changelog: the changelog to read
-     */
-    private fun readChangelog(changelog: Changelog) {
-        /*requester!!.execReadChangelog(changelog.id)
-        if (!requester!!.successResponse())
-            showSnack(requester!!.errorMessage())*/
     }
 
 }
