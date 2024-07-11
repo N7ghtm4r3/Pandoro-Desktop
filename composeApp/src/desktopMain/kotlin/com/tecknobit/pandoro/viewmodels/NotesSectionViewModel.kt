@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
  * @see ViewModel
  * @see FetcherManagerWrapper
  */
-//TODO: TO COMMENT
 class NotesSectionViewModel(
     override var snackbarHostState: SnackbarHostState?
 ): PandoroViewModel(
@@ -32,6 +31,11 @@ class NotesSectionViewModel(
     private val _notes = MutableStateFlow<MutableList<Note>>(mutableListOf())
     val notes: StateFlow<MutableList<Note>> = _notes
 
+    /**
+     * Function to execute the request to refresh the [_notes] list
+     *
+     * No-any params required
+     */
     fun refreshValues() {
         execRefreshingRoutine(
             currentContext = Home::class.java,

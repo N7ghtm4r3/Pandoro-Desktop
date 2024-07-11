@@ -49,9 +49,11 @@ import kotlin.math.ceil
  * @author Tecknobit - N7ghtm4r3
  * @see Section
  */
-//TODO TO COMMENT
 class GroupSection : Section() {
-    
+
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel by lazy { 
         GroupSectionViewModel(
             initialGroup = currentGroup.value,
@@ -59,6 +61,9 @@ class GroupSection : Section() {
         )
     }
 
+    /**
+     * *group* -> the current group displayed
+     */
     private lateinit var group: Group
     
     /**

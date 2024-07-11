@@ -41,11 +41,17 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
 
+/**
+ * *viewModel* -> the support view model to manage the requests to the backend
+ */
 private val viewModel = ProjectSectionViewModel(
     initialProject = currentProject.value,
     snackbarHostState = snackbarHostState
 )
 
+/**
+ * *groupViewModel* -> the support view model to manage the requests to the backend
+ */
 private val groupViewModel = GroupSectionViewModel(
     initialGroup = currentGroup.value,
     snackbarHostState = Section.snackbarHostState

@@ -36,7 +36,6 @@ import pandoro.composeapp.generated.resources.*
  * @author Tecknobit - N7ghtm4r3
  * @see Section
  */
-//TODO: TO COMMENT
 @OptIn(ExperimentalResourceApi::class)
 class ProjectsSection(
     val viewModel: HomeScreenViewModel

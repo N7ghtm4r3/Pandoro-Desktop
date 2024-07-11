@@ -34,6 +34,9 @@ import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
 
+/**
+ * *viewModel* -> the support view model to manage the requests to the backend
+ */
 private val viewModel = ProfileSectionViewModel(
     snackbarHostState = snackbarHostState
 )

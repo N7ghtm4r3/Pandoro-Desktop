@@ -70,7 +70,6 @@ class ProfileSectionViewModel(
      * @param newEmail: the new email of the user
      * @param onSuccess: the action to execute whether the request has been successful
      */
-    //TODO: TO FIX
     fun changeEmail(
         newEmail: String,
         onSuccess: () -> Unit

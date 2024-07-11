@@ -57,9 +57,11 @@ import java.awt.datatransfer.StringSelection
  * @see Section
  * @see SingleItemManager
  */
-//TODO: TO COMMENT
 class ProjectSection : Section() {
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel by lazy {
         ProjectSectionViewModel(
             initialProject = currentProject.value,
@@ -67,6 +69,9 @@ class ProjectSection : Section() {
         )
     }
 
+    /**
+     * *project* -> the project group displayed
+     */
     private lateinit var project: Project
 
     /**

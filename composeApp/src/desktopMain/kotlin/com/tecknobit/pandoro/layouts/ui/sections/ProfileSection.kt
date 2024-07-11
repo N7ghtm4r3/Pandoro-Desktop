@@ -77,6 +77,9 @@ class ProfileSection : Section() {
         lateinit var passwordProperty: MutableState<String>
     }
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel = ProfileSectionViewModel(
         snackbarHostState = snackbarHostState
     )

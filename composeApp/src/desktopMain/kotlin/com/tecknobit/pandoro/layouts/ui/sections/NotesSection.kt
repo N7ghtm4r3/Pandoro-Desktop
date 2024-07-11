@@ -42,6 +42,9 @@ class NotesSection : Section() {
 
     private lateinit var myNotes: List<Note>
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel = NotesSectionViewModel(
         snackbarHostState = snackbarHostState
     )

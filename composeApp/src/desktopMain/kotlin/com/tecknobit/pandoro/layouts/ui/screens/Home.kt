@@ -54,7 +54,6 @@ import java.util.*
  * @author Tecknobit - N7ghtm4r3
  * @see UIScreen
  */
-//TODO: TO COMMENT
 @OptIn(ExperimentalResourceApi::class)
 class Home : UIScreen() {
 
@@ -181,6 +180,9 @@ class Home : UIScreen() {
         snackbarHostState = snackbarHostState
     )
 
+    /**
+     * **myChangelogs** -> list of [Changelog] as changelogs for the [User]
+     */
     private lateinit var myChangelogs: List<Changelog>
 
     /**
@@ -342,6 +344,11 @@ class Home : UIScreen() {
         }
     }
 
+    /**
+     * Function to set and init the view for the dedicated section
+     *
+     * @param section: the section to display
+     */
     @Composable
     private fun SetSection(
         section: Section
