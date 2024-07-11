@@ -25,9 +25,9 @@ import layouts.components.PandoroTextField
 import layouts.components.popups.CreatePopup
 import layouts.components.popups.coroutineScope
 import layouts.components.popups.snackbarHostState
-import layouts.ui.screens.Home.Companion.currentProject
-import layouts.ui.screens.Home.Companion.showCreateNotePopup
-import layouts.ui.screens.Home.Companion.showNoteInfoPopup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentProject
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showCreateNotePopup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*

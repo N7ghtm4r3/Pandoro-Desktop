@@ -182,19 +182,21 @@ fun Logo(
     size: Dp = 45.dp,
     url: String
 ) {
-    var iUrl = url
-    if (!iUrl.startsWith(localAuthHelper.host!!))
-        iUrl = localAuthHelper.host + "/$url"
-    AsyncImage(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape),
-        imageLoader = imageLoader,
-        model = ImageRequest.Builder(LocalPlatformContext.current)
-            .data(iUrl)
-            .crossfade(true)
-            .build(),
-        contentDescription = null,
-        contentScale = ContentScale.Crop
-    )
+    if(localAuthHelper.host != null) {
+        var iUrl = url
+        if (!iUrl.startsWith(localAuthHelper.host!!))
+            iUrl = localAuthHelper.host + "/$url"
+        AsyncImage(
+            modifier = modifier
+                .size(size)
+                .clip(CircleShape),
+            imageLoader = imageLoader,
+            model = ImageRequest.Builder(LocalPlatformContext.current)
+                .data(iUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+    }
 }

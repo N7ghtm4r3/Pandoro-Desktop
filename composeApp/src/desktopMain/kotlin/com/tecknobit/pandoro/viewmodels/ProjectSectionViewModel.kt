@@ -10,7 +10,7 @@ import com.tecknobit.pandorocore.records.Project
 import com.tecknobit.pandorocore.records.ProjectUpdate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import layouts.ui.sections.ProjectSection
+import com.tecknobit.pandoro.layouts.ui.sections.ProjectSection
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.insert_a_correct_target_version

@@ -149,4 +149,5 @@
     <string name="total_change_notes">Notes sur les changements totaux :</string>
     <string name="language">Langue</string>
     <string name="change_language">Changer de langue</string>
+    <string name="server_currently_offline">Le serveur est actuellement hors ligne</string>
 </resources>

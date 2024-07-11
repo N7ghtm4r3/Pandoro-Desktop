@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -28,6 +28,11 @@ import com.tecknobit.pandoro.helpers.*
 import com.tecknobit.pandoro.layouts.components.DeleteUpdate
 import com.tecknobit.pandoro.layouts.components.PublishUpdate
 import com.tecknobit.pandoro.layouts.components.popups.clipboard
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentNote
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentProject
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentUpdate
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showCreateNotePopup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import com.tecknobit.pandoro.viewmodels.ProjectSectionViewModel
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.areAllChangeNotesDone
 import com.tecknobit.pandorocore.records.Note
@@ -40,11 +45,6 @@ import com.tecknobit.pandorocore.records.ProjectUpdate.Status.SCHEDULED
 import com.tecknobit.pandorocore.ui.SingleItemManager
 import com.tecknobit.pandorocore.ui.formatNotesAsMarkdown
 import layouts.components.showProjectChart
-import layouts.ui.screens.Home.Companion.currentNote
-import layouts.ui.screens.Home.Companion.currentProject
-import layouts.ui.screens.Home.Companion.currentUpdate
-import layouts.ui.screens.Home.Companion.showCreateNotePopup
-import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -66,9 +66,9 @@ class ProjectSection : Section() {
             snackbarHostState = snackbarHostState
         )
     }
-    
+
     private lateinit var project: Project
-    
+
     /**
      * Function to show the content of the [ProjectSection]
      *
@@ -80,8 +80,8 @@ class ProjectSection : Section() {
         viewModel.setActiveContext(this::class.java)
         var isGitHub = false
         var hasGroup = currentProject.value.hasGroups()
-        viewModel.refreshProject { 
-           hasGroup = project.hasGroups() 
+        viewModel.refreshProject {
+           hasGroup = project.hasGroups()
         }
         project = viewModel.project.collectAsState().value
         ShowSection {

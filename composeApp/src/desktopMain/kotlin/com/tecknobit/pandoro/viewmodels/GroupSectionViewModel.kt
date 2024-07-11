@@ -1,7 +1,9 @@
 package com.tecknobit.pandoro.viewmodels
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.MutableState
 import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
+import com.tecknobit.pandoro.layouts.ui.sections.GroupSection
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember
 import com.tecknobit.pandorocore.records.users.GroupMember.Role
@@ -9,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * The **GroupActivityViewModel** class is the support class used by the [GroupActivity]
+ * The **GroupSectionViewModel** class is the support class used by the [GroupSection]
  * to refresh the group displayed and to manage it
  *
  * @param initialGroup: the initial value of the project displayed
@@ -20,7 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @see ViewModel
  * @see FetcherManagerWrapper
  */
-class GroupActivityViewModel(
+class GroupSectionViewModel(
     val initialGroup: Group,
     override var snackbarHostState: SnackbarHostState?
 ): PandoroViewModel(
@@ -58,8 +60,8 @@ class GroupActivityViewModel(
     fun refreshGroup(
         onSuccess: () -> Unit
     ) {
-        /*execRefreshingRoutine(
-            currentContext = GroupActivity::class.java,
+        execRefreshingRoutine(
+            currentContext = GroupSection::class.java,
             routine = {
                 isRefreshing = true
                 requester.sendRequest(
@@ -77,7 +79,7 @@ class GroupActivityViewModel(
                     onFailure = { showSnack(it) }
                 )
             }
-        )*/
+        )
     }
 
     /**
@@ -85,12 +87,10 @@ class GroupActivityViewModel(
      *
      * @param members: the list of the new members to add
      * @param onSuccess: the action to execute whether the request has been successful
-     * @param onFailure: the action to execute whether the request has been failed
      */
     fun addMembers(
         members: List<String>,
-        onSuccess: () -> Unit,
-        onFailure: (String) -> Unit,
+        onSuccess: () -> Unit
     ) {
         requester.sendRequest(
             request = {
@@ -100,9 +100,7 @@ class GroupActivityViewModel(
                 )
             },
             onSuccess = { onSuccess.invoke() },
-            onFailure = {
-                onFailure.invoke(it.getString(RESPONSE_MESSAGE_KEY))
-            }
+            onFailure = { showSnack(it) }
         )
     }
 
@@ -133,10 +131,12 @@ class GroupActivityViewModel(
      *
      * @param member: the member to change its role
      * @param role: the new role of the user
+     * @param onSuccess: the action to execute whether the request has been successful
      */
     fun changeMemberRole(
         member: GroupMember,
-        role: Role
+        role: Role,
+        onSuccess: () -> Unit
     ) {
         requester.sendRequest(
             request = {
@@ -146,8 +146,85 @@ class GroupActivityViewModel(
                     role = role
                 )
             },
-            onSuccess = {},
+            onSuccess = { onSuccess.invoke() },
             onFailure = { showSnack(it) }
+        )
+    }
+
+    /**
+     * Function to execute the request to remove a member from a group
+     *
+     * @param show: whether show the dialog for the member removal
+     * @param onSuccess: the action to execute whether the request has been successful
+     * @param group: the group from remove that member
+     * @param memberId: the member identifier to remove
+     */
+    fun removeMember(
+        show: MutableState<Boolean>,
+        onSuccess: () -> Unit,
+        group: Group,
+        memberId: String
+    ) {
+        requester.sendRequest(
+            request = {
+                requester.removeMember(
+                    groupId = group.id,
+                    memberId = memberId
+                )
+            },
+            onSuccess = { onSuccess.invoke() },
+            onFailure = {
+                showSnack(it)
+                show.value = false
+            }
+        )
+    }
+
+    /**
+     * Function to execute the request to leave from a group
+     *
+     * @param group: the group from leave
+     * @param nextAdmin: the next admin choose by the admin is leaving
+     * @param onSuccess: the action to execute whether the request has been successful
+     */
+    fun leaveFromGroup(
+        group: Group,
+        nextAdmin: GroupMember?,
+        onSuccess: () -> Unit
+    ) {
+        requester.sendRequest(
+            request = {
+                requester.leaveGroup(
+                    groupId = group.id,
+                    nextAdminId = nextAdmin?.id
+                )
+            },
+            onSuccess = { onSuccess.invoke() },
+            onFailure = { showSnack(it) }
+        )
+    }
+
+    /**
+     * Function to execute the request to delete a group
+     *
+     * @param show: whether show the dialog for the group deletion
+     * @param group: the group to delete
+     */
+    fun deleteGroup(
+        group: Group,
+        onSuccess: () -> Unit
+    ) {
+        requester.sendRequest(
+            request = {
+                requester.deleteGroup(
+                    groupId = group.id,
+                )
+            },
+            onSuccess = { onSuccess.invoke() },
+            onFailure = {
+                onSuccess.invoke()
+                showSnack(it)
+            }
         )
     }
 

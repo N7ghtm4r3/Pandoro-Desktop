@@ -27,8 +27,8 @@ import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidVersio
 import layouts.components.PandoroTextField
 import layouts.components.popups.CreatePopup
 import layouts.components.popups.snackbarHostState
-import layouts.ui.screens.Home.Companion.currentProject
-import layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentProject
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showScheduleUpdatePopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*

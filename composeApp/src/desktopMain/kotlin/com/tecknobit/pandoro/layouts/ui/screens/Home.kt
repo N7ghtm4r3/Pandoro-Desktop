@@ -1,4 +1,4 @@
-package layouts.ui.screens
+package com.tecknobit.pandoro.layouts.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +22,9 @@ import com.tecknobit.pandoro.helpers.GREEN_COLOR
 import com.tecknobit.pandoro.helpers.RED_COLOR
 import com.tecknobit.pandoro.helpers.spaceContent
 import com.tecknobit.pandoro.layouts.components.popups.*
+import com.tecknobit.pandoro.layouts.ui.sections.*
+import com.tecknobit.pandoro.layouts.ui.sections.Section.*
+import com.tecknobit.pandoro.layouts.ui.sections.Section.Sections.*
 import com.tecknobit.pandoro.layouts.ui.theme.PrimaryLight
 import com.tecknobit.pandoro.viewmodels.HomeScreenViewModel
 import com.tecknobit.pandoro.viewmodels.ProfileSectionViewModel
@@ -29,21 +33,19 @@ import com.tecknobit.pandorocore.records.Changelog.ChangelogEvent.INVITED_GROUP
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Note
 import com.tecknobit.pandorocore.records.ProjectUpdate
-import com.tecknobit.pandorocore.ui.ListManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.StateFlow
 import layouts.components.Sidebar
 import layouts.components.Sidebar.Companion.SIDEBAR_WIDTH
 import layouts.components.popups.*
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.*
-import layouts.ui.sections.Section.*
-import layouts.ui.sections.Section.Sections.*
+import layouts.ui.screens.UIScreen
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res
 import pandoro.composeapp.generated.resources.decline
 import pandoro.composeapp.generated.resources.join
+import pandoro.composeapp.generated.resources.server_currently_offline
 import java.util.*
 
 /**
@@ -51,7 +53,6 @@ import java.util.*
  *
  * @author Tecknobit - N7ghtm4r3
  * @see UIScreen
- * @see ListManager
  */
 //TODO: TO COMMENT
 @OptIn(ExperimentalResourceApi::class)
@@ -139,22 +140,19 @@ class Home : UIScreen() {
          */
         lateinit var currentGroup: MutableState<Group>
 
+        /**
+         * *viewModel* -> the support view model to manage the requests to the backend
+         */
+        val viewModel = HomeScreenViewModel()
+
     }
 
     /**
      * **projects** -> instance to show the [ProjectsSection]
      */
-    private val projects = ProjectsSection()
-
-    /**
-     * **project** -> instance to show the [ProjectSection]
-     */
-    private val project = ProjectSection()
-
-    /**
-     * **group** -> instance to show the [GroupSection]
-     */
-    private val group = GroupSection()
+    private val projects = ProjectsSection(
+        viewModel = viewModel
+    )
 
     /**
      * **notes** -> instance to show the [NotesSection]
@@ -170,11 +168,6 @@ class Home : UIScreen() {
      * **profile** -> instance to show the [Profile]
      */
     private val profile = ProfileSection()
-
-    /**
-     * *viewModel* -> the support view model to manage the requests to the backend
-     */
-    private val viewModel = HomeScreenViewModel()
 
     /**
      * *snackbarHostState* -> the host to launch the snackbar messages
@@ -198,8 +191,6 @@ class Home : UIScreen() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun ShowScreen() {
-        viewModel.setActiveContext(this::class.java)
-        viewModel.refreshValues()
         myChangelogs = changelogs.collectAsState().value
         currentProject = remember { mutableStateOf(com.tecknobit.pandorocore.records.Project()) }
         currentGroup = remember { mutableStateOf(Group()) }
@@ -213,6 +204,7 @@ class Home : UIScreen() {
         showEditEmailPopup = remember { mutableStateOf(false) }
         showEditPasswordPopup = remember { mutableStateOf(false) }
         showAddGroupPopup = remember { mutableStateOf(false) }
+        val isServerOffline = viewModel.isServerOffline.collectAsState().value
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -228,25 +220,26 @@ class Home : UIScreen() {
                 )
              },
             floatingActionButton = {
-                var showNotifies = false
-                changelogs.value.forEach { changelog ->
-                    if (!changelog.isRed) {
-                        showNotifies = true
-                        return@forEach
-                    }
-                }
-                //TODO: TO FIX BECAUSE IS NOT SHOWN
-                if (showNotifies && activeScreen.value != Profile)
-                    ShowNotifies()
-                else {
-                    when (activeScreen.value) {
-                        Projects, Project, Notes, Profile -> CreateFab()
-                        Group -> {
-                            if (currentGroup.value.isUserMaintainer(user))
-                                CreateFab()
+                if(!isServerOffline) {
+                    var showNotifies = false
+                    changelogs.value.forEach { changelog ->
+                        if (!changelog.isRed) {
+                            showNotifies = true
+                            return@forEach
                         }
+                    }
+                    if (showNotifies && activeScreen.value != Profile)
+                        ShowNotifies()
+                    else {
+                        when (activeScreen.value) {
+                            Projects, Project, Notes, Profile -> CreateFab()
+                            Group -> {
+                                if (currentGroup.value.isUserMaintainer(user))
+                                    CreateFab()
+                            }
 
-                        else -> {}
+                            else -> {}
+                        }
                     }
                 }
             }
@@ -270,13 +263,39 @@ class Home : UIScreen() {
                             .padding(20.dp)
                             .background(BACKGROUND_COLOR)
                     ) {
-                        when (activeScreen.value) {
-                            Projects -> projects.ShowSection()
-                            Notes -> notes.ShowSection()
-                            Overview -> overview.ShowSection()
-                            Profile -> profile.ShowSection()
-                            Project -> project.ShowSection()
-                            Group -> group.ShowSection()
+                        if(isServerOffline)
+                            ServerOfflineUI()
+                        else {
+                            when (activeScreen.value) {
+                                Projects -> {
+                                    SetSection(
+                                        section = projects
+                                    )
+                                }
+                                Notes -> {
+                                    SetSection(
+                                        section = notes
+                                    )
+                                }
+                                Overview -> {
+                                    SetSection(
+                                        section = overview
+                                    )
+                                }
+                                Profile -> {
+                                    SetSection(
+                                        section = profile
+                                    )
+                                }
+                                Project -> {
+                                    viewModel.suspendRefresher()
+                                    ProjectSection().ShowSection()
+                                }
+                                Group -> {
+                                    viewModel.suspendRefresher()
+                                    GroupSection().ShowSection()
+                                }
+                            }
                         }
                     }
                 }
@@ -295,6 +314,41 @@ class Home : UIScreen() {
             ShowEditPasswordPopup()
             ShowAddGroupPopup()
         }
+    }
+
+    /**
+     * Function to display the layout if the server is currently offline
+     *
+     * No-any params required
+     */
+    @Composable
+    private fun ServerOfflineUI() {
+        Column (
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(150.dp),
+                imageVector = Icons.Default.Warning,
+                contentDescription = null,
+                tint = Color.Black
+            )
+            Text(
+                text = stringResource(Res.string.server_currently_offline),
+            )
+        }
+    }
+
+    @Composable
+    private fun SetSection(
+        section: Section
+    ) {
+        viewModel.setActiveContext(Home::class.java)
+        viewModel.refreshValues()
+        section.ShowSection()
     }
 
     /**

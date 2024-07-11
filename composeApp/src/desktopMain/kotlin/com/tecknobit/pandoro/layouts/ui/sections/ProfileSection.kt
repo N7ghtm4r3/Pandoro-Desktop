@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -30,14 +30,14 @@ import com.tecknobit.pandoro.helpers.RED_COLOR
 import com.tecknobit.pandoro.helpers.spaceContent
 import com.tecknobit.pandoro.layouts.components.ChangeLanguage
 import com.tecknobit.pandoro.layouts.components.DeleteGroup
+import com.tecknobit.pandoro.layouts.ui.screens.Home
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.changelogs
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import com.tecknobit.pandoro.viewmodels.ProfileSectionViewModel
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.*
 import currentProfilePic
 import kotlinx.coroutines.flow.StateFlow
-import layouts.ui.screens.Home
-import layouts.ui.screens.Home.Companion.changelogs
-import layouts.ui.screens.Home.Companion.showEditPasswordPopup
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -597,7 +597,11 @@ class ProfileSection : Section() {
                                                     val showDeleteDialog = mutableStateOf(false)
                                                     DeleteGroup(
                                                         show = showDeleteDialog,
-                                                        group = group
+                                                        group = group,
+                                                        onDismissRequest = {
+                                                            showDeleteDialog.value = false
+                                                            Home.viewModel.restartRefresher()
+                                                        }
                                                     )
                                                     Column (
                                                         modifier = Modifier
@@ -605,7 +609,10 @@ class ProfileSection : Section() {
                                                         horizontalAlignment = Alignment.End
                                                     ) {
                                                         IconButton(
-                                                            onClick = { showDeleteDialog.value = true }
+                                                            onClick = {
+                                                                Home.viewModel.suspendRefresher()
+                                                                showDeleteDialog.value = true
+                                                            }
                                                         ) {
                                                             Icon(
                                                                 modifier = Modifier

@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,17 +25,19 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.*
+import com.tecknobit.pandoro.layouts.components.LeaveGroup
+import com.tecknobit.pandoro.layouts.components.RemoveUser
+import com.tecknobit.pandoro.layouts.ui.screens.Home
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentGroup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
+import com.tecknobit.pandoro.layouts.ui.sections.ProfileSection.Companion.hideLeaveGroup
+import com.tecknobit.pandoro.viewmodels.GroupSectionViewModel
+import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.users.GroupMember
 import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.PENDING
 import com.tecknobit.pandorocore.records.users.GroupMember.Role
 import com.tecknobit.pandorocore.records.users.GroupMember.Role.ADMIN
-import com.tecknobit.pandorocore.ui.SingleItemManager
-import com.tecknobit.pandoro.layouts.components.LeaveGroup
-import com.tecknobit.pandoro.layouts.components.RemoveUser
-import layouts.ui.screens.Home.Companion.currentGroup
-import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.ProfileSection.Companion.hideLeaveGroup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -46,10 +48,19 @@ import kotlin.math.ceil
  *
  * @author Tecknobit - N7ghtm4r3
  * @see Section
- * @see SingleItemManager
  */
-class GroupSection : Section(), SingleItemManager {
+//TODO TO COMMENT
+class GroupSection : Section() {
+    
+    private val viewModel by lazy { 
+        GroupSectionViewModel(
+            initialGroup = currentGroup.value,
+            snackbarHostState = snackbarHostState
+        )
+    }
 
+    private lateinit var group: Group
+    
     /**
      * Function to show the content of the [GroupSection]
      *
@@ -58,10 +69,13 @@ class GroupSection : Section(), SingleItemManager {
     @OptIn(ExperimentalFoundationApi::class, ExperimentalResourceApi::class)
     @Composable
     override fun ShowSection() {
-        val isCurrentUserAnAdmin = currentGroup.value.isUserAdmin(user)
-        val authorId = currentGroup.value.author.id
-        val isCurrentUserAMaintainer = currentGroup.value.isUserMaintainer(user)
-        refreshItem()
+        val userProjects = Home.viewModel.projects.collectAsState().value
+        group = viewModel.group.collectAsState().value
+        val isCurrentUserAnAdmin = group.isUserAdmin(user)
+        val authorId = group.author.id
+        val isCurrentUserAMaintainer = group.isUserMaintainer(user)
+        viewModel.setActiveContext(this::class.java)
+        viewModel.refreshGroup {}
         ShowSection {
             LazyColumn(
                 modifier = Modifier
@@ -87,7 +101,7 @@ class GroupSection : Section(), SingleItemManager {
                             )
                         }
                         Text(
-                            text = currentGroup.value.name,
+                            text = group.name,
                             fontSize = 25.sp
                         )
                     }
@@ -105,7 +119,7 @@ class GroupSection : Section(), SingleItemManager {
                                 .padding(
                                     top = 5.dp
                                 ),
-                            text = stringResource(Res.string.author) + " ${currentGroup.value.author.completeName}",
+                            text = stringResource(Res.string.author) + " ${group.author.completeName}",
                             textAlign = TextAlign.Justify,
                             fontSize = 20.sp
                         )
@@ -114,7 +128,7 @@ class GroupSection : Section(), SingleItemManager {
                                 .padding(
                                     top = 5.dp
                                 ),
-                            text = currentGroup.value.description,
+                            text = group.description,
                             textAlign = TextAlign.Justify,
                             fontSize = 14.sp
                         )
@@ -151,7 +165,7 @@ class GroupSection : Section(), SingleItemManager {
                         }
                         if (showMembersSection) {
                             val members = mutableListOf<GroupMember>()
-                            members.addAll(currentGroup.value.members)
+                            members.addAll(group.members)
                             if (!isCurrentUserAMaintainer) {
                                 val membersToHide = mutableListOf<GroupMember>()
                                 members.forEach { member ->
@@ -221,13 +235,6 @@ class GroupSection : Section(), SingleItemManager {
                                                     Logo(
                                                         url = member.profilePic
                                                     )
-                                                    /*
-                                                    Image(
-                                                        modifier = Modifier.size(45.dp).clip(CircleShape),
-                                                        bitmap = loadImageBitmap(member.profilePic),
-                                                        contentDescription = null,
-                                                        contentScale = ContentScale.Crop
-                                                    )*/
                                                     Text(
                                                         modifier = Modifier
                                                             .padding(
@@ -257,15 +264,13 @@ class GroupSection : Section(), SingleItemManager {
                                                             Role.entries.forEach { role ->
                                                                 DropdownMenuItem(
                                                                     onClick = {
-                                                                        /*requester!!.execChangeMemberRole(
-                                                                            currentGroup.value.id,
-                                                                            member.id,
-                                                                            role
+                                                                        viewModel.changeMemberRole(
+                                                                            member = member,
+                                                                            role = role,
+                                                                            onSuccess = {
+                                                                                showRoleMenu = false
+                                                                            }
                                                                         )
-                                                                        if (requester!!.successResponse())
-                                                                            showRoleMenu = false
-                                                                        else
-                                                                            showSnack(requester!!.errorMessage())*/
                                                                     },
                                                                     text = {
                                                                         Text(
@@ -307,7 +312,10 @@ class GroupSection : Section(), SingleItemManager {
                                                                 horizontalAlignment = Alignment.End
                                                             ) {
                                                                 IconButton(
-                                                                    onClick = { showRemoveDialog.value = true }
+                                                                    onClick = {
+                                                                        viewModel.suspendRefresher()
+                                                                        showRemoveDialog.value = true
+                                                                    }
                                                                 ) {
                                                                     Icon(
                                                                         imageVector = Icons.Default.GroupRemove,
@@ -318,8 +326,12 @@ class GroupSection : Section(), SingleItemManager {
                                                         }
                                                         RemoveUser(
                                                             show = showRemoveDialog,
-                                                            group = currentGroup.value,
-                                                            memberId = member.id
+                                                            group = group,
+                                                            memberId = member.id,
+                                                            onDismissRequest = {
+                                                                showRemoveDialog.value = false
+                                                                viewModel.restartRefresher()
+                                                            }
                                                         )
                                                     }
                                                 }
@@ -330,7 +342,7 @@ class GroupSection : Section(), SingleItemManager {
                             }
                         }
                         spaceContent()
-                        val projects = currentGroup.value.projects
+                        val projects = group.projects
                         val areProjectsEmpty = projects.isEmpty()
                         if (!areProjectsEmpty || isCurrentUserAnAdmin) {
                             var showProjectsSection by remember { mutableStateOf(true) }
@@ -362,7 +374,7 @@ class GroupSection : Section(), SingleItemManager {
                                         contentDescription = null
                                     )
                                 }
-                                if (showProjectsSection && isCurrentUserAnAdmin && user.projects.isNotEmpty()) {
+                                if (showProjectsSection && isCurrentUserAnAdmin && userProjects.isNotEmpty()) {
                                     IconButton(
                                         onClick = { showEditProjectGroupPopup.value = true }
                                     ) {
@@ -466,7 +478,10 @@ class GroupSection : Section(), SingleItemManager {
                             TextButton(
                                 modifier = Modifier
                                     .fillMaxSize(),
-                                onClick = { showLeaveDialog.value = true }
+                                onClick = {
+                                    viewModel.suspendRefresher()
+                                    showLeaveDialog.value = true
+                                }
                             ) {
                                 Text(
                                     modifier = Modifier
@@ -479,34 +494,16 @@ class GroupSection : Section(), SingleItemManager {
                         }
                         LeaveGroup(
                             show = showLeaveDialog,
-                            group = currentGroup.value,
+                            group = group,
+                            onDismissRequest = {
+                                showLeaveDialog.value = false
+                                viewModel.restartRefresher()
+                            }
                         )
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Function to refresh an item to display in the UI
-     *
-     * No-any params required
-     */
-    override fun refreshItem() {
-        /*CoroutineScope(Dispatchers.Default).launch {
-            while (user.id != null && activeScreen.value == Sections.Group) {
-                try {
-                    val response = requester!!.execGetSingleGroup(currentGroup.value.id)
-                    if (requester!!.successResponse()) {
-                        val tmpGroup = Group(response)
-                        if (needToRefresh(currentGroup.value, tmpGroup))
-                            currentGroup.value = tmpGroup
-                    }
-                } catch (_: JSONException) {
-                }
-                delay(1000)
-            }
-        }*/
     }
 
 }

@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,11 +21,11 @@ import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
 import com.tecknobit.pandoro.helpers.RED_COLOR
 import com.tecknobit.pandoro.helpers.spaceContent
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentNote
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentUpdate
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import com.tecknobit.pandoro.viewmodels.NotesSectionViewModel
 import com.tecknobit.pandorocore.records.Note
-import layouts.ui.screens.Home.Companion.currentNote
-import layouts.ui.screens.Home.Companion.currentUpdate
-import layouts.ui.screens.Home.Companion.showNoteInfoPopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res

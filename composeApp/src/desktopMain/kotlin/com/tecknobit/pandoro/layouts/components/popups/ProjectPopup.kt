@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showAddProjectPopup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showEditPopup
 import com.tecknobit.pandoro.viewmodels.HomeScreenViewModel
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectDescription
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectName
@@ -29,8 +31,6 @@ import com.tecknobit.pandorocore.records.Project
 import layouts.components.PandoroTextField
 import layouts.components.popups.CreatePopup
 import layouts.components.popups.snackbarHostState
-import layouts.ui.screens.Home.Companion.showAddProjectPopup
-import layouts.ui.screens.Home.Companion.showEditPopup
 import layouts.ui.screens.SplashScreen.Companion.user
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
@@ -78,8 +78,13 @@ private fun ShowProjectPopup(title: String, buttonText: String, flag: MutableSta
     viewModel.version = remember { mutableStateOf(if (project != null) project.version else "") }
     viewModel.projectRepository = remember { mutableStateOf(if (project != null) project.projectRepo else "") }
     viewModel.projectGroups = remember { mutableListOf() }
-    if (project != null)
-        viewModel.projectGroups.addAll(project.groups)
+    var loaded by remember { mutableStateOf(false) }
+    if (project != null) {
+        if(!loaded) {
+            viewModel.projectGroups.addAll(project.groups.map { group -> group.id })
+            loaded = true
+        }
+    }
     CreatePopup(
         height = if (user.adminGroups.isNotEmpty())
             665.dp
@@ -156,7 +161,7 @@ private fun ShowProjectPopup(title: String, buttonText: String, flag: MutableSta
                             group.id
                         }
                     ) { group ->
-                        var selected by remember { mutableStateOf(viewModel.projectGroups.contains(group)) }
+                        var selected by remember { mutableStateOf(viewModel.projectGroups.contains(group.id)) }
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -169,9 +174,9 @@ private fun ShowProjectPopup(title: String, buttonText: String, flag: MutableSta
                                 onCheckedChange = {
                                     selected = it
                                     if (it)
-                                        viewModel.projectGroups.add(group)
+                                        viewModel.projectGroups.add(group.id)
                                     else
-                                        viewModel.projectGroups.remove(group)
+                                        viewModel.projectGroups.remove(group.id)
                                 }
                             )
                             Text(

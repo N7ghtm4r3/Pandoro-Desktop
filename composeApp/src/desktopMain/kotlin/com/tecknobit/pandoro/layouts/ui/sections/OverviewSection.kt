@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +8,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +20,7 @@ import com.netguru.multiplatform.charts.pie.PieChart
 import com.tecknobit.apimanager.trading.TradingTools.computeProportion
 import com.tecknobit.equinox.environment.records.EquinoxUser
 import com.tecknobit.pandoro.helpers.*
+import com.tecknobit.pandoro.layouts.ui.screens.Home
 import com.tecknobit.pandorocore.records.Project
 import com.tecknobit.pandorocore.records.ProjectUpdate.Status
 import com.tecknobit.pandorocore.records.ProjectUpdate.Status.*
@@ -44,6 +46,8 @@ class OverviewSection : Section() {
      */
     private lateinit var overviewUIHelper: OverviewUIHelper
 
+    private lateinit var projects: List<Project>
+
     /**
      * Function to show the content of the [OverviewSection]
      *
@@ -52,7 +56,8 @@ class OverviewSection : Section() {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowSection() {
-        overviewUIHelper = OverviewUIHelper(user.projects)
+        projects = Home.viewModel.projects.collectAsState().value
+        overviewUIHelper = OverviewUIHelper(projects)
         LazyColumn(
             modifier = Modifier
                 .padding(
@@ -85,10 +90,10 @@ class OverviewSection : Section() {
                     ) {
                         createChartCard(
                             title = stringResource(Res.string.projects),
-                            total = { user.projects.size },
+                            total = { projects.size },
                             personal = {
                                 var personal = 0
-                                user.projects.forEach { project ->
+                                projects.forEach { project ->
                                     if (!project.hasGroups())
                                         personal++
                                 }
@@ -105,14 +110,14 @@ class OverviewSection : Section() {
                             title = stringResource(Res.string.updates),
                             total = {
                                 var updates = 0
-                                user.projects.forEach { project ->
+                                projects.forEach { project ->
                                     updates += project.updatesNumber
                                 }
                                 return@createChartCard updates
                             },
                             personal = {
                                 var personalUpdates = 0
-                                user.projects.forEach { project ->
+                                projects.forEach { project ->
                                     if (!project.hasGroups())
                                         personalUpdates += project.updatesNumber
                                 }
@@ -215,12 +220,12 @@ class OverviewSection : Section() {
                                 title = stringResource(Res.string.development_days),
                                 total = {
                                     var total = 0
-                                    user.projects.forEach { project -> total += project.totalDevelopmentDays }
+                                    projects.forEach { project -> total += project.totalDevelopmentDays }
                                     return@createChartCard total
                                 },
                                 personal = {
                                     var personal = 0
-                                    user.projects.forEach { project ->
+                                    projects.forEach { project ->
                                         if (!project.hasGroups())
                                             personal += project.totalDevelopmentDays
                                     }
@@ -237,12 +242,12 @@ class OverviewSection : Section() {
                                 title = stringResource(Res.string.average_development_days),
                                 total = {
                                     var total = 0
-                                    user.projects.forEach { project -> total += project.averageDevelopmentTime }
+                                    projects.forEach { project -> total += project.averageDevelopmentTime }
                                     return@createChartCard total
                                 },
                                 personal = {
                                     var personal = 0
-                                    user.projects.forEach { project ->
+                                    projects.forEach { project ->
                                         if (!project.hasGroups())
                                             personal += project.averageDevelopmentTime
                                     }
@@ -674,7 +679,7 @@ class OverviewSection : Section() {
      */
     private fun fetchUpdates(status: Status): Int {
         var updates = 0
-        user.projects.forEach { project ->
+        projects.forEach { project ->
             project.updates.forEach { update ->
                 if (update.status == status)
                     updates++
@@ -692,7 +697,7 @@ class OverviewSection : Section() {
      */
     private fun fetchPersonalUpdates(status: Status): Int {
         var updates = 0
-        user.projects.forEach { project ->
+        projects.forEach { project ->
             if (!project.hasGroups()) {
                 project.updates.forEach { update ->
                     if (update.status == status)
@@ -712,7 +717,7 @@ class OverviewSection : Section() {
      */
     private fun fetchUserAuthorUpdates(status: Status): Int {
         var updates = 0
-        user.projects.forEach { project ->
+        projects.forEach { project ->
             project.updates.forEach { update ->
                 val author: EquinoxUser? = when (status) {
                     SCHEDULED -> update.author

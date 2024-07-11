@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.RED_COLOR
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.activeScreen
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentProject
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showEditPopup
 import com.tecknobit.pandoro.viewmodels.HomeScreenViewModel
 import com.tecknobit.pandorocore.records.Project
 import com.tecknobit.pandorocore.ui.filterProjects
 import com.tecknobit.pandorocore.ui.populateFrequentProjects
 import layouts.components.PandoroTextField
-import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.screens.Home.Companion.currentProject
-import layouts.ui.screens.Home.Companion.showEditPopup
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
@@ -38,7 +38,9 @@ import pandoro.composeapp.generated.resources.*
  */
 //TODO: TO COMMENT
 @OptIn(ExperimentalResourceApi::class)
-class ProjectsSection : Section() {
+class ProjectsSection(
+    val viewModel: HomeScreenViewModel
+) : Section() {
 
     /**
      * **maxHeight** -> the max height of the [BoxWithConstraints] where are nested the [LazyVerticalGrid]
@@ -50,10 +52,6 @@ class ProjectsSection : Section() {
      */
     private lateinit var projectsList: List<Project>
 
-    private val viewModel = HomeScreenViewModel(
-        snackbarHostState = snackbarHostState
-    )
-
     /**
      * Function to show the content of the [ProjectsSection]
      *
@@ -61,7 +59,7 @@ class ProjectsSection : Section() {
      */
     @Composable
     override fun ShowSection() {
-        viewModel.refreshValues()
+        viewModel.snackbarHostState = snackbarHostState
         projectsList = viewModel.projects.collectAsState().value
         ShowSection {
             BoxWithConstraints {

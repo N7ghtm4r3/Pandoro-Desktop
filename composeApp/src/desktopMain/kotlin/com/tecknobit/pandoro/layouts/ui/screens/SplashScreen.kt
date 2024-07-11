@@ -1,5 +1,7 @@
 package layouts.ui.screens
 
+import Routes.connect
+import Routes.home
 import UpdaterDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,17 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.equinox.environment.records.EquinoxUser.DEFAULT_PROFILE_PIC
-import Routes.connect
-import Routes.home
-import currentProfilePic
-import fontFamily
 import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
 import com.tecknobit.pandoro.layouts.ui.screens.Connect
-import navigator
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.activeScreen
+import com.tecknobit.pandoro.layouts.ui.sections.Section
 import com.tecknobit.pandorocore.records.users.User
-import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.sections.Section
+import currentProfilePic
+import fontFamily
+import navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res
@@ -67,9 +67,8 @@ class SplashScreen : UIScreen() {
         activeScreen = remember { mutableStateOf(Section.Sections.Projects) }
         isRefreshing = rememberSaveable { mutableStateOf(false) }
         localAuthHelper.initUserCredentials()
-        if(user.language != null) {
+        if(user.language != null)
             Locale.setDefault(Locale.forLanguageTag(user.language))
-        }
         currentProfilePic = remember {
             mutableStateOf(
                 if(user.profilePic != null)

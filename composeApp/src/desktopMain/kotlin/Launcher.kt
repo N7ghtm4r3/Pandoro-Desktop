@@ -14,7 +14,7 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
 import Routes.*
 import com.tecknobit.pandoro.layouts.ui.screens.Connect
-import layouts.ui.screens.Home
+import com.tecknobit.pandoro.layouts.ui.screens.Home
 import layouts.ui.screens.SplashScreen
 import com.tecknobit.pandoro.layouts.ui.theme.PandoroTheme
 import moe.tlaster.precompose.PreComposeApp

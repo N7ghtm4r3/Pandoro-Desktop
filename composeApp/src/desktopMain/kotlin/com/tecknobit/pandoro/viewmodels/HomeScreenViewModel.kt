@@ -1,8 +1,14 @@
 package com.tecknobit.pandoro.viewmodels
 
+import Routes.connect
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
+import com.tecknobit.pandoro.layouts.ui.screens.Home
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.activeScreen
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.changelogs
+import com.tecknobit.pandoro.layouts.ui.sections.ProfileSection.Companion.groups
+import com.tecknobit.pandoro.layouts.ui.sections.Section.Sections.*
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectDescription
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectName
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isValidProjectShortDescription
@@ -13,13 +19,8 @@ import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Project
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import layouts.ui.screens.Home
-import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.screens.Home.Companion.changelogs
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
-import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.ProfileSection.Companion.groups
-import layouts.ui.sections.Section.Sections.*
+import navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import pandoro.composeapp.generated.resources.*
 
@@ -91,7 +92,7 @@ class HomeScreenViewModel(
     /**
      * **projectGroups** -> the list of groups where the project is shared
      */
-    lateinit var projectGroups: MutableList<Group>
+    lateinit var projectGroups: MutableList<String>
 
     init {
         groups = _groups
@@ -107,15 +108,13 @@ class HomeScreenViewModel(
         execRefreshingRoutine(
             currentContext = Home::class.java,
             routine = {
-                if(activeScreen.value == Projects || activeScreen.value == Overview
-                    /*|| currentGroup != null*/) {
+                if(activeScreen.value == Projects || activeScreen.value == Overview || activeScreen.value == Group) {
                     requester.sendRequest(
                         request = { requester.getProjectsList() },
                         onSuccess = { response ->
                             _projects.value = Project.getInstances(
                                 response.getJSONArray(RESPONSE_MESSAGE_KEY)
                             )
-                            user.setProjects(_projects.value)
                         },
                         onFailure = { showSnack(it) }
                     )
@@ -127,7 +126,6 @@ class HomeScreenViewModel(
                                 response.getJSONArray(RESPONSE_MESSAGE_KEY)
                             )
                             groups = _groups
-                            user.setGroups(_groups.value)
                         },
                         onFailure = { showSnack(it) }
                     )
@@ -142,8 +140,9 @@ class HomeScreenViewModel(
                         changelogs = _changelogs
                     },
                     onFailure = {
+                        suspendRefresher()
                         localAuthHelper.logout()
-                        //context.startActivity(Intent(context, ConnectActivity::class.java))
+                        navigator.navigate(connect.name)
                     },
                     onConnectionError = { _isServerOffline.value = true }
                 )
@@ -166,19 +165,15 @@ class HomeScreenViewModel(
                 if (isValidProjectShortDescription(shortDescription.value)) {
                     if (isValidVersion(version.value)) {
                         if (isValidRepository(projectRepository.value)) {
-                            val groupIds = mutableListOf<String>()
-                            projectGroups.forEach { group ->
-                                groupIds.add(group.id)
-                            }
                             if(project == null) {
                                 addProject(
-                                    groupIds = groupIds,
+                                    groupIds = projectGroups,
                                     onSuccess = onSuccess
                                 )
                             } else {
                                 editProject(
                                     project = project,
-                                    groupIds = groupIds,
+                                    groupIds = projectGroups,
                                     onSuccess = onSuccess
                                 )
                             }

@@ -25,20 +25,28 @@ import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
 import com.tecknobit.pandoro.helpers.RED_COLOR
 import com.tecknobit.pandoro.helpers.showSnack
+import com.tecknobit.pandoro.layouts.ui.screens.Home
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentGroup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showAddMembersPopup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
+import com.tecknobit.pandoro.layouts.ui.sections.Section.Companion.snackbarHostState
+import com.tecknobit.pandoro.viewmodels.GroupSectionViewModel
 import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.checkMembersValidity
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Project
 import layouts.components.PandoroTextField
 import layouts.components.popups.CreatePopup
 import layouts.components.popups.coroutineScope
-import layouts.ui.screens.Home.Companion.currentGroup
-import layouts.ui.screens.Home.Companion.showAddMembersPopup
-import layouts.ui.screens.Home.Companion.showEditProjectGroupPopup
-import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.Section.Companion.snackbarHostState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.*
+
+private val viewModel by lazy {
+    GroupSectionViewModel(
+        initialGroup = currentGroup.value,
+        snackbarHostState = snackbarHostState
+    )
+}
 
 /**
  * Function to show the popup to add members to a [Group]
@@ -68,11 +76,12 @@ fun ShowAddMembersPopup(
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally).clickable {
                         if (checkMembersValidity(members)) {
-                            /*requester!!.execAddMembers(group.id, members.toList())
-                            if (requester!!.successResponse())
-                                ShowAddMembersPopup.value = false
-                            else
-                                showSnack(coroutineScope, snackbarHostState, requester!!.errorMessage())*/
+                            viewModel.addMembers(
+                                members = members,
+                                onSuccess = {
+                                    showAddMembersPopup.value = false
+                                }
+                            )
                         } else
                             showSnack(coroutineScope, snackbarHostState, Res.string.wrong_group_list)
                     },
@@ -173,7 +182,7 @@ fun showMembersSection(
  */
 @Composable
 fun showEditProjectGroupPopup() {
-    val uProjects = user.projects
+    val uProjects = Home.viewModel.projects.collectAsState().value
     CreatePopup(
         height = 400.dp,
         flag = showEditProjectGroupPopup,
@@ -239,11 +248,12 @@ fun showEditProjectGroupPopup() {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable {
-                        /*requester!!.execEditProjects(currentGroup.value.id, projects)
-                        if (requester!!.successResponse())
-                            showEditProjectGroupPopup.value = false
-                        else
-                            showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
+                        viewModel.editProjects(
+                            projects = projects,
+                            onSuccess = {
+                                showEditProjectGroupPopup.value = false
+                            }
+                        )
                     },
                 text = stringResource(Res.string.edit),
                 fontSize = 14.sp

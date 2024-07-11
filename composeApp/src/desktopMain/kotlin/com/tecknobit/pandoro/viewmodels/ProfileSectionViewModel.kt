@@ -1,10 +1,16 @@
 package com.tecknobit.pandoro.viewmodels
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.MutableState
 import com.tecknobit.apimanager.formatters.JsonHelper
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.checkMembersValidity
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isGroupDescriptionValid
+import com.tecknobit.pandorocore.helpers.InputsValidator.Companion.isGroupNameValid
 import com.tecknobit.pandorocore.records.Changelog
 import com.tecknobit.pandorocore.records.Group
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import pandoro.composeapp.generated.resources.*
 import java.io.File
 
 /**
@@ -18,11 +24,22 @@ import java.io.File
  * @see ViewModel
  * @see FetcherManagerWrapper
  */
+@OptIn(ExperimentalResourceApi::class)
 class ProfileSectionViewModel(
     override var snackbarHostState: SnackbarHostState?
 ): PandoroViewModel(
     snackbarHostState = snackbarHostState
 ) {
+
+    /**
+     * **name** -> the name of the group
+     */
+    lateinit var name: MutableState<String>
+
+    /**
+     * **description** -> the description of the group
+     */
+    lateinit var description: MutableState<String>
 
     /**
      * Function to execute the profile pic change
@@ -53,6 +70,7 @@ class ProfileSectionViewModel(
      * @param newEmail: the new email of the user
      * @param onSuccess: the action to execute whether the request has been successful
      */
+    //TODO: TO FIX
     fun changeEmail(
         newEmail: String,
         onSuccess: () -> Unit
@@ -209,6 +227,45 @@ class ProfileSectionViewModel(
             onSuccess = { },
             onFailure = { showSnack(it) }
         )
+    }
+
+    /**
+     * Function to execute the request to create a new group
+     *
+     * @param members: the list of the members to add to the group
+     * @param showCreateGroup: whether show the dialog for the creation of the group
+     */
+    fun createGroup(
+        members: List<String>,
+        showCreateGroup: MutableState<Boolean>
+    ) {
+        if (isGroupNameValid(name.value)) {
+            if (isGroupDescriptionValid(description.value)) {
+                if (members.isNotEmpty()) {
+                    if (checkMembersValidity(members)) {
+                        requester.sendRequest(
+                            request = {
+                                requester.createGroup(
+                                    name = name.value,
+                                    groupDescription = description.value,
+                                    members = members
+                                )
+                            },
+                            onSuccess = {
+                                showCreateGroup.value = false
+                                name.value = ""
+                                description.value = ""
+                            },
+                            onFailure = { showSnack(it) }
+                        )
+                    } else
+                        showSnack(Res.string.you_must_insert_a_correct_members_list)
+                } else
+                    showSnack(Res.string.you_must_insert_one_member_at_least)
+            } else
+                showSnack(Res.string.you_must_insert_a_correct_group_description)
+        } else
+            showSnack(Res.string.you_must_insert_a_correct_group_name)
     }
 
 }

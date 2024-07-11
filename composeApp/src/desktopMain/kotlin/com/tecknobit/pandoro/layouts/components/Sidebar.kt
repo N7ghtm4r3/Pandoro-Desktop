@@ -12,14 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import currentProfilePic
-import fontFamily
 import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.Logo
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
-import layouts.ui.screens.Home
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.activeScreen
+import com.tecknobit.pandoro.layouts.ui.sections.Section
+import currentProfilePic
+import fontFamily
 import layouts.ui.screens.SplashScreen.Companion.user
-import layouts.ui.sections.Section
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import pandoro.composeapp.generated.resources.Res
@@ -75,21 +75,25 @@ class Sidebar {
                         url = currentProfilePic.value,
                         size = 100.dp
                     )
-                    Text(
-                        modifier = Modifier
-                            .padding(
-                                top = 10.dp,
-                                bottom = 5.dp
-                            ),
-                        fontFamily = fontFamily,
-                        text = user.completeName,
-                        fontSize = 14.sp
-                    )
-                    Text(
-                        text = user.email,
-                        fontFamily = fontFamily,
-                        fontSize = 12.sp
-                    )
+                    if(user.completeName != null) {
+                        Text(
+                            modifier = Modifier
+                                .padding(
+                                    top = 10.dp,
+                                    bottom = 5.dp
+                                ),
+                            fontFamily = fontFamily,
+                            text = user.completeName,
+                            fontSize = 14.sp
+                        )
+                    }
+                    if(user.email != null) {
+                        Text(
+                            text = user.email,
+                            fontFamily = fontFamily,
+                            fontSize = 12.sp
+                        )
+                    }
                 }
                 HorizontalDivider(
                     modifier = Modifier
@@ -107,7 +111,7 @@ class Sidebar {
                             .fillMaxWidth()
                             .height(30.dp)
                             .clickable {
-                                Home.activeScreen.value = item.first
+                                activeScreen.value = item.first
                             },
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally

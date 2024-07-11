@@ -1,4 +1,4 @@
-package layouts.ui.sections
+package com.tecknobit.pandoro.layouts.ui.sections
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
@@ -10,15 +10,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
 import com.tecknobit.pandoro.helpers.showSnack
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.activeScreen
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentGroup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentProject
 import com.tecknobit.pandorocore.records.Group
 import com.tecknobit.pandorocore.records.Project
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import layouts.ui.screens.Home.Companion.activeScreen
-import layouts.ui.screens.Home.Companion.currentGroup
-import layouts.ui.screens.Home.Companion.currentProject
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString

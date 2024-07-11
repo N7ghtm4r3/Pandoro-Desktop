@@ -20,6 +20,12 @@ import com.tecknobit.equinox.inputs.InputValidator.LANGUAGES_SUPPORTED
 import com.tecknobit.pandoro.helpers.BACKGROUND_COLOR
 import com.tecknobit.pandoro.helpers.Logo
 import com.tecknobit.pandoro.helpers.PRIMARY_COLOR
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.activeScreen
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentGroup
+import com.tecknobit.pandoro.layouts.ui.screens.Home.Companion.currentProject
+import com.tecknobit.pandoro.layouts.ui.sections.Section
+import com.tecknobit.pandoro.layouts.ui.sections.Section.Companion.navBack
+import com.tecknobit.pandoro.viewmodels.GroupSectionViewModel
 import com.tecknobit.pandoro.viewmodels.ProfileSectionViewModel
 import com.tecknobit.pandoro.viewmodels.ProjectSectionViewModel
 import com.tecknobit.pandorocore.records.Group
@@ -28,7 +34,6 @@ import com.tecknobit.pandorocore.records.users.GroupMember
 import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.JOINED
 import com.tecknobit.pandorocore.records.users.GroupMember.InvitationStatus.PENDING
 import layouts.components.popups.snackbarHostState
-import layouts.ui.screens.Home.Companion.currentProject
 import layouts.ui.screens.SplashScreen.Companion.localAuthHelper
 import layouts.ui.screens.SplashScreen.Companion.user
 import navigator
@@ -39,6 +44,11 @@ import pandoro.composeapp.generated.resources.*
 private val viewModel = ProjectSectionViewModel(
     initialProject = currentProject.value,
     snackbarHostState = snackbarHostState
+)
+
+private val groupViewModel = GroupSectionViewModel(
+    initialGroup = currentGroup.value,
+    snackbarHostState = Section.snackbarHostState
 )
 
 /**
@@ -87,20 +97,24 @@ fun DeleteUpdate(
 @Composable
 fun RemoveUser(
     show: MutableState<Boolean>,
+    onDismissRequest: () -> Unit,
     group: Group,
     memberId: String
 ) {
     AlertDialogContainer(
         show = show,
+        onDismissRequest = onDismissRequest,
         title = stringResource(Res.string.remove_the_user_from) + " ${group.name}",
         text = stringResource(Res.string.remove_user_text),
         confirmButton = {
             TextButton(
                 onClick = {
-                    /*requester!!.execRemoveMember(group.id, memberId)
-                    show.value = false
-                    if (!requester!!.successResponse())
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
+                    groupViewModel.removeMember(
+                        show = show,
+                        group = group,
+                        memberId = memberId,
+                        onSuccess = onDismissRequest
+                    )
                 },
                 content = {
                     Text(
@@ -116,12 +130,14 @@ fun RemoveUser(
  * Function to leave a [Group]
  *
  * @param show: the flaw whether show the [AlertDialog]
+ * @param onDismissRequest: the action to execute when the dialog has been dismissed
  * @param group: the group to leave
  */
 @Wrapper
 @Composable
 fun LeaveGroup(
     show: MutableState<Boolean>,
+    onDismissRequest: () -> Unit,
     group: Group
 ) {
     val members = group.members
@@ -140,9 +156,9 @@ fun LeaveGroup(
                     width = 400.dp,
                     height = 280.dp
                 ),
+            onDismissRequest = onDismissRequest,
             shape = RoundedCornerShape(25.dp),
             backgroundColor = BACKGROUND_COLOR,
-            onDismissRequest = { show.value = false },
             title = {},
             text = {},
             buttons = {
@@ -239,6 +255,7 @@ fun LeaveGroup(
         show = show,
         title = stringResource(Res.string.leave_group),
         text = stringResource(Res.string.leave_group_text),
+        onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
                 onClick = {
@@ -287,41 +304,43 @@ private fun leaveGroup(
     group: Group,
     nextAdmin: GroupMember? = null
 ) {
-    var nextAdminId: String? = null
-    if (nextAdmin != null)
-        nextAdminId = nextAdmin.id
-    /*requester!!.execLeaveGroup(group.id, nextAdminId)
+    groupViewModel.leaveFromGroup(
+        group = group,
+        nextAdmin = nextAdmin,
+        onSuccess = {
+            navBack()
+            activeScreen.value = Section.Sections.Projects
+        }
+    )
     show.value = false
-    if (requester!!.successResponse()) {
-        navBack()
-        activeScreen.value = Section.Sections.Projects
-    } else
-        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
 }
 
 /**
  * Function to delete a [Group]
  *
  * @param show: the flaw whether show the [AlertDialog]
+ * @param onDismissRequest: the action to execute when the dialog has been dismissed
  * @param group: the group to delete
  */
 @Wrapper
 @Composable
 fun DeleteGroup(
     show: MutableState<Boolean>,
-    group: Group
+    group: Group,
+    onDismissRequest: () -> Unit,
 ) {
     AlertDialogContainer(
         show = show,
+        onDismissRequest = onDismissRequest,
         title = stringResource(Res.string.delete_group),
         text = stringResource(Res.string.delete_group_text),
         confirmButton = {
             TextButton(
                 onClick = {
-                    /*requester!!.execDeleteGroup(group.id)
-                    show.value = false
-                    if (!requester!!.successResponse())
-                        showSnack(sectionCoroutineScope, snackbarHostState, requester!!.errorMessage())*/
+                    groupViewModel.deleteGroup(
+                        group = group,
+                        onSuccess = onDismissRequest
+                    )
                 },
                 content = {
                     Text(
@@ -435,6 +454,7 @@ fun ChangeLanguage(
  * @param show: the flag whether show the [AlertDialog]
  * @param title: the title of the [AlertDialog]
  * @param text: the text of the [AlertDialog]
+ * @param onDismissRequest: the action to execute when the dialog has been dismissed
  * @param dismissButton: the dismiss button and its action of the [AlertDialog]
  * @param confirmButton: the confirm button and its action of the [AlertDialog]
  */
@@ -443,9 +463,10 @@ private fun AlertDialogContainer(
     show: MutableState<Boolean>,
     title: String,
     text: String,
+    onDismissRequest: () -> Unit = { show.value = false },
     dismissButton: @Composable (() -> Unit)? = {
         TextButton(
-            onClick = { show.value = false },
+            onClick = onDismissRequest,
             content = {
                 Text(
                     text = stringResource(Res.string.dismiss)
@@ -461,9 +482,10 @@ private fun AlertDialogContainer(
                 .widthIn(
                     max = 400.dp
                 ),
+
             shape = RoundedCornerShape(25.dp),
             containerColor = BACKGROUND_COLOR,
-            onDismissRequest = { show.value = false },
+            onDismissRequest = onDismissRequest,
             title = { Text(text = title) },
             text = { Text(text = text) },
             dismissButton = dismissButton,

@@ -3,12 +3,10 @@ package com.tecknobit.pandoro.viewmodels
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.MutableState
 import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
+import com.tecknobit.pandoro.layouts.ui.screens.Home
 import com.tecknobit.pandorocore.records.Note
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import layouts.ui.screens.Home
-import layouts.ui.sections.NotesSection
-import layouts.ui.sections.Section.Sections.*
 
 /**
  * The **NotesSectionViewModel** class is the support class used by the [NotesSection]
