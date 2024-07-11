@@ -24,16 +24,18 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation("com.github.N7ghtm4r3:APIManager:2.2.2")
-            implementation("com.tecknobit.pandorocore:Pandoro-core:1.0.3")
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+            implementation("com.github.N7ghtm4r3:Equinox:1.0.1")
+            implementation("com.github.N7ghtm4r3:APIManager:2.2.3")
+            implementation("com.tecknobit.pandorocore:Pandoro-core:1.0.4")
             implementation("com.github.N7ghtm4r3:OctocatKDU:1.0.3")
             implementation("com.netguru.multiplatform-charts:multiplatform-charts-desktop:1.0.0")
             implementation("org.json:json:20230227")
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             api("commons-validator:commons-validator:1.7")
             api("moe.tlaster:precompose:1.5.11")
-            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
-            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-alpha06")
+            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha07")
+            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-alpha07")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -52,8 +54,8 @@ compose.desktop {
                 "java.scripting", "java.security.jgss", "java.sql.rowset", "jdk.jfr", "jdk.unsupported"
             )
             packageName = "Pandoro"
-            packageVersion = "1.0.3"
-            version = "1.0.3"
+            packageVersion = "1.0.4"
+            version = "1.0.4"
             description = "Pandoro, open source management software"
             copyright = "© 2024 Tecknobit"
             vendor = "Tecknobit"
@@ -70,7 +72,7 @@ compose.desktop {
                 iconFile.set(project.file("src/desktopMain/resources/icons/logo.icns"))
                 packageName = "com-tecknobit-pandoro"
                 debMaintainer = "infotecknobitcompany@gmail.com"
-                appRelease = "1.0.3"
+                appRelease = "1.0.4"
                 appCategory = "PERSONALIZATION"
                 rpmLicenseType = "MIT"
             }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Pandoro</string>
-    <string name="app_version" translatable="false">1.0.3</string>
+    <string name="app_version" translatable="false">1.0.4</string>
     <string name="description_subtext">Pandoro est un logiciel de gestion open source permettant de gérer facilement vos projets et leurs mises à jour.</string>
     <string name="frequent_projects">Projets fréquents</string>
     <string name="current_projects">Projets en cours</string>
@@ -149,4 +149,5 @@
     <string name="total_change_notes">Notes sur les changements totaux :</string>
     <string name="language">Langue</string>
     <string name="change_language">Changer de langue</string>
+    <string name="server_currently_offline">Le serveur est actuellement hors ligne</string>
 </resources>
