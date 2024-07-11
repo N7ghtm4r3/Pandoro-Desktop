@@ -1,5 +1,3 @@
-
-import Routes.*
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -14,10 +12,11 @@ import coil3.addLastModifiedToFileCacheKey
 import coil3.compose.LocalPlatformContext
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
-import layouts.ui.screens.Connect
+import Routes.*
+import com.tecknobit.pandoro.layouts.ui.screens.Connect
 import layouts.ui.screens.Home
 import layouts.ui.screens.SplashScreen
-import layouts.ui.theme.PandoroTheme
+import com.tecknobit.pandoro.layouts.ui.theme.PandoroTheme
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
@@ -101,7 +100,8 @@ fun App() {
                 add(
                     OkHttpNetworkFetcherFactory {
                         OkHttpClient.Builder()
-                            .sslSocketFactory(sslContext.socketFactory,
+                            .sslSocketFactory(
+                                sslContext.socketFactory,
                                 validateSelfSignedCertificate()[0] as X509TrustManager
                             )
                             .hostnameVerifier { _: String?, _: SSLSession? -> true }
